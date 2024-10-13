@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisteredUserController; //nuevo
+use App\Http\Controllers\Admin\WorkerController; //nuevo
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,5 +18,24 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+//Restringir el Registro Solo a Usuarios
+Route::get('/register', [RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
+
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware('guest');
+//fin del cambio
+//Definir las Rutas para el Administrador
+Route::middleware(['auth', 'role:administrador'])->group(function () {
+    Route::get('/admin/workers/create', [WorkerController::class, 'create'])->name('admin.workers.create');
+    Route::post('/admin/workers', [WorkerController::class, 'store'])->name('admin.workers.store');
+    // Otras rutas de administrador...
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+});
+//fin del cambio
 
 require __DIR__.'/auth.php';
