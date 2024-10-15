@@ -1,4 +1,5 @@
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
+<x-app-layout>
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
         <h1 class="text-2xl font-semibold mb-6">Registrar Trabajador</h1>
         <form method="POST" action="{{ route('admin.workers.store') }}">
             @csrf
@@ -37,3 +38,5 @@
             </div>
         </form>
     </div>
+
+</x-app-layout>

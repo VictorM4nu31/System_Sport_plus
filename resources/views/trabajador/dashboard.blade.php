@@ -1,5 +1,6 @@
-<!-- resources/views/trabajador/dashboard.blade.php -->
-
-<h2 class="text-xl font-semibold">Panel de Trabajador</h2>
-<p>Bienvenido, {{ auth()->user()->name }}. Este es tu panel de trabajador.</p>
-<!-- Funcionalidades para trabajadores -->
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Dashboard') }}
+    </h2>
+    <p>Bienvenido, {{ auth()->user()->name }}. Este es tu panel de trabajador.</p>
+</x-slot>

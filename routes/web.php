@@ -31,6 +31,11 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
 Route::middleware(['auth', 'role:administrador'])->group(function () {
     Route::get('/admin/workers/create', [WorkerController::class, 'create'])->name('admin.workers.create');
     Route::post('/admin/workers', [WorkerController::class, 'store'])->name('admin.workers.store');
+    Route::get('/admin/workers', [WorkerController::class, 'index'])->name('admin.workers.index');
+    Route::get('/admin/workers/{id}/edit', [WorkerController::class, 'edit'])->name('admin.workers.edit');
+    Route::patch('/admin/workers/{id}', [WorkerController::class, 'update'])->name('admin.workers.update');
+    Route::delete('/admin/workers/{id}', [WorkerController::class, 'destroy'])->name('admin.workers.destroy');
+
     // Otras rutas de administrador...
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
@@ -38,4 +43,4 @@ Route::middleware(['auth', 'role:administrador'])->group(function () {
 });
 //fin del cambio
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

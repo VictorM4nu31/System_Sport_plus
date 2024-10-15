@@ -1,3 +1,7 @@
-<p>Bienvenido, {{ auth()->user()->name }}. Este es tu panel de administrador.</p>
-<!-- Aquí puedes agregar enlaces y funcionalidades específicas para el administrador -->
-@include('admin.workers.create')
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Dashboard') }}
+    </h2>
+    <p>Bienvenido, {{ auth()->user()->name }}. Este es tu panel de administrador.</p>
+</x-slot>
+
