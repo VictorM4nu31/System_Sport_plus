@@ -14,9 +14,12 @@ class CreateProductsTable extends Migration
             $table->decimal('price', 10, 2);
             $table->text('description');
             $table->integer('stock');
-            $table->string('category');
+            $table->unsignedBigInteger('category_id'); // Este campo será la clave foránea
             $table->string('image')->nullable();
             $table->timestamps();
+
+            // Definir la clave foránea
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 
@@ -25,3 +28,4 @@ class CreateProductsTable extends Migration
         Schema::dropIfExists('products');
     }
 }
+

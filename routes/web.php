@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController; //nuevo
 use App\Http\Controllers\Admin\WorkerController; //nuevo
-use App\Http\Controllers\Admin\ProductController; //nuevo   
+use App\Http\Controllers\Admin\ProductController; //nuevo
+use App\Http\Controllers\Admin\CategoryController; //nuevo
 
 Route::get('/', function () {
     return view('welcome');
@@ -42,6 +43,12 @@ Route::middleware(['auth', 'role:administrador'])->group(function () {
     Route::get('/admin/products/{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
     Route::patch('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('admin.categories.create');
+    Route::post('/admin/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+    Route::get('/admin/categories/{id}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
+    Route::patch('/admin/categories/{id}', [CategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('/admin/categories/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     // Otras rutas de administrador...
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');

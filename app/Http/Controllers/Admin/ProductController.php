@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
@@ -18,7 +19,8 @@ class ProductController extends Controller
     // Mostrar formulario para crear un producto
     public function create()
     {
-        return view('admin.products.create');
+        $categories = Category::all(); // Obtener todas las categorías
+        return view('admin.products.create', compact('categories'));
     }
 
     // Guardar un producto nuevo
@@ -29,25 +31,17 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'description' => 'required|string',
             'stock' => 'required|integer',
-            'category' => 'required|string',
+            'category_id' => 'required|exists:categories,id',  // Aquí validamos el campo correcto
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
-        // Manejo de la imagen del producto
-        if ($request->hasFile('image')) {
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('images'), $imageName);
-        } else {
-            $imageName = null;
-        }
 
         Product::create([
             'name' => $request->name,
             'price' => $request->price,
             'description' => $request->description,
             'stock' => $request->stock,
-            'category' => $request->category,
-            'image' => $imageName,
+            'category_id' => $request->category_id, // Cambiado de category a category_id
+            'image' => $this->storeImage($request) // Manejar imagen si se sube
         ]);
 
         return redirect()->route('admin.products.index')->with('success', 'Producto creado con éxito.');
@@ -57,8 +51,10 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('admin.products.edit', compact('product'));
+        $categories = Category::all(); // Obtener todas las categorías
+        return view('admin.products.edit', compact('product', 'categories'));
     }
+
 
     // Actualizar un producto existente
     public function update(Request $request, $id)
@@ -70,28 +66,41 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'description' => 'required|string',
             'stock' => 'required|integer',
-            'category' => 'required|string',
+            'category_id' => 'required|exists:categories,id',  // Asegúrate de validar el campo category_id
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Si hay una nueva imagen, la procesamos
+        // Si hay una nueva imagen, utilizamos el método storeImage
         if ($request->hasFile('image')) {
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('images'), $imageName);
-            $product->image = $imageName;
+            $product->image = $this->storeImage($request);
         }
 
-        $product->update($request->only('name', 'price', 'description', 'stock', 'category'));
+        $product->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'description' => $request->description,
+            'stock' => $request->stock,
+            'category_id' => $request->category_id, // Cambiado de category a category_id
+        ]);
 
         return redirect()->route('admin.products.index')->with('success', 'Producto actualizado con éxito.');
     }
+
 
     // Eliminar un producto
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
         $product->delete();
-
         return redirect()->route('admin.products.index')->with('success', 'Producto eliminado.');
+    }
+
+    // Método para manejar la subida de imagen
+    protected function storeImage(Request $request)
+    {
+        if ($request->hasFile('image')) {
+            return $request->file('image')->store('products', 'public');
+        }
+        return null; // Retornar null si no hay imagen
     }
 }

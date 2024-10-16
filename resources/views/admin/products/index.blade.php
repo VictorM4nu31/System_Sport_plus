@@ -4,9 +4,11 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-semibold mb-4">Gestión de Productos</h3>
                 <a href="{{ route('admin.products.create') }}" class="px-4 py-2 bg-green-600 text-white rounded">Agregar Producto</a>
+                <a href="{{ route('admin.categories.index') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Gestionar Categorías</a>
                 <table class="min-w-full bg-white mt-4">
                     <thead>
                         <tr>
+                            <th class="px-6 py-3 border-b-2 border-gray-300 text-left">Imagen</th>
                             <th class="px-6 py-3 border-b-2 border-gray-300 text-left">Nombre</th>
                             <th class="px-6 py-3 border-b-2 border-gray-300 text-left">Precio</th>
                             <th class="px-6 py-3 border-b-2 border-gray-300 text-left">Stock</th>
@@ -16,6 +18,13 @@
                     <tbody>
                         @foreach ($products as $product)
                             <tr>
+                                <td class="px-6 py-3 border-b border-gray-300">
+                                    @if($product->image)
+                                        <img src="{{ asset('storage/products/' . $product->image) }}" class="h-16 w-16 object-cover" alt="{{ $product->name }}">
+                                    @else
+                                        <p>Sin imagen</p>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-3 border-b border-gray-300">{{ $product->name }}</td>
                                 <td class="px-6 py-3 border-b border-gray-300">{{ $product->price }}</td>
                                 <td class="px-6 py-3 border-b border-gray-300">{{ $product->stock }}</td>
