@@ -22,6 +22,11 @@
                             {{ __('Ver Trabajadores') }}
                         </x-nav-link>
                     @endif
+                    @if (auth()->user()->hasRole('administrador'))
+                        <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
+                            {{ __('Gestión de Productos') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -79,6 +84,11 @@
             @if (auth()->user()->hasRole('administrador'))
                 <x-responsive-nav-link :href="route('admin.workers.index')" :active="request()->routeIs('admin.workers.index')">
                     {{ __('Ver Trabajadores') }}
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->user()->hasRole('administrador'))
+                <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
+                    {{ __('Gestión de Productos') }}
                 </x-responsive-nav-link>
             @endif
         </div>

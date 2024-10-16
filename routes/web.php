@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController; //nuevo
 use App\Http\Controllers\Admin\WorkerController; //nuevo
+use App\Http\Controllers\Admin\ProductController; //nuevo   
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,7 +36,12 @@ Route::middleware(['auth', 'role:administrador'])->group(function () {
     Route::get('/admin/workers/{id}/edit', [WorkerController::class, 'edit'])->name('admin.workers.edit');
     Route::patch('/admin/workers/{id}', [WorkerController::class, 'update'])->name('admin.workers.update');
     Route::delete('/admin/workers/{id}', [WorkerController::class, 'destroy'])->name('admin.workers.destroy');
-
+    Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.products.index');
+    Route::get('/admin/products/create', [ProductController::class, 'create'])->name('admin.products.create');
+    Route::post('/admin/products', [ProductController::class, 'store'])->name('admin.products.store');
+    Route::get('/admin/products/{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
+    Route::patch('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.products.update');
+    Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
     // Otras rutas de administrador...
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
