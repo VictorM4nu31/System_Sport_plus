@@ -5,8 +5,6 @@
                 <h3 class="text-lg font-semibold mb-4">Gestión de Trabajadores</h3>
                 <a href="{{ route('admin.workers.create') }}" class="px-4 py-2 bg-green-600 text-white rounded">Agregar
                     Trabajador</a>
-
-
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
                     <h1 class="text-2xl font-semibold mb-6">Listado de Trabajadores</h1>
                     <table class="min-w-full bg-white">
@@ -25,11 +23,6 @@
                                     <td class="px-6 py-3 border-b border-gray-300">
                                         <a href="{{ route('admin.workers.edit', $worker->id) }}"
                                             class="text-blue-600 hover:text-blue-900">Editar</a> |
-                                        {{-- <form action="{{ route('admin.workers.suspend', $worker->id) }}" method="POST"
-                                style="display:inline-block;">
-                                @csrf
-                                <button type="submit" class="text-yellow-600 hover:text-yellow-900">Suspender</button>
-                            </form> | --}}
                                         <form action="{{ route('admin.workers.destroy', $worker->id) }}" method="POST"
                                             style="display:inline-block;">
                                             @csrf

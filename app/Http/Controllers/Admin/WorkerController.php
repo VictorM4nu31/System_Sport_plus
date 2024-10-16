@@ -21,13 +21,27 @@ class WorkerController extends Controller
 
     public function store(Request $request)
     {
+        // Validar los datos
         $request->validate([
             'name' => 'required|string|max:255',
-            // Otros campos de validación...
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|confirmed|min:8',
         ]);
 
-        // Lógica para almacenar el trabajador...
+        // Crear el trabajador
+        $worker = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        // Asignar el rol de trabajador
+        $worker->assignRole('trabajador');
+
+        // Redirigir de vuelta al índice de trabajadores con un mensaje de éxito
+        return redirect()->route('admin.workers.index')->with('success', 'Trabajador creado con éxito.');
     }
+
 
     public function edit($id)
     {
