@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:8.2  # Usando la versión 8.0 de MySQL
         env:
-          MYSQL_ROOT_PASSWORD:  # Solo necesitas definir la contraseña de root
+          MYSQL_ROOT_PASSWORD: root  # Solo necesitas definir la contraseña de root
           MYSQL_DATABASE: test_db  # Base de datos que se creará
         options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
         ports:
