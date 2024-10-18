@@ -3,10 +3,10 @@ name: Laravel CI
 on:
   push:
     branches:
-      - main
+      - back-end
   pull_request:
     branches:
-      - main
+      - back-end
 
 jobs:
   laravel-tests:
@@ -31,9 +31,8 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0' # Aquí puedes poner la versión de PHP que necesitas
-          extensions: mbstring, mysql
-          coverage: xdebug
+          php-version: '8.0' # Ajusta esta versión según lo que estés usando
+          extensions: mbstring, pdo_mysql
 
       - name: Cache Composer dependencies
         uses: actions/cache@v2
@@ -45,11 +44,10 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: Generate application key
-        run: php artisan key:generate
-
       - name: Create .env file
-        run: cp .env.example .env
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
       - name: Set up database
         run: |
