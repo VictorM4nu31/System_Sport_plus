@@ -1,6 +1,5 @@
 name: CI Pipeline
 
-# Ejecuta el pipeline cuando haya un push o un pull request a la rama back-end
 on:
   push:
     branches:
@@ -10,60 +9,67 @@ on:
       - back-end
 
 jobs:
-  build:
+  laravel-tests:
     runs-on: ubuntu-latest
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_db
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
-    # Paso 1: Clonar el repositorio
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Check out the repository code
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-    # Paso 2: Configurar PHP con la versión 8.2
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, pdo, mysql, xml
-        coverage: none
+      # Set up PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, mysqli, pdo_mysql
+          ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=512M
 
-    # Paso 3: Instalar dependencias de Composer
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+      # Install Composer dependencies
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
 
-    # Paso 4: Crear archivo .env para la configuración
-    - name: Copy .env file
-      run: cp .env.example .env
+      # Create the .env file using .env.example
+      - name: Create .env file
+        run: cp .env.example .env
 
-    # Paso 5: Generar la APP_KEY
-    - name: Generate APP_KEY
-      run: php artisan key:generate
+      # Generate the Laravel application key
+      - name: Generate Laravel APP_KEY
+        run: php artisan key:generate
 
-    # Paso 6: Configurar la base de datos
-    - name: Configure .env DB
-      run: |
-        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
-        sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
-        sed -i 's/DB_PASSWORD=root/DB_PASSWORD=root/' .env
-        sed -i 's/DB_DATABASE=test_db/DB_DATABASE=test_db/' .env
+      # Set up the application
+      - name: Set up database
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: test_db
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: |
+          php artisan migrate --force
 
-    # Paso 7: Ejecutar las migraciones
-    - name: Run migrations
-      run: php artisan migrate --force
-
-    # Paso 8: Ejecutar pruebas unitarias
-    - name: Run Tests
-      run: php artisan test --env=testing
-
-    # Paso 9: Limpiar cachés (opcional)
-    - name: Clear caches
-      run: php artisan cache:clear
+      # Run tests
+      - name: Run tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: test_db
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php artisan test
