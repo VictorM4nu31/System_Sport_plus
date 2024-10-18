@@ -3,10 +3,10 @@ name: Laravel CI
 on:
   push:
     branches:
-      - back-end
+      - main
   pull_request:
     branches:
-      - back-end
+      - main
 
 jobs:
   laravel-tests:
@@ -14,15 +14,13 @@ jobs:
 
     services:
       mysql:
-        image: mysql:latest
+        image: mysql:8.2  # Usando la versión 8.0 de MySQL
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_db
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
+          MYSQL_ROOT_PASSWORD:  # Solo necesitas definir la contraseña de root
+          MYSQL_DATABASE: test_db  # Base de datos que se creará
         options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
         ports:
-          - 3306:3306
+          - 33306:3306  # Cambiar el puerto para evitar conflictos
 
     steps:
       - name: Checkout code
@@ -31,7 +29,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' # Ajusta esta versión según lo que estés usando
+          php-version: '8.0'
           extensions: mbstring, pdo_mysql
 
       - name: Cache Composer dependencies
@@ -48,6 +46,9 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+
+      - name: Wait for MySQL to be ready
+        run: sleep 30  # Añadir un tiempo de espera para que MySQL se inicie
 
       - name: Set up database
         run: |
