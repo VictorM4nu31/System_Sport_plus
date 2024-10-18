@@ -14,7 +14,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_db
@@ -31,7 +31,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0' # Ajusta esta versión según lo que estés usando
+          php-version: '8.2' # Ajusta esta versión según lo que estés usando
           extensions: mbstring, pdo_mysql
 
       - name: Cache Composer dependencies
