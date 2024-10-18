@@ -1,34 +1,37 @@
-on: push
-name: CI
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ back-end ]
+  pull_request:
+    branches: [ back-end ]
+
 jobs:
-  phpunit:
+  build:
+
     runs-on: ubuntu-latest
-    container:
-      image: kirschbaumdevelopment/laravel-test-runner:7.3
- 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: test
-        ports:
-          - 33306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
- 
+
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
       with:
-        fetch-depth: 1
- 
-    - name: Install composer dependencies
-      run: |
-        composer install --no-scripts
- 
-    - name: Prepare Laravel Application
-      run: |
-        cp .env.ci .env
-        php artisan key:generate
- 
-    - name: Run Testsuite
-      run: vendor/bin/phpunit tests/
+        php-version: '8.2'
+        extensions: mbstring, mysqli, pdo, pdo_mysql
+        ini-values: |
+          memory_limit = 1G
+        coverage: none
+
+    - name: Install Dependencies
+      run: composer install --no-progress --no-interaction --prefer-dist
+
+    - name: Copy .env
+      run: cp .env.example .env
+
+    - name: Generate Application Key
+      run: php artisan key:generate
+
+    - name: Run Tests
+      run: php artisan test
