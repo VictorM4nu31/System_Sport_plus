@@ -3,10 +3,10 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - back-end
+      - master
   pull_request:
     branches:
-      - back-end
+      - master
 
 jobs:
   laravel-tests:
