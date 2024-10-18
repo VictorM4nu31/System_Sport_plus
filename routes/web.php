@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController; //nuevo
 use App\Http\Controllers\Admin\WorkerController; //nuevo
 use App\Http\Controllers\Admin\ProductController; //nuevo
 use App\Http\Controllers\Admin\CategoryController; //nuevo
+use App\Http\Controllers\Admin\OrderController; //nuevo
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,6 +50,10 @@ Route::middleware(['auth', 'role:administrador'])->group(function () {
     Route::get('/admin/categories/{id}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
     Route::patch('/admin/categories/{id}', [CategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('/admin/categories/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+    Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/admin/orders/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+    Route::patch('/admin/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+    Route::delete('/admin/orders/{id}', [OrderController::class, 'destroy'])->name('admin.orders.destroy');
     // Otras rutas de administrador...
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
