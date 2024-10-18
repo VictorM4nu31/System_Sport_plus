@@ -2,14 +2,28 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ back-end ]
+    branches: [ main ]
   pull_request:
-    branches: [ back-end ]
+    branches: [ main ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
 
     steps:
     - name: Checkout Code
@@ -30,8 +44,18 @@ jobs:
     - name: Copy .env
       run: cp .env.example .env
 
-    - name: Generate Application Key
+    - name: Update Environment Variables
       run: php artisan key:generate
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_DATABASE: test_db
+        DB_USERNAME: root
+        DB_PASSWORD: root
+
+    - name: Run Migrations
+      run: php artisan migrate --force
 
     - name: Run Tests
       run: php artisan test
