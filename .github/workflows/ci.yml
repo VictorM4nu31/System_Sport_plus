@@ -7,55 +7,26 @@ on:
     branches: [ back-end ]
 
 jobs:
-  build:
-
+  tests:
+    name: Run tests
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_db
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          - 3306:3306
-
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, mysqli, pdo, pdo_mysql
-        ini-values: |
-          memory_limit = 1G
-        coverage: none
-
-    - name: Install Dependencies
-      run: composer install --no-progress --no-interaction --prefer-dist
-
-    - name: Copy .env
-      run: cp .env.example .env
-
-    - name: Update Environment Variables
-      run: php artisan key:generate
-      env:
-        DB_CONNECTION: mysql
-        DB_HOST: 127.0.0.1
-        DB_PORT: 3306
-        DB_DATABASE: test_db
-        DB_USERNAME: root
-        DB_PASSWORD: root
-
-    - name: Run Migrations
-      run: php artisan migrate --force
-
-    - name: Run Tests
-      run: php artisan test
+      - uses: actions/checkout@v3
+ 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+ 
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+ 
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.ci .env
+          php artisan key:generate
+ 
+      - name: Run tests
+        run: php artisan test
