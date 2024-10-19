@@ -1,4 +1,5 @@
 name: CI Pipeline
+
 on:
   push:
     branches: [ back-end ]
@@ -57,4 +58,4 @@ jobs:
       - name: Run Migrations
         run: php artisan migrate --force
       - name: Run Tests
-        run: php 
+        run: php artisan test
