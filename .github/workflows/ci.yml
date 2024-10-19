@@ -1,8 +1,5 @@
-name: Run tests
-
-on: [push]
-
 name: CI Pipeline
+
 on:
   push:
     branches: [ back-end ]
@@ -27,6 +24,7 @@ jobs:
           --health-timeout 5s
           --health-retries 3
           --health-start-period 5s
+
     steps:
       - uses: actions/checkout@v3
       - name: Setup PHP
@@ -60,4 +58,4 @@ jobs:
       - name: Run Migrations
         run: php artisan migrate --force
       - name: Run Tests
-        run: php 
+        run: php artisan test
