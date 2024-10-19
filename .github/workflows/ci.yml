@@ -40,12 +40,12 @@ jobs:
           php artisan key:generate
       - name: Set Database Environment Variables
         run: |
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=test_db" >> .env
-          echo "DB_USERNAME=test_user" >> .env
-          echo "DB_PASSWORD=test_pass" >> .env
+          sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
+          sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
+          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
+          sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
+          sed -i 's/DB_PASSWORD=root/DB_PASSWORD=root/' .env
       - name: Wait for MySQL to be ready
         run: |
           sudo apt-get update
@@ -57,4 +57,4 @@ jobs:
       - name: Run Migrations
         run: php artisan migrate --force
       - name: Run Tests
-        run: php artisan test
+        run: php 
