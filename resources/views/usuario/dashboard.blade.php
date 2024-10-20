@@ -3,4 +3,5 @@
         {{ __('Dashboard') }}
     </h2>
     <p>Bienvenido, {{ auth()->user()->name }}. Este es tu panel de usuario.</p>
+ <a href=""></a>
 </x-slot>

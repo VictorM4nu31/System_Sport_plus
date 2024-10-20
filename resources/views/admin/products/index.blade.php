@@ -5,6 +5,7 @@
                 <h3 class="text-lg font-semibold mb-4">Gestión de Productos</h3>
                 <a href="{{ route('admin.products.create') }}" class="px-4 py-2 bg-green-600 text-white rounded">Agregar Producto</a>
                 <a href="{{ route('admin.categories.index') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Gestionar Categorías</a>
+                <a href="{{ route('admin.orders.index') }}" class="px-4 py-2 bg-blue-600 text-white rounded"> Gestionar Ordenes</a>
                 <table class="min-w-full bg-white mt-4">
                     <thead>
                         <tr>
