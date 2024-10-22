@@ -31,45 +31,17 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2' # Ajusta la versión de PHP según tu proyecto
-        extensions: mbstring, mysql, pdo, pdo_mysql, intl, xml, curl, json, gd, fileinfo
-        ini-values: post_max_size=256M, upload_max_filesize=256M, max_execution_time=300
+        php-version: '8.2'
+        extensions: mbstring, exif, pcntl, bcmath, gd, mysqli
+        coverage: none
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-
-    - name: Install Composer dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
-
-    - name: Install NPM dependencies
-      run: npm install
-
-    - name: Build assets
-      run: npm run build
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
 
     - name: Copy .env.example to .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-    - name: Configure environment
-      run: |
-        php -r "
-        \$path = '.env';
-        \$file = file_get_contents(\$path);
-        \$file = str_replace('APP_ENV=local', 'APP_ENV=testing', \$file);
-        \$file = str_replace('APP_URL=http://localhost', 'APP_URL=http://127.0.0.1', \$file);
-        \$file = str_replace('DB_CONNECTION=mysql', 'DB_CONNECTION=mysql', \$file);
-        \$file = str_replace('DB_HOST=127.0.0.1', 'DB_HOST=127.0.0.1', \$file);
-        \$file = str_replace('DB_PORT=3306', 'DB_PORT=3306', \$file);
-        \$file = str_replace('DB_DATABASE=laravel', 'DB_DATABASE=test_db', \$file);
-        \$file = str_replace('DB_USERNAME=root', 'DB_USERNAME=root', \$file);
-        \$file = str_replace('DB_PASSWORD=', 'DB_PASSWORD=root', \$file);
-        \$file = str_replace('SESSION_DRIVER=file', 'SESSION_DRIVER=array', \$file);
-        file_put_contents(\$path, \$file);
-        "
-
-    - name: Generate APP_KEY
+    - name: Generate application key
       run: php artisan key:generate
 
     - name: Clear caches
@@ -80,14 +52,14 @@ jobs:
 
     - name: Wait for MySQL
       run: |
-        sudo apt-get install -y netcat
-        until nc -z -v -w30 127.0.0.1 3306
-        do
-          echo "Waiting for MySQL..."
-          sleep 5
-        done
+        sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
+        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
+        sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
+        sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
+        sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
+        sed -i 's/DB_PASSWORD=root/DB_PASSWORD=root/' .env
 
-    - name: Run migrations
+    - name: Prepare database
       run: php artisan migrate --force
 
     - name: Run database seeder
