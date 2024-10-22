@@ -1,10 +1,10 @@
-name: CI Pipeline
+name: CI Laravel
 
 on:
   push:
-    branches: [back-end]
+    branches: [ back-end ]
   pull_request:
-    branches: [back-end]
+    branches: [ back-end ]
 
 jobs:
   build:
@@ -20,11 +20,10 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd "mysqladmin ping -h localhost"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 3
-          --health-start-period 5s
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
     - uses: actions/checkout@v3
@@ -32,29 +31,43 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
-        extensions: mbstring, exif, pcntl, bcmath, gd, mysqli
-        coverage: none
+        php-version: '8.2' # Ajusta la versión de PHP según tu proyecto
+        extensions: mbstring, mysql, pdo, pdo_mysql, intl, xml, curl, json, gd, fileinfo
+        ini-values: post_max_size=256M, upload_max_filesize=256M, max_execution_time=300
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+    - name: Install Composer dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Copy .env file
-      run: cp .env.example .env
+    - name: Copy .env.example to .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-    - name: Generate application key
+    - name: Generate APP_KEY
       run: php artisan key:generate
 
     - name: Configure database
       run: |
-        sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
-        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
-        sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
-        sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
-        sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
-        sed -i 's/DB_PASSWORD=root/DB_PASSWORD=root/' .env
+        php -r "
+        \$path = '.env';
+        \$file = file_get_contents(\$path);
+        \$file = str_replace('DB_CONNECTION=mysql', 'DB_CONNECTION=mysql', \$file);
+        \$file = str_replace('DB_HOST=127.0.0.1', 'DB_HOST=127.0.0.1', \$file);
+        \$file = str_replace('DB_PORT=3306', 'DB_PORT=3306', \$file);
+        \$file = str_replace('DB_DATABASE=laravel', 'DB_DATABASE=test_db', \$file);
+        \$file = str_replace('DB_USERNAME=root', 'DB_USERNAME=root', \$file);
+        \$file = str_replace('DB_PASSWORD=', 'DB_PASSWORD=root', \$file);
+        file_put_contents(\$path, \$file);
+        "
 
-    - name: Prepare database
+    - name: Wait for MySQL
+      run: |
+        sudo apt-get install -y netcat
+        until nc -z -v -w30 127.0.0.1 3306
+        do
+          echo "Waiting for MySQL..."
+          sleep 5
+        done
+
+    - name: Run migrations
       run: php artisan migrate --force
 
     - name: Run tests
