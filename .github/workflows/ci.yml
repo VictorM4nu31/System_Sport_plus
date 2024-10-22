@@ -2,14 +2,15 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ back-end ]
+    branches: [back-end]
   pull_request:
-    branches: [ back-end ]
+    branches: [back-end]
 
 jobs:
-  tests:
-    name: Run tests
+  build:
+
     runs-on: ubuntu-latest
+
     services:
       mysql:
         image: mysql:8.0
@@ -26,36 +27,35 @@ jobs:
           --health-start-period 5s
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
-          coverage: none
-      - name: Run composer install
-        run: composer install -n --prefer-dist
-      - name: Prepare Laravel Application
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-      - name: Set Database Environment Variables
-        run: |
-          sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
-          sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
-          sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
-          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
-          sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
-          sed -i 's/DB_PASSWORD=root/DB_PASSWORD=root/' .env
-      - name: Wait for MySQL to be ready
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-client
-          until mysqladmin ping -h 127.0.0.1 -P 3306 --silent; do
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
-      - name: Run Migrations
-        run: php artisan migrate --force
-      - name: Run Tests
-        run: php artisan test
+    - uses: actions/checkout@v3
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, exif, pcntl, bcmath, gd, mysqli
+        coverage: none
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+    - name: Copy .env file
+      run: cp .env.example .env
+
+    - name: Generate application key
+      run: php artisan key:generate
+
+    - name: Configure database
+      run: |
+        sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
+        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
+        sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
+        sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
+        sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
+        sed -i 's/DB_PASSWORD=root/DB_PASSWORD=root/' .env
+
+    - name: Prepare database
+      run: php artisan migrate --force
+
+    - name: Run tests
+      run: php artisan test
