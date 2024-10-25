@@ -14,7 +14,8 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <!-- Ver Trabajadores (Solo para Administradores) -->
+
+                    <!-- Ver Trabajadores y Productos (Solo para Administradores) -->
                     @if (auth()->user()->hasRole('administrador'))
                         <x-nav-link :href="route('admin.workers.index')" :active="request()->routeIs('admin.workers.index')">
                             {{ __('Ver Trabajadores') }}
@@ -22,7 +23,12 @@
                         <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
                             {{ __('Gestión de Productos') }}
                         </x-nav-link>
+                        <!-- Reportes de Ventas (Solo para Administradores) -->
+                        <x-nav-link :href="route('admin.reports.sales')" :active="request()->routeIs('admin.reports.sales')">
+                            {{ __('Reportes de Ventas') }}
+                        </x-nav-link>
                     @endif
+
                     <!-- Catálogo de Productos (Solo para Usuarios) -->
                     @if (auth()->user()->hasRole('usuario'))
                         <x-nav-link :href="route('usuario.products.index')" :active="request()->routeIs('usuario.products.index')">
@@ -31,6 +37,7 @@
                     @endif
                 </div>
             </div>
+
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
@@ -60,6 +67,7 @@
                     </x-slot>
                 </x-dropdown>
             </div>
+
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
@@ -71,12 +79,14 @@
             </div>
         </div>
     </div>
+
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
             @if (auth()->user()->hasRole('administrador'))
                 <x-responsive-nav-link :href="route('admin.workers.index')" :active="request()->routeIs('admin.workers.index')">
                     {{ __('Ver Trabajadores') }}
@@ -84,13 +94,18 @@
                 <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
                     {{ __('Gestión de Productos') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.reports.sales')" :active="request()->routeIs('admin.reports.sales')">
+                    {{ __('Reportes de Ventas') }}
+                </x-responsive-nav-link>
             @endif
+
             @if (auth()->user()->hasRole('usuario'))
                 <x-responsive-nav-link :href="route('usuario.products.index')" :active="request()->routeIs('usuario.products.index')">
                     {{ __('Catálogo de Productos') }}
                 </x-responsive-nav-link>
             @endif
         </div>
+
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
