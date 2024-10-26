@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\User\UserOrderHistoryController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\User\WishlistController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,10 +40,14 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
     Route::get('/carrito', [CartController::class, 'index'])->name('usuario.cart.index');
     Route::post('/carrito/{id}/agregar', [CartController::class, 'add'])->name('usuario.cart.add');  // Aquí debe ir 'add'
     Route::post('/carrito/{id}/eliminar', [CartController::class, 'remove'])->name('usuario.cart.remove');
+    Route::post('/carrito/procesar-pedido', [CartController::class, 'processOrder'])->name('usuario.cart.processOrder');
     Route::get('/pedidos', [UserOrderController::class, 'index'])->name('usuario.orders.index');
     Route::get('/pedidos/{id}', [UserOrderController::class, 'show'])->name('usuario.orders.show');
     Route::get('/historial-pedidos', [UserOrderHistoryController::class, 'history'])->name('usuario.orders.history');
     Route::get('/historial-pedidos/{id}', [UserOrderHistoryController::class, 'show'])->name('usuario.orders.show');
+    Route::get('/lista-deseos', [WishlistController::class, 'index'])->name('usuario.wishlist.index');
+    Route::post('/lista-deseos/{id}/agregar', [WishlistController::class, 'add'])->name('usuario.wishlist.add');
+    Route::post('/lista-deseos/{id}/eliminar', [WishlistController::class, 'remove'])->name('usuario.wishlist.remove');
 
 });
 

@@ -21,7 +21,7 @@
                             <tr>
                                 <td class="px-6 py-3 border-b border-gray-300">
                                     @if($product->image)
-                                        <img src="{{ asset('storage/products/' . $product->image) }}" class="h-16 w-16 object-cover" alt="{{ $product->name }}">
+                                        <img src="{{ Storage::url('products/' . $product->image) }}" class="h-16 w-16 object-cover" alt="{{ $product->name }}">
                                     @else
                                         <p>Sin imagen</p>
                                     @endif

@@ -31,10 +31,27 @@
         <!-- Listado de Productos -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach ($products as $product)
-                <div class="bg-white p-4 shadow-sm rounded-lg">
-                    <img src="{{ asset('storage/products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover mb-4">
+                <div class="bg-white p-4 shadow-sm rounded-lg relative">
+                    <!-- Imagen del Producto -->
+                    <img src="{{ Storage::url('products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover mb-4">
+
+                    <!-- Nombre del Producto -->
                     <h2 class="text-lg font-semibold">{{ $product->name }}</h2>
+
+                    <!-- Precio del Producto -->
                     <p class="text-gray-600">${{ number_format($product->price, 2) }}</p>
+
+                    <!-- Ícono del Corazón para la Lista de Deseos -->
+                    <form action="{{ route('usuario.wishlist.add', $product->id) }}" method="POST" class="absolute top-2 right-2">
+                        @csrf
+                        <button type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-red-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v12M12 8v12M8 8v12" />
+                            </svg>
+                        </button>
+                    </form>
+
                     <!-- Formulario para seleccionar cantidad y agregar al carrito -->
                     <form action="{{ route('usuario.cart.add', $product->id) }}" method="POST">
                         @csrf

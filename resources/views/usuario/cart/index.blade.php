@@ -31,9 +31,11 @@
 
             <!-- Calcular el total del carrito -->
             @php
-                $total = array_sum(array_map(function($details) {
-                    return $details['price'] * $details['quantity'];
-                }, session('cart')));
+                $total = array_sum(
+                    array_map(function ($details) {
+                        return $details['price'] * $details['quantity'];
+                    }, session('cart')),
+                );
             @endphp
 
             <div class="mt-6">
@@ -42,7 +44,6 @@
 
             <!-- Contenedor del botón de PayPal -->
             <div class="mt-6" id="paypal-button-container"></div>
-
         @else
             <p>No tienes productos en el carrito.</p>
         @endif
@@ -55,46 +56,43 @@
         <script>
             paypal.Buttons({
                 createOrder: function(data, actions) {
-                    // Crear la orden de pago con el total del carrito
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
-                                value: '{{ $total }}'  // Total del carrito
+                                value: '{{ $total }}'
                             }
                         }]
                     });
                 },
                 onApprove: function(data, actions) {
-                    // Capturar el pago si es aprobado
                     return actions.order.capture().then(function(details) {
-                        // Enviar los datos del pedido al backend para crear el pedido
-                        return fetch('{{ route('usuario.orders.store') }}', {
+                        // Enviar los datos del pedido al backend para guardar el pedido
+                        return fetch('{{ route('usuario.cart.processOrder') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
                             body: JSON.stringify({
-                                orderID: data.orderID, // ID del pedido de PayPal
-                                payerID: details.payer.payer_id, // ID del pagador
-                                total: '{{ $total }}', // Total del pedido
-                                cart: @json(session('cart')) // Enviar los productos del carrito
+                                orderID: data.orderID,
+                                total: '{{ $total }}',
+                                cart: @json(session('cart'))
                             })
                         }).then(function(res) {
                             if (res.ok) {
-                                // Redirigir a una página de confirmación o a los detalles del pedido
-                                window.location.href = '{{ route('usuario.orders.index') }}';
+                                // Redirigir al historial de pedidos
+                                window.location.href = '{{ route('usuario.orders.history') }}';
                             } else {
                                 alert('Hubo un problema al procesar el pedido.');
                             }
                         });
                     });
                 },
-                onError: function (err) {
+                onError: function(err) {
                     console.error(err);
                     alert('Hubo un error al procesar el pago.');
                 }
-            }).render('#paypal-button-container');  // Renderizar el botón de PayPal en el div especificado
+            }).render('#paypal-button-container');
         </script>
     @endif
 </x-app-layout>
