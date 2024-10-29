@@ -33,7 +33,7 @@
             @foreach ($products as $product)
                 <div class="bg-white p-4 shadow-sm rounded-lg relative">
                     <!-- Imagen del Producto -->
-                    <img src="{{ Storage::url('products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover mb-4">
+                    <img src="{{ '/storage/'.$product->image }}" alt="{{ $product->name }}" class="w-full h-40 object-cover mb-4">
 
                     <!-- Nombre del Producto -->
                     <h2 class="text-lg font-semibold">{{ $product->name }}</h2>
