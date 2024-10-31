@@ -26,7 +26,7 @@ class ReportController extends Controller
 
         // Obtener los productos más vendidos dentro del rango seleccionado
         $topProducts = OrderItem::selectRaw('product_id, SUM(quantity) as total_quantity')
-            ->whereHas('order', function($query) use ($startDate, $endDate) {
+            ->whereHas('order', function ($query) use ($startDate, $endDate) {
                 $query->whereBetween('created_at', [$startDate, $endDate]);
             })
             ->groupBy('product_id')
@@ -36,5 +36,12 @@ class ReportController extends Controller
             ->get();
 
         return view('admin.reports.sales', compact('sales', 'topProducts', 'startDate', 'endDate'));
+    }
+
+    public function workerSalesReport()
+    {
+        // Genera el reporte de ventas, por ejemplo, con los pedidos completados
+        $completedOrders = Order::where('status', 'completado')->get();
+        return view('trabajador.reports.sales', compact('completedOrders'));
     }
 }

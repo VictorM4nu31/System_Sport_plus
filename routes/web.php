@@ -64,4 +64,12 @@ Route::middleware(['auth', 'role:administrador'])->prefix('admin')->name('admin.
     })->name('dashboard');
 });
 
+// Rutas para el trabajador
+Route::middleware(['auth', 'role:trabajador'])->prefix('trabajador')->name('trabajador.')->group(function () {
+    Route::get('/pedidos', [OrderController::class, 'workerIndex'])->name('orders.index');
+    Route::patch('/pedidos/{id}/aceptar', [OrderController::class, 'acceptOrder'])->name('orders.accept');
+    Route::get('/reportes', [ReportController::class, 'workerSalesReport'])->name('reports.sales');
+});
+
+
 require __DIR__ . '/auth.php';

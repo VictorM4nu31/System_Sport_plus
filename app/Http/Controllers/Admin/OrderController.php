@@ -43,4 +43,17 @@ class OrderController extends Controller
 
         return redirect()->route('admin.orders.index')->with('success', 'Pedido eliminado.');
     }
+
+    public function workerIndex()
+    {
+        $orders = Order::where('status', 'pendiente')->get(); // Solo mostrar pedidos pendientes
+        return view('trabajador.orders.index', compact('orders'));
+    }
+
+    public function acceptOrder($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->update(['status' => 'en proceso']); // Actualiza el estado a "en proceso" cuando el trabajador lo acepta
+        return redirect()->route('trabajador.orders.index')->with('success', 'Pedido aceptado con éxito.');
+    }
 }
