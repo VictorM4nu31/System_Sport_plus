@@ -18,14 +18,14 @@
                     <!-- Ver Trabajadores y Productos (Solo para Administradores) -->
                     @if (auth()->user()->hasRole('administrador'))
                         <x-nav-link :href="route('admin.workers.index')" :active="request()->routeIs('admin.workers.index')">
-                            {{ __('Ver Trabajadores') }}
+                            {{ __('Trabajadores') }}
                         </x-nav-link>
                         <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
-                            {{ __('Gestión de Productos') }}
+                            {{ __('Productos') }}
                         </x-nav-link>
                         <!-- Reportes de Ventas (Solo para Administradores) -->
                         <x-nav-link :href="route('admin.reports.sales')" :active="request()->routeIs('admin.reports.sales')">
-                            {{ __('Reportes de Ventas') }}
+                            {{ __('Ventas') }}
                         </x-nav-link>
                     @endif
 
