@@ -48,11 +48,18 @@ jobs:
     - name: Configure database
       run: |
         sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
-        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/' .env
+        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' .env
         sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
         sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
         sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
-        sed -i 's/DB_PASSWORD=root/DB_PASSWORD=root/' .env
+        sed -i 's/DB_PASSWORD=/DB_PASSWORD=root/' .env
+
+    - name: Wait for MySQL to be ready
+      run: |
+        until mysql -h mysql -u root -proot -e "show databases;" > /dev/null 2>&1; do
+          echo "Waiting for MySQL to be ready..."
+          sleep 5
+        done
 
     - name: Prepare database
       run: php artisan migrate --force
