@@ -25,6 +25,8 @@ jobs:
           --health-timeout 5s
           --health-retries 5
           --health-start-period 20s
+        networks:
+          - mynetwork
 
     steps:
     - uses: actions/checkout@v3
@@ -35,6 +37,12 @@ jobs:
         php-version: '8.2'
         extensions: mbstring, exif, pcntl, bcmath, gd, mysqli
         coverage: none
+
+    - name: Create Docker Network
+      run: docker network create mynetwork
+
+    - name: Attach Network
+      run: docker network connect mynetwork $(docker ps -q --filter ancestor=mysql:8.0)
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
@@ -48,17 +56,16 @@ jobs:
     - name: Configure database
       run: |
         sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
-        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' .env
+        sed -i 's/DB_HOST=mysql/DB_HOST=127.0.0.1/' .env
         sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
         sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
         sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
         sed -i 's/DB_PASSWORD=/DB_PASSWORD=root/' .env
 
-    # Este paso usa mysqladmin para verificar si MySQL está listo antes de proceder
     - name: Wait for MySQL to be ready
       run: |
         for i in {1..10}; do
-          if mysqladmin ping -h mysql -u root -proot > /dev/null 2>&1; then
+          if mysqladmin ping -h 127.0.0.1 -u root -proot > /dev/null 2>&1; then
             echo "MySQL is ready!"
             break
           fi
