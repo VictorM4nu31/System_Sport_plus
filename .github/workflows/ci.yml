@@ -68,5 +68,9 @@ jobs:
     - name: Prepare database
       run: php artisan migrate --force
 
+    # Añadir un paso para ejecutar los seeders después de las migraciones
+    - name: Seed the database
+      run: php artisan db:seed --class=DatabaseSeeder --force
+
     - name: Run tests
       run: php artisan test
