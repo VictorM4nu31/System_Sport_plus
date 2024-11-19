@@ -20,11 +20,11 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd "mysqladmin ping -h localhost"
+          --health-cmd "mysqladmin ping -h localhost --silent"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 3
-          --health-start-period 5s
+          --health-start-period 10s
 
     steps:
     - uses: actions/checkout@v3
@@ -56,10 +56,22 @@ jobs:
 
     - name: Wait for MySQL to be ready
       run: |
-        until mysql -h mysql -u root -proot -e "show databases;" > /dev/null 2>&1; do
+        TIMEOUT=120
+        while ! mysql -h mysql -u root -proot -e "show databases;" > /dev/null 2>&1; do
           echo "Waiting for MySQL to be ready..."
           sleep 5
+          TIMEOUT=$((TIMEOUT - 5))
+          if [ $TIMEOUT -le 0 ]; then
+            echo "MySQL did not become ready in time, exiting..."
+            exit 1
+          fi
         done
+
+    - name: Check MySQL logs
+      run: docker logs $(docker ps -q --filter ancestor=mysql:8.0)
+
+    - name: Sleep before migrations
+      run: sleep 60
 
     - name: Prepare database
       run: php artisan migrate --force
