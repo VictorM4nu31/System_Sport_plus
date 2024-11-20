@@ -16,26 +16,16 @@ class RegistrationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register()
-{
-    // Realiza la solicitud de registro
-    $response = $this->post('/register', [
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
+    public function test_new_users_can_register(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
 
-    // Verifica que el usuario fue creado en la base de datos
-    $this->assertDatabaseHas('users', [
-        'email' => 'test@example.com',
-    ]);
-
-    // Verifica que el usuario no esté autenticado
-    $this->assertGuest();
-
-    // Verifica que la redirección sea correcta
-    $response->assertRedirect(route('register'));
-}
-
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard', absolute: false));
+    }
 }
