@@ -49,8 +49,8 @@ jobs:
     - name: Install composer dependencies
       run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
 
-    - name: Copy .env.testing file
-      run: cp .env.example .env.testing
+    - name: Copy .env file
+      run: cp .env.example .env
 
     - name: Generate application key
       run: php artisan key:generate
