@@ -17,8 +17,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_db
-          MYSQL_USER: ci_user
-          MYSQL_PASSWORD: ci_password
         ports:
           - 3306:3306
         options: >-
@@ -50,16 +48,16 @@ jobs:
     - name: Configure database
       run: |
         sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
-        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' .env
+        sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
         sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
         sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_db/' .env
-        sed -i 's/DB_USERNAME=root/DB_USERNAME=ci_user/' .env
-        sed -i 's/DB_PASSWORD=/DB_PASSWORD=ci_password/' .env
+        sed -i 's/DB_USERNAME=root/DB_USERNAME=root/' .env
+        sed -i 's/DB_PASSWORD=/DB_PASSWORD=root/' .env
 
     - name: Wait for MySQL to be ready
       run: |
         for i in {1..10}; do
-          if mysqladmin ping -h mysql -u root -proot > /dev/null 2>&1; then
+          if mysqladmin ping -h 127.0.0.1 -u root -proot > /dev/null 2>&1; then
             echo "MySQL is ready!"
             break
           fi
