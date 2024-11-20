@@ -72,3 +72,10 @@ jobs:
 
     - name: Run tests
       run: php artisan test
+
+    # Mostrar los registros de errores si las pruebas fallan
+    - name: Display Laravel logs
+      if: failure()
+      run: |
+        echo "Displaying Laravel logs..."
+        cat storage/logs/laravel.log || echo "No logs found."
