@@ -26,7 +26,7 @@ class RegistrationTest extends TestCase
         ]);
 
         // Depura la respuesta para verificar detalles
-    $response->dump(); // Muestra el contenido completo de la respuesta
+    // $response->dump(); // Muestra el contenido completo de la respuesta
 
     // Comprueba si el usuario fue creado correctamente en la base de datos
     $this->assertDatabaseHas('users', [
