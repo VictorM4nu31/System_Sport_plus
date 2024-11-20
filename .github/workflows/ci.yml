@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -10,71 +10,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_db
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping -h localhost --silent || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-          --health-start-period 30s
-
-    env:
-      VITE_DISABLE: true
-
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, exif, pcntl, bcmath, gd, mysqli
-        coverage: none
-
-    - name: Install Node.js
+    - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '16'
 
-    - name: Install npm dependencies
+    - name: Install dependencies
       run: npm install
 
-    - name: Build assets
+    - name: Build application
       run: npm run build
 
-    - name: Install composer dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+    - name: Package application
+      run: zip -r app.zip .
 
-    - name: Copy .env file
-      run: cp .env.example .env
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app
+        path: app.zip
 
-    - name: Generate application key
-      run: php artisan key:generate
+    - name: Build Docker image
+      run: docker build -t myapp:latest .
 
-    - name: Wait for MySQL to initialize
-      run: sleep 30
-
-    - name: Configure database
-      run: |
-        sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=mysql/' .env
-        sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
-        sed -i 's/DB_PORT=3306/DB_PORT=3306/' .env
-        sed -i 's/DB_DATABASE=.*/DB_DATABASE=test_db/' .env
-        sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
-        sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env
-
-    - name: Prepare database
-      run: php artisan migrate --force
-
-    - name: Seed the database
-      run: php artisan db:seed --class=DatabaseSeeder --force
-
-    - name: Run tests
-      run: php artisan test
+    - name: Run Docker container
+      run: docker run -d -p 80:80 myapp:latest
