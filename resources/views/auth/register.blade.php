@@ -1,60 +1,66 @@
 <x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+    <!-- Contenedor dividido en dos columnas con Flexbox -->
+    <div class="flex min-h-screen w-full">
+        
+        <!-- Columna izquierda: Espacio para la imagen -->
+        <div class="w-full lg:w-1/2 bg-cover bg-center" style="background-image: url('img/registro.jpg'); min-height: 100vh;">
+            <!-- Aquí va la imagen de fondo -->
+        </div>
 
-        <x-validation-errors class="mb-4" />
+        <!-- Columna derecha: Formulario de registro -->
+        <div class="flex flex-col justify-center w-full lg:w-1/2 bg-white p-16">
+            <!-- Título del formulario en rojo -->
+            <h1 class="text-center text-3xl font-bold mb-8" style="color: #D40000;">Register</h1>
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
+            <!-- Formulario de registro -->
+            <form method="POST" action="{{ route('register') }}" class="w-full max-w-lg mx-auto">
+                @csrf
 
-            <div>
-                <x-label for="name" value="{{ __('Name') }}" />
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            </div>
-
-            <div class="mt-4">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            </div>
-
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            </div>
-
-            <div class="mt-4">
-                <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
-            </div>
-
-            @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
-                <div class="mt-4">
-                    <x-label for="terms">
-                        <div class="flex items-center">
-                            <x-checkbox name="terms" id="terms" required />
-
-                            <div class="ms-2">
-                                {!! __('I agree to the :terms_of_service and :privacy_policy', [
-                                        'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Terms of Service').'</a>',
-                                        'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">'.__('Privacy Policy').'</a>',
-                                ]) !!}
-                            </div>
-                        </div>
-                    </x-label>
+                <!-- Name -->
+                <div class="mb-4">
+                    <label for="name" style="color: #666666;">Name</label>
+                    <input id="name" class="block mt-2 w-full border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                           type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
+                           style="border-color: #cccccc; padding: 0.5rem; border-radius: 0.375rem; width: 100%;">
                 </div>
-            @endif
 
-            <div class="flex items-center justify-end mt-4">
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                    {{ __('Already registered?') }}
-                </a>
+                <!-- Email Address -->
+                <div class="mb-4">
+                    <label for="email" style="color: #666666;">Email</label>
+                    <input id="email" class="block mt-2 w-full border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                           type="email" name="email" value="{{ old('email') }}" required autocomplete="username"
+                           style="border-color: #cccccc; padding: 0.5rem; border-radius: 0.375rem; width: 100%;">
+                </div>
 
-                <x-button class="ms-4">
-                    {{ __('Register') }}
-                </x-button>
-            </div>
-        </form>
-    </x-authentication-card>
+                <!-- Password -->
+                <div class="mb-4">
+                    <label for="password" style="color: #666666;">Password</label>
+                    <input id="password" class="block mt-2 w-full border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                           type="password" name="password" required autocomplete="new-password"
+                           style="border-color: #cccccc; padding: 0.5rem; border-radius: 0.375rem; width: 100%;">
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-4">
+                    <label for="password_confirmation" style="color: #666666;">Confirm Password</label>
+                    <input id="password_confirmation" class="block mt-2 w-full border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                           type="password" name="password_confirmation" required autocomplete="new-password"
+                           style="border-color: #cccccc; padding: 0.5rem; border-radius: 0.375rem; width: 100%;">
+                </div>
+
+                <!-- Botón de registro en rojo y enlace de inicio de sesión -->
+                <div class="flex flex-col items-center justify-center mt-4 space-y-4">
+                    <!-- Botón de registro en rojo -->
+                    <button type="submit" style="background-color: #D40000; color: #ffffff; font-weight: bold; padding: 0.5rem 1rem; border-radius: 0.375rem;">
+                        Register
+                    </button>
+                    
+                    <!-- Texto debajo del botón, centrado -->
+                    <a href="{{ route('login') }}" style="color: #666666; text-decoration: underline;">
+                        Already registered?
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </x-guest-layout>

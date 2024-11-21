@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -13,15 +13,14 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <!-- Styles -->
-        @livewireStyles
     </head>
-    <body>
-        <div class="font-sans text-gray-900 dark:text-gray-100 antialiased">
-            {{ $slot }}
-        </div>
+    <body class="font-sans text-gray-900 antialiased">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
 
-        @livewireScripts
+            <!-- Aquí eliminamos la clase sm:max-w-md que estaba limitando el ancho -->
+            <div class="w-full mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+                {{ $slot }}
+            </div>
+        </div>
     </body>
 </html>

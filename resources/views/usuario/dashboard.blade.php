@@ -15,10 +15,7 @@
                 <!-- Botón Carrito de Compras -->
                 <a href="{{ route('usuario.cart.index') }}" class="px-4 py-2 bg-green-600 text-white rounded flex items-center space-x-2">
                     <!-- Icono de carrito -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.4L7 13z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 13L5.5 5H20m-7.5 15a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM7.5 19.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                    </svg>
+                    <span class="material-icons">shopping_cart</span>
                     <span>Carrito de Compras</span>
                 </a>
 

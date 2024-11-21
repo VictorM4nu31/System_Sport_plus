@@ -9,6 +9,7 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
+
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -18,14 +19,23 @@
                     <!-- Ver Trabajadores y Productos (Solo para Administradores) -->
                     @if (auth()->user()->hasRole('administrador'))
                         <x-nav-link :href="route('admin.workers.index')" :active="request()->routeIs('admin.workers.index')">
-                            {{ __('Trabajadores') }}
+                            {{ __('Ver Trabajadores') }}
                         </x-nav-link>
                         <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
-                            {{ __('Productos') }}
+                            {{ __('Gestión de Productos') }}
                         </x-nav-link>
-                        <!-- Reportes de Ventas (Solo para Administradores) -->
                         <x-nav-link :href="route('admin.reports.sales')" :active="request()->routeIs('admin.reports.sales')">
-                            {{ __('Ventas') }}
+                            {{ __('Reportes de Ventas') }}
+                        </x-nav-link>
+                    @endif
+
+                    <!-- Opciones para Trabajadores -->
+                    @if (auth()->user()->hasRole('trabajador'))
+                        <x-nav-link :href="route('trabajador.orders.index')" :active="request()->routeIs('trabajador.orders.index')">
+                            {{ __('Pedidos') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('trabajador.reports.sales')" :active="request()->routeIs('trabajador.reports.sales')">
+                            {{ __('Reporte de Ventas') }}
                         </x-nav-link>
                     @endif
 
@@ -102,13 +112,22 @@
                 </x-responsive-nav-link>
             @endif
 
+            @if (auth()->user()->hasRole('trabajador'))
+                <x-responsive-nav-link :href="route('trabajador.orders.index')" :active="request()->routeIs('trabajador.orders.index')">
+                    {{ __('Pedidos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('trabajador.reports.sales')" :active="request()->routeIs('trabajador.reports.sales')">
+                    {{ __('Reporte de Ventas') }}
+                </x-responsive-nav-link>
+            @endif
+
             @if (auth()->user()->hasRole('usuario'))
                 <x-responsive-nav-link :href="route('usuario.products.index')" :active="request()->routeIs('usuario.products.index')">
                     {{ __('Catálogo de Productos') }}
                 </x-responsive-nav-link>
-                <x-nav-link :href="route('usuario.wishlist.index')" :active="request()->routeIs('usuario.wishlist.index')">
+                <x-responsive-nav-link :href="route('usuario.wishlist.index')" :active="request()->routeIs('usuario.wishlist.index')">
                     {{ __('Lista de Deseos') }}
-                </x-nav-link>
+                </x-responsive-nav-link>
             @endif
         </div>
 

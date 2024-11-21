@@ -30,9 +30,7 @@
         <!-- Ícono del Carrito con Cantidad de Artículos -->
         <div class="mb-6 flex items-center space-x-2 text-white">
             <a href="{{ route('usuario.cart.index') }}" class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-8 h-8 text-white">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l1.38-8H6.62M7 13h10l1 6H6l1-6zM16 17h-8m1 0a1 1 0 011 1v2a1 1 0 001 1h4a1 1 0 001-1v-2a1 1 0 011-1z"/>
-                </svg>
+                <span class="material-icons">shopping_cart</span>
                 <span class="ml-2 text-lg font-semibold">{{ array_sum(array_column(session('cart', []), 'quantity')) }} artículos</span>
             </a>
         </div>
