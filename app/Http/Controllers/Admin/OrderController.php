@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function direccion()
+    {
+        return view('usuario.orders.direccion'); // Asegúrate de tener la vista 'usuario/orders/direccion.blade.php'
+    }
+    //public function direccion()
+   // {
+    //    return view('usuario.orders.direccion'); // Asegúrate de tener la vista 'usuario/orders/direccion.blade.php'
+  //  }
     // Mostrar todos los pedidos
     public function index()
     {

@@ -1,4 +1,9 @@
 <x-app-layout>
+@if(session('success'))
+            <div class="bg-green-500 text-white p-4 rounded mb-6">
+                {{ session('success') }}
+            </div>
+        @endif
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
         <h1 class="text-2xl font-semibold mb-6">Mis Pedidos</h1>
 

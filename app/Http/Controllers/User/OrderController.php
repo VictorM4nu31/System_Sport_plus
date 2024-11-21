@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
+    public function dashboard()
+    {
+        $addresses = auth()->user()->addresses; // Obtener las direcciones del usuario autenticado
+        return view('usuario.dashboard', compact('addresses'));
+    }
+    public function direccion()
+    {
+        return view('usuario.orders.direccion'); // Asegúrate de tener la vista 'usuario/orders/direccion.blade.php'
+    }
     public function store(Request $request)
     {
         $cart = session()->get('cart', []);

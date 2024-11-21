@@ -57,4 +57,11 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+    public function getAddressByPostalCode($postalCode)
+{
+    $response = Http::get("https://api-sepomex.hckdrk.mx/query/info_cp/$postalCode?type=simplified");
+    return response()->json($response->json());
+}
+
+    
 }

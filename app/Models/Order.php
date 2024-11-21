@@ -23,7 +23,11 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
-
+    public function address()
+    {
+        return $this->belongsTo(Address::class, 'user_id', 'user_id');
+    }
+    
     // Relación con los items del pedido (un pedido tiene muchos items)
     public function orderItems()
     {

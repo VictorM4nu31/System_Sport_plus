@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\User\AddressController;
+
 use App\Http\Controllers\Admin\{
     WorkerController, ProductController, CategoryController,
     OrderController, ReportController
@@ -88,5 +90,23 @@ Route::middleware(['auth', 'role:trabajador'])
         });
         Route::get('/reportes', [ReportController::class, 'workerSalesReport'])->name('reports.sales');
     });
+
+
+    // Ruta para la dirección del pedido
+Route::middleware(['auth', 'role:usuario'])->group(function () {
+    Route::get('/direccion', [OrderController::class, 'direccion'])->name('usuario.orders.direccion');
+    Route::post('/direccion', [AddressController::class, 'store'])->name('usuario.orders.direccion');
+
+});
+
+Route::middleware(['auth', 'role:usuario'])->group(function () {
+    // Dashboard del usuario
+    Route::get('/usuario/dashboard', [App\Http\Controllers\User\OrderController::class, 'index'])->name('usuario.dashboard');
+});
+
+
+
+Route::get('/api/address/{postalCode}', [ProfileController::class, 'getAddressByPostalCode']);
+
 
 require __DIR__ . '/auth.php';

@@ -14,6 +14,8 @@
                 <a href="{{ route('usuario.cart.index') }}" class="px-4 py-2 bg-green-600 text-white rounded">Carrito de Compras</a>
                 <a href="{{ route('usuario.orders.index') }}" class="px-4 py-2 bg-yellow-600 text-white rounded">Mis Pedidos</a>
                 <a href="{{ route('usuario.orders.history') }}" class="px-4 py-2 bg-yellow-900 text-white rounded">Mi historial de Pedidos</a>
+                <a href="{{ route('usuario.orders.direccion') }}" class="px-4 py-2 bg-yellow-900 text-white rounded">+Direccion</a>
+
             </nav>
         </div>
     </div>
