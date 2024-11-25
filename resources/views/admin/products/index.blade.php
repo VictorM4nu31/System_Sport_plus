@@ -55,7 +55,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">{{ $product->name }}</td>
-                                    <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">{{ $product->price }}</td>
+                                    <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">{{ $product->formatted_price }}</td>
                                     <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">{{ $product->stock }}</td>
                                     <td class="px-6 py-3 border-b border-[#801336]">
                                         <div class="flex items-center gap-4">

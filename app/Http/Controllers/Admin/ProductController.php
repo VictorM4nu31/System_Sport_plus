@@ -103,4 +103,14 @@ class ProductController extends Controller
         }
         return null; // Retornar null si no hay imagen
     }
+    // Mostrar detalles de un producto
+    public function show($id)
+    {
+        $product = Product::findOrFail($id);
+        // Pasar los datos a la vista
+        return view('usuario.products.show', [
+            'product' => $product,
+            'reviews' => $product->reviews, // Obtener las reseñas del producto
+        ]);
+    }
 }

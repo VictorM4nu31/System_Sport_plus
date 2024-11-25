@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+
     <title>{{ config('app.name', 'Laravel') }}</title>
-    
+
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -82,24 +82,24 @@
                         </svg>
                     </button>
                 </x-slot>
-                
+
                 <x-slot name="content">
                     <!-- Opción de Perfil -->
                     <x-dropdown-link :href="route('profile.edit')">
                         <span class="flex items-center space-x-2">
-                            <span class="material-icons text-white">person</span>
-                            <span class="text-white">{{ __('Profile') }}</span>
+                            <span class="material-icons text-black">person</span>
+                            <span class="text-black">{{ __('Profile') }}</span>
                         </span>
                     </x-dropdown-link>
-                    
+
                     <!-- Opción de Cerrar Sesión -->
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <x-dropdown-link :href="route('logout')"
                                          onclick="event.preventDefault(); this.closest('form').submit();">
                             <span class="flex items-center space-x-2">
-                                <span class="material-icons text-white">logout</span>
-                                <span class="text-white">{{ __('Log Out') }}</span>
+                                <span class="material-icons text-black">logout</span>
+                                <span class="text-black">{{ __('Log Out') }}</span>
                             </span>
                         </x-dropdown-link>
                     </form>
@@ -109,8 +109,8 @@
     </header>
 
             <!-- Contenedor principal con fondo degradado -->
-        <div class="relative min-h-screen bg-gradient-to-b from-[#801336] via-[#801336] via-[#801336] to-[#801336] overflow-hidden">
-            
+        <div class="relative min-h-screen bg-gradient-to-b from-[#801336] via-[#801336] to-[#801336] overflow-hidden">
+
             <!-- Círculos grandes y desenfocados para el fondo -->
             <div class="absolute inset-0 -z-10">
                 <!-- Círculos grandes -->
@@ -118,7 +118,7 @@
                 <div class="absolute w-72 h-72 bg-[#C72C41] opacity-30 rounded-full blur-2xl bottom-20 right-10"></div>
                 <div class="absolute w-80 h-80 bg-[#FF8B9B] opacity-30 rounded-full blur-3xl bottom-40 left-40"></div>
                 <div class="absolute w-48 h-48 bg-[#2D132C] opacity-25 rounded-full blur-2xl top-60 left-1/3"></div>
-                
+
                 <!-- Nuevos círculos añadidos -->
                 <div class="absolute w-64 h-64 bg-[#C72C41] opacity-20 rounded-full blur-2xl top-80 left-5"></div>
                 <div class="absolute w-40 h-40 bg-[#EE4E50] opacity-25 rounded-full blur-2xl bottom-10 left-3/4"></div>
@@ -141,7 +141,7 @@
 
             <!-- Contenido de la página -->
             <div class="relative z-10">
-        
+
 
                 <!-- Contenido de la página -->
                 <main>

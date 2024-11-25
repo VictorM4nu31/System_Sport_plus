@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\{
 use App\Http\Controllers\User\{
     ProductController as UserProductController,
     CartController, OrderController as UserOrderController,
-    UserOrderHistoryController, WishlistController
+    UserOrderHistoryController, WishlistController, ReviewController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +36,8 @@ Route::middleware('guest')->controller(RegisteredUserController::class)->group(f
 // User routes
 Route::middleware(['auth', 'role:usuario'])->group(function () {
     Route::get('/productos', [UserProductController::class, 'index'])->name('usuario.products.index');
+    Route::get('/productos/{id}', [ProductController::class, 'show'])->name('usuario.products.show');
+
 
     // Cart routes
     Route::controller(CartController::class)->group(function () {
@@ -63,6 +65,12 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
         Route::post('/{id}/agregar', 'add')->name('usuario.wishlist.add');
         Route::post('/{id}/eliminar', 'remove')->name('usuario.wishlist.remove');
     });
+
+    // Review routes
+Route::controller(ReviewController::class)->prefix('productos')->group(function () {
+    Route::post('/{id}/reseñas', 'store')->name('usuario.reviews.store'); // Ruta para guardar reseñas
+    Route::get('/{id}/reseñas', 'index')->name('usuario.reviews.index'); // Ruta para mostrar reseñas de un producto
+});
 });
 
 // Admin routes

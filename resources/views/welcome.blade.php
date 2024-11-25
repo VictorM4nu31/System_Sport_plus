@@ -15,7 +15,7 @@
     <div class="container mx-auto flex justify-between items-center px-6">
         <!-- Logo or Title -->
         <h1 class="text-2xl font-bold">Campos Sport</h1>
-        
+
         <!-- Main Navigation -->
         <nav class="flex space-x-6">
             <a href="#" class="hover:text-red-500">Mujer</a>
@@ -23,7 +23,7 @@
             <a href="#" class="hover:text-red-500">Niños</a>
             <a href="#" class="hover:text-red-500">Accesorios</a>
         </nav>
-        
+
         <!-- Authentication Links -->
         @if (Route::has('login'))
         <div class="flex items-center space-x-4">
@@ -33,12 +33,12 @@
             </a>
             @else
             <a href="{{ route('login') }}" class="rounded-md px-3 py-2 text-white hover:text-red-500 transition">
-                Log in
+                Iniciar sesión
             </a>
-            
+
             @if (Route::has('register'))
             <a href="{{ route('register') }}" class="rounded-md px-3 py-2 text-white hover:text-red-500 transition">
-                Register
+                Regístrese
             </a>
             @endif
             @endauth
