@@ -7,11 +7,12 @@
             <!-- Tabla de la lista de deseos -->
             <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
                 <thead>
-                    <tr class="bg-gray-800 text-white">
-                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Producto</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Precio</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">Acciones</th>
-                    </tr>
+                <tr class="bg-[#282E2E] text-white">
+                    <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Producto</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Precio</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Acciones</th>
+                </tr>
+
                 </thead>
                 <tbody>
                     @foreach ($wishlist as $id => $details)
@@ -35,7 +36,7 @@
                 </tbody>
             </table>
         @else
-            <p class="text-gray-600 text-lg">No tienes productos en la lista de deseos.</p>
+            <p class="text-white text-lg">No tienes productos en la lista de deseos.</p>
         @endif
     </div>
 </x-app-layout>

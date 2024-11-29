@@ -60,6 +60,10 @@
                         <span class="material-icons">favorite</span>
                         <span>Lista de Deseos</span>
                     </a>
+                    <a href="{{ route('usuario.orders.direccion') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                    <span class="material-icons">location_on</span>
+                        <span>Administrar Direcciones</span>
+                    </a>
                 @endif
             </div>
         </aside>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
         <!-- Título de la sección -->
-        <h1 class="text-3xl font-bold text-gray-900 mb-6">Productos Disponibles</h1>
+        <h1 class="text-3xl font-bold text-white mb-6">Productos Disponibles</h1>
 
         <!-- Formulario de Búsqueda y Filtrado -->
         <form method="GET" action="{{ route('usuario.products.index') }}">
