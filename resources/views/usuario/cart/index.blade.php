@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
         <h1 class="text-3xl text-white font-semibold mb-6">Carrito de Compras</h1>
-
+        <h1 class="">(Compras menores a $300.00 se les cobra envio)</h1>
         @if (session('cart') && count(session('cart')) > 0)
         <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
             <thead>
@@ -38,13 +38,28 @@
 
             <!-- Calcular el total del carrito -->
             @php
-                $total = array_sum(
+                $subtotal = array_sum(
                     array_map(function ($details) {
                         return $details['price'] * $details['quantity'];
                     }, session('cart')),
                 );
-            @endphp
 
+                    $shippingCost = $subtotal < 300 ? 200 : 0;
+                    $total = $subtotal + $shippingCost;
+            @endphp
+                <div class="mt-6">
+                    <h2 class="text-xl font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
+                    <h2 class="text-xl font-semibold">
+                        Costo de Envío:
+                        @if ($subtotal > 300)
+                        Envío gratis
+
+                        @else
+                            $200.00
+
+                        @endif
+                    </h2>
+                </div>
             <div class="mt-6">
                 <h2 class="text-xl text-white font-semibold">Total: ${{ number_format($total, 2) }}</h2>
             </div>
@@ -58,7 +73,7 @@
 
     <!-- Cargar el SDK de PayPal solo si hay productos en el carrito -->
     @if (session('cart') && count(session('cart')) > 0)
-        <script src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.client_id') }}&currency=USD"></script>
+        <script src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.client_id') }}&currency=MXN"></script>
 
         <script>
             paypal.Buttons({

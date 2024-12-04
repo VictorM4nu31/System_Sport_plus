@@ -22,7 +22,18 @@
         </table>
 
         <div class="mt-6">
-            <h2 class="text-xl font-semibold">Total: ${{ number_format($order->total_price, 2) }}</h2>
+            <h2 class="text-xl font-semibold">Subtotal: ${{ number_format($item->price, 2) }}</h2>
+            <h2 class="text-xl font-semibold">
+                Costo de Envío:
+                @if ($item->price > 300)
+                Envío gratis
+
+                @else
+                    $200.00
+
+                @endif
+            </h2>
+            <h2 class="text-xl font-semibold">Total: ${{ number_format($order->total_price + $order->shipping_cost, 2) }}</h2>
         </div>
     </div>
 </x-app-layout>

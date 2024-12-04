@@ -51,5 +51,9 @@ class User extends Authenticatable
 {
     return $this->hasMany(Order::class);
 }
+public function address()
+{
+    return $this->hasOne(Address::class); // Relación uno a uno
+}
 
 }

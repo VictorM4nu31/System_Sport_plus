@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Relación con el usuario
+            $table->unsignedBigInteger('user_id')->unique();  // Relación con el usuario
             $table->string('full_name'); // Nombre y apellido
             $table->string('postal_code'); // Código Postal
             $table->string('state'); // Estado

@@ -17,6 +17,11 @@ class AddressController extends Controller
     // Método para almacenar la dirección en la base de datos
     public function store(Request $request)
     {
+        // Verificar si el usuario ya tiene una dirección
+        if (auth()->user()->address()->exists()) {
+            return redirect()->back()->with('error', 'Ya tienes una dirección registrada. No puedes añadir otra.');
+        }
+
         // Validación de los datos
         $request->validate([
             'full_name' => 'required|string|max:255',
