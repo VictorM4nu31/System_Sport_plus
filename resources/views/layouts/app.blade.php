@@ -26,7 +26,7 @@
     <!-- Contenedor principal con barra lateral y contenido -->
     <div class="flex">
         <!-- Menú lateral estático para pantallas grandes -->
-        <aside class="hidden md:block bg-[#282E2E] text-white w-64 h-screen p-6">
+        <aside class="hidden md:block bg-[#282E2E] text-white w-64 p-6">
             <!-- Logo -->
             <div class="text-2xl font-semibold mb-8">Campos Sport</div>
             <!-- Menú -->
