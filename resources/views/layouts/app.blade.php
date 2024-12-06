@@ -11,25 +11,27 @@
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Flowbite -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Flowbite -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet">
+
 </head>
 <body class="font-sans antialiased">
 
     <!-- Contenedor principal con barra lateral y contenido -->
-    <div class="relative z-10 flex min-h-screen">
-        <!-- Barra lateral -->
-        <aside class="bg-[#282E2E] w-64 p-6 text-white flex-shrink-0">
+    <div class="flex">
+        <!-- Menú lateral estático para pantallas grandes -->
+        <aside class="hidden md:block bg-[#282E2E] text-white w-64 h-screen p-6">
             <!-- Logo -->
-            <div class="text-2xl font-semibold mb-8">
-                Campos Sport
-            </div>
-
-            <!-- Menú de Navegación Principal con Estilos y Roles -->
-            <div class="space-y-4">
-                <!-- Enlace común para todos los usuarios -->
-                <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+            <div class="text-2xl font-semibold mb-8">Campos Sport</div>
+            <!-- Menú -->
+            <nav class="space-y-4">
+                <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">dashboard</span>
                     <span>Dashboard</span>
                 </a>
@@ -65,54 +67,107 @@
                         <span>Administrar Direcciones</span>
                     </a>
                 @endif
-            </div>
+            </nav>
         </aside>
 
+
         <!-- Contenido principal -->
-<div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1]">
-    <!-- Navbar superior -->
-    <header class="bg-[#282E2E] flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
-        <!-- Título en blanco -->
-        <div class="text-xl font-semibold text-white">@yield('title', 'Bienvenido')</div>
+        <div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1]">
+        <!-- Navbar superior -->
+        <header class="bg-[#282E2E] flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
+            <!-- Título en blanco -->
+            <div class="text-xl font-semibold text-white">@yield('title', 'Bienvenido')</div>
 
-        <!-- Settings Dropdown -->
-        <div class="flex items-center space-x-4">
-            <x-dropdown align="right" width="48">
-                <x-slot name="trigger">
-                    <button class="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white hover:text-white transition ease-in-out duration-150 focus:outline-none">
-                        <span>{{ Auth::user()->name ?? 'Administrador' }}</span>
-                        <svg class="fill-current h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </x-slot>
+            <!-- Settings Dropdown -->
+            <div class="flex items-center space-x-4">
+                <x-dropdown align="right" width="48">
+                    <x-slot name="trigger">
+                        <button class="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white hover:text-white transition ease-in-out duration-150 focus:outline-none">
+                            <span>{{ Auth::user()->name ?? 'Administrador' }}</span>
+                            <svg class="fill-current h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </x-slot>
 
-                <x-slot name="content">
-                    <!-- Opción de Perfil -->
-                    <x-dropdown-link :href="route('profile.edit')">
-                        <span class="flex items-center space-x-2">
-                            <span class="material-icons text-black">person</span>
-                            <span class="text-black">{{ __('Profile') }}</span>
-                        </span>
-                    </x-dropdown-link>
-
-                    <!-- Opción de Cerrar Sesión -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <x-dropdown-link :href="route('logout')"
-                                         onclick="event.preventDefault(); this.closest('form').submit();">
+                    <x-slot name="content">
+                        <!-- Opción de Perfil -->
+                        <x-dropdown-link :href="route('profile.edit')">
                             <span class="flex items-center space-x-2">
-                                <span class="material-icons text-black">logout</span>
-                                <span class="text-black">{{ __('Log Out') }}</span>
+                                <span class="material-icons">person</span>
+                                <span>{{ __('Profile') }}</span>
                             </span>
                         </x-dropdown-link>
-                    </form>
-                </x-slot>
-            </x-dropdown>
-        </div>
-    </header>
 
-            <!-- Contenedor principal con fondo degradado -->
+                        <!-- Opción de Cerrar Sesión -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-dropdown-link :href="route('logout')"
+                                            onclick="event.preventDefault(); this.closest('form').submit();">
+                                <span class="flex items-center space-x-2">
+                                    <span class="material-icons">logout</span>
+                                    <span>{{ __('Log Out') }}</span>
+                                </span>
+                            </x-dropdown-link>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
+            </div>
+        </header>
+
+        <!-- Menú desplegable para pantallas pequeñas-->
+        <div class="flex-1 p-6">
+            <!-- Menú desplegable en pantallas pequeñas -->
+            <nav class="bg-[#282E2E] p-4 text-white md:hidden">
+                <button data-collapse-toggle="mobile-menu" type="button" class="inline-flex items-center px-3 py-2 text-sm text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600" aria-controls="mobile-menu" aria-expanded="false">
+                    <span class="sr-only">Open menu</span>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+                <div class="hidden mt-4" id="mobile-menu">
+                    <nav class="space-y-4">
+                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
+                        <span class="material-icons">dashboard</span>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <!-- Enlaces para Administradores -->
+                    @if (auth()->user()->hasRole('administrador'))
+                        <a href="{{ route('admin.workers.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">people</span>
+                            <span>Trabajadores</span>
+                        </a>
+                        <a href="{{ route('admin.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">inventory</span>
+                            <span>Productos</span>
+                        </a>
+                        <a href="{{ route('admin.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">bar_chart</span>
+                            <span>Ventas</span>
+                        </a>
+                    @endif
+
+                    <!-- Enlaces para Usuarios -->
+                    @if (auth()->user()->hasRole('usuario'))
+                        <a href="{{ route('usuario.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">shopping_cart</span>
+                            <span>Catálogo de Productos</span>
+                        </a>
+                        <a href="{{ route('usuario.wishlist.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">favorite</span>
+                            <span>Lista de Deseos</span>
+                        </a>
+                        <a href="{{ route('usuario.orders.direccion') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                        <span class="material-icons">location_on</span>
+                            <span>Administrar Direcciones</span>
+                        </a>
+                    @endif
+                    </nav>
+                </div>
+            </nav>
+
+        <!-- Contenedor principal con fondo degradado -->
         <div class="relative min-h-screen bg-gradient-to-b from-[#801336] via-[#801336] to-[#801336] overflow-hidden">
 
             <!-- Círculos grandes y desenfocados para el fondo -->
@@ -179,8 +234,6 @@
             .animate-bounce-6 { animation: bounce 7s linear infinite; left: 80%; top: 20%; }
             .animate-bounce-7 { animation: bounce 9s linear infinite; left: 40%; top: 10%; }
         </style>
-        </div>
     </div>
-
 </body>
 </html>

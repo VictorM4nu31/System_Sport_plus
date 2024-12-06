@@ -30,8 +30,8 @@
         <!-- Ícono del Carrito -->
         <div class="mb-6 flex items-center space-x-2">
             <a href="{{ route('usuario.cart.index') }}" class="flex items-center">
-                <span class="material-icons">shopping_cart</span>
-                <span class="ml-2 text-lg font-semibold">{{ array_sum(array_column(session('cart', []), 'quantity')) }} artículos</span>
+                <span class="material-icons text-white">shopping_cart</span>
+                <span class="ml-2 text-lg font-semibold text-white">{{ array_sum(array_column(session('cart', []), 'quantity')) }} artículos</span>
             </a>
         </div>
 

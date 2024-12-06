@@ -5,7 +5,7 @@
             </div>
         @endif
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
-        <h1 class="text-2xl font-semibold mb-6">Mis Pedidos</h1>
+        <h1 class="text-2xl text-white font-semibold mb-6">Mis Pedidos</h1>
 
         @if ($orders->count())
             <table class="min-w-full bg-white">
@@ -31,7 +31,7 @@
                 </tbody>
             </table>
         @else
-            <p>No has realizado ningún pedido.</p>
+            <p class="text-white">No has realizado ningún pedido.</p>
         @endif
     </div>
 </x-app-layout>

@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
-        <h1 class="text-2xl font-semibold mb-6">Historial de Pedidos</h1>
+        <h1 class="text-2xl text-white font-semibold mb-6">Historial de Pedidos</h1>
 
         @if ($orders->count())
             <table class="min-w-full bg-white">
@@ -26,7 +26,7 @@
                 </tbody>
             </table>
         @else
-            <p>No tienes pedidos en tu historial.</p>
+            <p class="text-white">No tienes pedidos en tu historial.</p>
         @endif
     </div>
 </x-app-layout>

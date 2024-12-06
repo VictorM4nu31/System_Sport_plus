@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
         <h1 class="text-3xl text-white font-semibold mb-6">Carrito de Compras</h1>
-        <h1 class="">(Compras menores a $300.00 se les cobra envio)</h1>
+        <h1 class="text-white">(Compras menores a $300.00 se les cobra envio)</h1>
         @if (session('cart') && count(session('cart')) > 0)
         <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
             <thead>
@@ -48,8 +48,8 @@
                     $total = $subtotal + $shippingCost;
             @endphp
                 <div class="mt-6">
-                    <h2 class="text-xl font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
-                    <h2 class="text-xl font-semibold">
+                    <h2 class="text-xl text-white font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
+                    <h2 class="text-xl text-white font-semibold">
                         Costo de Envío:
                         @if ($subtotal > 300)
                         Envío gratis
