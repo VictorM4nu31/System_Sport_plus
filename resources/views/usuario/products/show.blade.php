@@ -8,12 +8,13 @@
             <span class="mx-2 text-gray-400">></span>
             <span class="text-white">{{ $product->name }}</span>
         </nav>
-
+        
         <div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8">
             <!-- Imagen del Producto -->
-            <div class="flex-shrink-0 w-full md:w-1/2">
-                <img src="{{ '/storage/' . $product->image }}" alt="{{ $product->name }}" class="w-full h-auto rounded-lg shadow-md">
+            <div class="flex-shrink-0 w-1/2">
+                <img src="{{ '/storage/' . $product->image }}" alt="{{ $product->name }}" class="max-w-xs">
             </div>
+
 
             <!-- Información del Producto -->
             <div class="w-full md:w-1/2">
