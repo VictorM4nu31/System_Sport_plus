@@ -52,6 +52,18 @@
                     </a>
                 @endif
 
+                <!-- Opciones para Trabajadores -->
+                @if (auth()->user()->hasRole('trabajador'))
+                        <a href="{{ route('trabajador.orders.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">shopping_cart</span>
+                            <span>Pedidos</span>
+                        </a>
+                        <a href="{{ route('trabajador.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">assessment</span>
+                            <span>Reporte de Ventas</span>
+                        </a>
+                    @endif
+
                 <!-- Enlaces para Usuarios -->
                 @if (auth()->user()->hasRole('usuario'))
                     <a href="{{ route('usuario.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
@@ -133,19 +145,25 @@
                     </a>
 
                     <!-- Enlaces para Administradores -->
-                    @if (auth()->user()->hasRole('administrador'))
-                        <a href="{{ route('admin.workers.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">people</span>
-                            <span>Trabajadores</span>
+                    @if (auth()->user()->hasRole('trabajador'))
+                        <a href="{{ route('trabajador.orders.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">shopping_cart</span>
+                            <span>Pedidos</span>
                         </a>
-                        <a href="{{ route('admin.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">inventory</span>
-                            <span>Productos</span>
+                        <a href="{{ route('trabajador.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
+                            <span class="material-icons">assessment</span>
+                            <span>Reporte de Ventas</span>
                         </a>
-                        <a href="{{ route('admin.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">bar_chart</span>
-                            <span>Ventas</span>
-                        </a>
+                    @endif
+
+                    <!-- Opciones para Trabajadores -->
+                    @if (auth()->user()->hasRole('trabajador'))
+                        <x-nav-link :href="route('trabajador.orders.index')" :active="request()->routeIs('trabajador.orders.index')">
+                            {{ __('Pedidos') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('trabajador.reports.sales')" :active="request()->routeIs('trabajador.reports.sales')">
+                            {{ __('Reporte de Ventas') }}
+                        </x-nav-link>
                     @endif
 
                     <!-- Enlaces para Usuarios -->

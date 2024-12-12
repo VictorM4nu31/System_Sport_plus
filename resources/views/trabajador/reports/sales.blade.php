@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
-        <h1 class="text-2xl font-semibold mb-6">Reporte de Ventas</h1>
+        <h1 class="text-2xl font-semibold text-white mb-6">Reporte de Ventas</h1>
         @if ($completedOrders->count())
             <table class="min-w-full bg-white">
                 <thead>
@@ -21,7 +21,7 @@
                 </tbody>
             </table>
         @else
-            <p>No hay pedidos completados para mostrar.</p>
+            <p class="text-white">No hay pedidos completados para mostrar.</p>
         @endif
     </div>
 </x-app-layout>
