@@ -16,14 +16,6 @@
         <!-- Logo or Title -->
         <h1 class="text-2xl font-bold">Campos Sport</h1>
 
-        <!-- Main Navigation -->
-        <nav class="flex space-x-6">
-            <a href="#" class="hover:text-red-500">Mujer</a>
-            <a href="#" class="hover:text-red-500">Hombre</a>
-            <a href="#" class="hover:text-red-500">Niños</a>
-            <a href="#" class="hover:text-red-500">Accesorios</a>
-        </nav>
-
         <!-- Authentication Links -->
         @if (Route::has('login'))
         <div class="flex items-center space-x-4">
@@ -138,19 +130,19 @@
             <h2 class="text-3xl font-bold text-center mb-8">Ofertas</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="relative group">
-                    <img src="https://via.placeholder.com/400x300?text=Yoga+Gear" alt="Yoga Gear" class="rounded-lg shadow-lg object-cover w-full h-60">
+                    <img src="../img/yoga.png" alt="Yoga Gear" class="rounded-lg shadow-lg object-cover w-full h-60">
                     <div class="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-lg font-bold">
                         Shop Yoga Gear
                     </div>
                 </div>
                 <div class="relative group">
-                    <img src="https://via.placeholder.com/400x300?text=Running+Wear" alt="Running Wear" class="rounded-lg shadow-lg object-cover w-full h-60">
+                    <img src="../img/running.png" alt="Running Wear" class="rounded-lg shadow-lg object-cover w-full h-60">
                     <div class="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-lg font-bold">
                         Shop Running Wear
                     </div>
                 </div>
                 <div class="relative group">
-                    <img src="https://via.placeholder.com/400x300?text=Accessories" alt="Accessories" class="rounded-lg shadow-lg object-cover w-full h-60">
+                    <img src="../img/accesorios.png" alt="Accessories" class="rounded-lg shadow-lg object-cover w-full h-60">
                     <div class="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-lg font-bold">
                         Shop Accessories
                     </div>
@@ -162,40 +154,18 @@
     <!-- Products -->
     <section class="py-12 bg-gray-50">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-8">Lo más vendido</h2>
+            <h2 class="text-3xl font-bold text-center mb-8">Welcome to our store!</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                    <img src="https://via.placeholder.com/300x200?text=Product+1" alt="Product 1" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold">Product Name</h3>
-                        <p class="text-gray-600">$49.99</p>
-                        <button class="mt-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Add to Cart</button>
+                @foreach ($products as $product)
+                    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                        <img src="{{ '/storage/' . $product->image }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold">{{ $product->name }}</h3>
+                            <p class="text-gray-600 p-3">${{ $product->price }}</p>
+                            <a href="{{ route('login') }}" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Ver Detalles</a>
+                        </div>
                     </div>
-                </div>
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                    <img src="https://via.placeholder.com/300x200?text=Product+2" alt="Product 2" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold">Product Name</h3>
-                        <p class="text-gray-600">$59.99</p>
-                        <button class="mt-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Add to Cart</button>
-                    </div>
-                </div>
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                    <img src="https://via.placeholder.com/300x200?text=Product+3" alt="Product 3" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold">Product Name</h3>
-                        <p class="text-gray-600">$69.99</p>
-                        <button class="mt-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Add to Cart</button>
-                    </div>
-                </div>
-                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                    <img src="https://via.placeholder.com/300x200?text=Product+4" alt="Product 4" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold">Product Name</h3>
-                        <p class="text-gray-600">$79.99</p>
-                        <button class="mt-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Add to Cart</button>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -208,35 +178,35 @@
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="https://via.placeholder.com/100x100?text=Nike" alt="Nike" class="object-contain w-16 h-16">
+                    <img src="../img/nike.png" alt="Nike" class="object-contain w-16 h-16">
                 </div>
                 <span class="text-sm font-semibold text-black">Nike</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="https://via.placeholder.com/100x100?text=Adidas" alt="Adidas" class="object-contain w-16 h-16">
+                    <img src="../img/adidas.png" alt="Adidas" class="object-contain w-16 h-16">
                 </div>
                 <span class="text-sm font-semibold text-black">Adidas</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="https://via.placeholder.com/100x100?text=Puma" alt="Puma" class="object-contain w-16 h-16">
+                    <img src="../img/puma.png" alt="Puma" class="object-contain w-16 h-16">
                 </div>
                 <span class="text-sm font-semibold text-black">Puma</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="https://via.placeholder.com/100x100?text=Under+Armour" alt="Under Armour" class="object-contain w-16 h-16">
+                    <img src="../img/Under_armour.png" alt="Under Armour" class="object-contain w-16 h-16">
                 </div>
                 <span class="text-sm font-semibold text-black">Under Armour</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="https://via.placeholder.com/100x100?text=Jordan" alt="Jordan" class="object-contain w-16 h-16">
+                    <img src="../img/jordan.png" alt="Jordan" class="object-contain w-16 h-16">
                 </div>
                 <span class="text-sm font-semibold text-black">Jordan</span>
             </div>

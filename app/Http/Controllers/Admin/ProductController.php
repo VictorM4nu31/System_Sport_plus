@@ -113,4 +113,13 @@ class ProductController extends Controller
             'reviews' => $product->reviews, // Obtener las reseñas del producto
         ]);
     }
+    // Mostrar productos en la vista de welcome
+public function welcome()
+{
+    $products = Product::all();
+    return view('welcome', compact('products'));
 }
+
+}
+
+

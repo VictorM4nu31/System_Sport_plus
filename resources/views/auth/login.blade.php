@@ -8,7 +8,9 @@
 
             <!-- Imagen de perfil (opcional) -->
             <div class="flex justify-center mb-8">
-                <div class="w-24 h-24 rounded-full" style="background-color: #e0e0e0;"></div> <!-- Aplicado color de fondo en línea -->
+                <div class="w-24 h-24 rounded-full overflow-hidden" style="background-color: #e0e0e0;">
+                    <img src="../img/logo.png" alt="Profile Image" class="w-full h-full object-cover " style="object-position: center;">
+                </div>
             </div>
 
             <!-- Título en rojo -->

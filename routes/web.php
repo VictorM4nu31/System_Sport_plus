@@ -16,6 +16,7 @@ use App\Http\Controllers\User\{
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
+Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 Route::view('/dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
 
 // Profile routes
