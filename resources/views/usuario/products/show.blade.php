@@ -8,8 +8,8 @@
             <span class="mx-2 text-gray-400">></span>
             <span class="text-white">{{ $product->name }}</span>
         </nav>
-        <div
-            class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8">
+
+        <div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8">
             <!-- Imagen del Producto -->
             <div class="flex-shrink-0 w-1/2">
                 <img src="{{ '/storage/' . $product->image }}" alt="{{ $product->name }}" class="max-w-xs">
@@ -40,6 +40,7 @@
                         <p class="text-gray-600">Sin calificaciones aún</p>
                     @endif
                 </div>
+
                 <!-- Precio -->
                 <div class="mb-6">
                     <p class="text-3xl font-bold text-gray-900">MX${{ number_format($product->price, 2) }}</p>
@@ -87,10 +88,12 @@
         </div>
         <!-- Sección de Reseñas -->
         <div class="mt-12">
-            <div class="flex items-center space-x-2 mb-6">
-                <h2 class="text-2xl text-white font-bold">Reseñas del artículo</h2>
-                <span class="text-gray-400 text-lg">({{ $product->reviews->count() }} reseñas)</span>
-            </div>
+        <div class="flex items-center space-x-2 mb-6">
+            <h2 class="text-2xl text-white font-bold">Reseñas del artículo</h2>
+            <span class="text-gray-400 text-lg">({{ $product->reviews->count() }} reseñas)</span>
+        </div>
+
+
             <!-- Formulario para agregar reseñas -->
             <form action="{{ route('usuario.reviews.store', $product->id) }}" method="POST"
                 class="mb-8 bg-white p-6 rounded-lg shadow">
