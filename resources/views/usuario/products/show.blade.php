@@ -8,8 +8,9 @@
             <span class="mx-2 text-gray-400">></span>
             <span class="text-white">{{ $product->name }}</span>
         </nav>
-        
-        <div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8">
+
+        <div
+            class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8">
             <!-- Imagen del Producto -->
             <div class="flex-shrink-0 w-1/2">
                 <img src="{{ '/storage/' . $product->image }}" alt="{{ $product->name }}" class="max-w-xs">
@@ -32,7 +33,7 @@
                         <div class="flex space-x-1">
                             @for ($i = 1; $i <= 5; $i++)
                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6 @if ($i <= $product->average_rating) text-yellow-400 @else text-gray-300 @endif"
+                                    class="{{ $i <= $product->average_rating ? 'text-yellow-400' : 'text-gray-300' }} h-6 w-6"
                                     fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
                                     <path
                                         d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -44,6 +45,7 @@
                         <p class="text-gray-600">Sin calificaciones aún</p>
                     @endif
                 </div>
+
 
                 <!-- Precio -->
                 <div class="mb-6">
@@ -66,17 +68,20 @@
                         <!-- Selector de Cantidad -->
                         <div class="flex items-center border rounded-lg overflow-hidden shadow-sm">
                             <!-- Botón de Restar -->
-                            <button type="button" class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 focus:outline-none transition-all"
+                            <button type="button"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 focus:outline-none transition-all"
                                 onclick="updateQuantity(-1)">
                                 -
                             </button>
 
                             <!-- Campo de Entrada -->
-                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $product->stock }}"
+                            <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                max="{{ $product->stock }}"
                                 class="w-16 text-center border-t border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all">
 
                             <!-- Botón de Sumar -->
-                            <button type="button" class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 focus:outline-none transition-all"
+                            <button type="button"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 focus:outline-none transition-all"
                                 onclick="updateQuantity(1)">
                                 +
                             </button>
@@ -98,10 +103,10 @@
 
         <!-- Sección de Reseñas -->
         <div class="mt-12">
-        <div class="flex items-center space-x-2 mb-6">
-            <h2 class="text-2xl text-white font-bold">Reseñas del artículo</h2>
-            <span class="text-gray-400 text-lg">({{ $product->reviews->count() }} reseñas)</span>
-        </div>
+            <div class="flex items-center space-x-2 mb-6">
+                <h2 class="text-2xl text-white font-bold">Reseñas del artículo</h2>
+                <span class="text-gray-400 text-lg">({{ $product->reviews->count() }} reseñas)</span>
+            </div>
 
 
             <!-- Formulario para agregar reseñas -->
@@ -133,7 +138,7 @@
                             <div class="flex space-x-1">
                                 @for ($i = 1; $i <= 5; $i++)
                                     <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="h-5 w-5 @if ($i <= $review->rating) text-yellow-400 @else text-gray-300 @endif"
+                                        class="{{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }} h-5 w-5"
                                         fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
                                         <path
                                             d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />

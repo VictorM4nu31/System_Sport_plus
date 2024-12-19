@@ -11,7 +11,7 @@
                        class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
 
                 <!-- Campo de selección de categoría -->
-                <select name="category" class="border border-gray-300 rounded-lg p-2 pr-8 focus:ring-2 focus:ring-blue-500">
+                <select name="category_id" class="border border-gray-300 rounded-lg p-2 pr-8 focus:ring-2 focus:ring-blue-500">
                     <option value="">Todas las Categorías</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>

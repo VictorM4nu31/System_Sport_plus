@@ -1,20 +1,33 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Campos Sport</title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Campos Sport</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+        <style>
+            .bebas-neue-regular {
+                font-family: "Bebas Neue", serif;
+                font-weight: 400;
+                font-style: normal;
+            }
+        </style>
+    </head>
+
 <body class="bg-gray-100 text-gray-800">
 
     <!-- Header -->
 <header class="bg-[#282E2E] text-white py-4">
     <div class="container mx-auto flex justify-between items-center px-6">
         <!-- Logo or Title -->
-        <h1 class="text-2xl font-bold">Campos Sport</h1>
+        <h1 class="text-4xl font-bold bebas-neue-regular">Campos Sport</h1>
 
         <!-- Authentication Links -->
         @if (Route::has('login'))
