@@ -22,236 +22,112 @@
 
 </head>
 <body class="font-sans antialiased">
-
-    <!-- Contenedor principal con barra lateral y contenido -->
     <div class="flex">
-        <!-- Menú lateral estático para pantallas grandes -->
-        <aside class="hidden md:block bg-[#282E2E] text-white w-64 p-6">
-            <!-- Logo -->
-            <div class="text-2xl font-semibold mb-8">Campos Sport</div>
-            <!-- Menú -->
-            <nav class="space-y-4">
-                <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
-                    <span class="material-icons">dashboard</span>
-                    <span>Dashboard</span>
-                </a>
+        @include('layouts.navigation')
 
-                <!-- Enlaces para Administradores -->
-                @if (auth()->user()->hasRole('administrador'))
-                    <a href="{{ route('admin.workers.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                        <span class="material-icons">people</span>
-                        <span>Trabajadores</span>
-                    </a>
-                    <a href="{{ route('admin.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                        <span class="material-icons">inventory</span>
-                        <span>Productos</span>
-                    </a>
-                    <a href="{{ route('admin.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                        <span class="material-icons">bar_chart</span>
-                        <span>Ventas</span>
-                    </a>
-                @endif
+        <!-- Contenido principal con margen izquierdo -->
+        <div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1] ml-64">
+            <header class="bg-[#282E2E] flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
+                <!-- Título en blanco -->
+                <div class="text-xl font-semibold text-white">@yield('title', 'Bienvenido')</div>
 
-                <!-- Opciones para Trabajadores -->
-                @if (auth()->user()->hasRole('trabajador'))
-                        <a href="{{ route('trabajador.orders.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">shopping_cart</span>
-                            <span>Pedidos</span>
-                        </a>
-                        <a href="{{ route('trabajador.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">assessment</span>
-                            <span>Reporte de Ventas</span>
-                        </a>
-                    @endif
+                <!-- Settings Dropdown -->
+                <div class="flex items-center space-x-4">
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <button class="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white hover:text-white transition ease-in-out duration-150 focus:outline-none">
+                                <span>{{ Auth::user()->name ?? 'Administrador' }}</span>
+                                <svg class="fill-current h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </x-slot>
 
-                <!-- Enlaces para Usuarios -->
-                @if (auth()->user()->hasRole('usuario'))
-                    <a href="{{ route('usuario.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                        <span class="material-icons">shopping_cart</span>
-                        <span>Catálogo de Productos</span>
-                    </a>
-                    <a href="{{ route('usuario.wishlist.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                        <span class="material-icons">favorite</span>
-                        <span>Lista de Deseos</span>
-                    </a>
-                    <a href="{{ route('usuario.orders.direccion') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                    <span class="material-icons">location_on</span>
-                        <span>Administrar Direcciones</span>
-                    </a>
-                @endif
-            </nav>
-        </aside>
-
-
-        <!-- Contenido principal -->
-        <div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1]">
-        <!-- Navbar superior -->
-        <header class="bg-[#282E2E] flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
-            <!-- Título en blanco -->
-            <div class="text-xl font-semibold text-white">@yield('title', 'Bienvenido')</div>
-
-            <!-- Settings Dropdown -->
-            <div class="flex items-center space-x-4">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white hover:text-white transition ease-in-out duration-150 focus:outline-none">
-                            <span>{{ Auth::user()->name ?? 'Administrador' }}</span>
-                            <svg class="fill-current h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <!-- Opción de Perfil -->
-                        <x-dropdown-link :href="route('profile.edit')">
-                            <span class="flex items-center space-x-2">
-                                <span class="material-icons">person</span>
-                                <span>{{ __('Profile') }}</span>
-                            </span>
-                        </x-dropdown-link>
-
-                        <!-- Opción de Cerrar Sesión -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <x-dropdown-link :href="route('logout')"
-                                            onclick="event.preventDefault(); this.closest('form').submit();">
+                        <x-slot name="content">
+                            <!-- Opción de Perfil -->
+                            <x-dropdown-link :href="route('profile.edit')">
                                 <span class="flex items-center space-x-2">
-                                    <span class="material-icons">logout</span>
-                                    <span>{{ __('Log Out') }}</span>
+                                    <span class="material-icons">person</span>
+                                    <span>{{ __('Profile') }}</span>
                                 </span>
                             </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-        </header>
 
-        <!-- Menú desplegable para pantallas pequeñas-->
-        <div class="flex-1 p-6">
-            <!-- Menú desplegable en pantallas pequeñas -->
-            <nav class="bg-[#282E2E] p-4 text-white md:hidden">
-                <button data-collapse-toggle="mobile-menu" type="button" class="inline-flex items-center px-3 py-2 text-sm text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600" aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="sr-only">Open menu</span>
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                    </svg>
-                </button>
-                <div class="hidden mt-4" id="mobile-menu">
-                    <nav class="space-y-4">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
-                        <span class="material-icons">dashboard</span>
-                        <span>Dashboard</span>
-                    </a>
-
-                    <!-- Enlaces para Administradores -->
-                    @if (auth()->user()->hasRole('trabajador'))
-                        <a href="{{ route('trabajador.orders.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">shopping_cart</span>
-                            <span>Pedidos</span>
-                        </a>
-                        <a href="{{ route('trabajador.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">assessment</span>
-                            <span>Reporte de Ventas</span>
-                        </a>
-                    @endif
-
-                    <!-- Opciones para Trabajadores -->
-                    @if (auth()->user()->hasRole('trabajador'))
-                        <x-nav-link :href="route('trabajador.orders.index')" :active="request()->routeIs('trabajador.orders.index')">
-                            {{ __('Pedidos') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('trabajador.reports.sales')" :active="request()->routeIs('trabajador.reports.sales')">
-                            {{ __('Reporte de Ventas') }}
-                        </x-nav-link>
-                    @endif
-
-                    <!-- Enlaces para Usuarios -->
-                    @if (auth()->user()->hasRole('usuario'))
-                        <a href="{{ route('usuario.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">shopping_cart</span>
-                            <span>Catálogo de Productos</span>
-                        </a>
-                        <a href="{{ route('usuario.wishlist.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                            <span class="material-icons">favorite</span>
-                            <span>Lista de Deseos</span>
-                        </a>
-                        <a href="{{ route('usuario.orders.direccion') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-[#A4133C]">
-                        <span class="material-icons">location_on</span>
-                            <span>Administrar Direcciones</span>
-                        </a>
-                    @endif
-                    </nav>
+                            <!-- Opción de Cerrar Sesión -->
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <x-dropdown-link :href="route('logout')"
+                                                onclick="event.preventDefault(); this.closest('form').submit();">
+                                    <span class="flex items-center space-x-2">
+                                        <span class="material-icons">logout</span>
+                                        <span>{{ __('Log Out') }}</span>
+                                    </span>
+                                </x-dropdown-link>
+                            </form>
+                        </x-slot>
+                    </x-dropdown>
                 </div>
-            </nav>
+            </header>
 
-        <!-- Contenedor principal con fondo degradado -->
-        <div class="relative min-h-screen bg-gradient-to-b from-[#801336] via-[#801336] to-[#801336] overflow-hidden">
+            <div class="relative min-h-screen bg-gradient-to-b from-[#801336] via-[#801336] to-[#801336] overflow-hidden">
+                <div class="absolute inset-0 -z-10">
+                    <!-- Círculos grandes -->
+                    <div class="absolute w-96 h-96 bg-[#EE4E50] opacity-40 rounded-full blur-3xl top-10 left-20"></div>
+                    <div class="absolute w-72 h-72 bg-[#C72C41] opacity-30 rounded-full blur-2xl bottom-20 right-10"></div>
+                    <div class="absolute w-80 h-80 bg-[#FF8B9B] opacity-30 rounded-full blur-3xl bottom-40 left-40"></div>
+                    <div class="absolute w-48 h-48 bg-[#2D132C] opacity-25 rounded-full blur-2xl top-60 left-1/3"></div>
 
-            <!-- Círculos grandes y desenfocados para el fondo -->
-            <div class="absolute inset-0 -z-10">
-                <!-- Círculos grandes -->
-                <div class="absolute w-96 h-96 bg-[#EE4E50] opacity-40 rounded-full blur-3xl top-10 left-20"></div>
-                <div class="absolute w-72 h-72 bg-[#C72C41] opacity-30 rounded-full blur-2xl bottom-20 right-10"></div>
-                <div class="absolute w-80 h-80 bg-[#FF8B9B] opacity-30 rounded-full blur-3xl bottom-40 left-40"></div>
-                <div class="absolute w-48 h-48 bg-[#2D132C] opacity-25 rounded-full blur-2xl top-60 left-1/3"></div>
+                    <!-- Nuevos círculos añadidos -->
+                    <div class="absolute w-64 h-64 bg-[#C72C41] opacity-20 rounded-full blur-2xl top-80 left-5"></div>
+                    <div class="absolute w-40 h-40 bg-[#EE4E50] opacity-25 rounded-full blur-2xl bottom-10 left-3/4"></div>
+                    <div class="absolute w-56 h-56 bg-[#FF8B9B] opacity-35 rounded-full blur-3xl top-1/4 right-1/4"></div>
+                    <div class="absolute w-32 h-32 bg-[#2D132C] opacity-20 rounded-full blur-2xl bottom-40 right-1/5"></div>
+                    <div class="absolute w-20 h-20 bg-[#C72C41] opacity-30 rounded-full blur-2xl top-1/2 left-1/5"></div>
+                </div>
 
-                <!-- Nuevos círculos añadidos -->
-                <div class="absolute w-64 h-64 bg-[#C72C41] opacity-20 rounded-full blur-2xl top-80 left-5"></div>
-                <div class="absolute w-40 h-40 bg-[#EE4E50] opacity-25 rounded-full blur-2xl bottom-10 left-3/4"></div>
-                <div class="absolute w-56 h-56 bg-[#FF8B9B] opacity-35 rounded-full blur-3xl top-1/4 right-1/4"></div>
-                <div class="absolute w-32 h-32 bg-[#2D132C] opacity-20 rounded-full blur-2xl bottom-40 right-1/5"></div>
-                <div class="absolute w-20 h-20 bg-[#C72C41] opacity-30 rounded-full blur-2xl top-1/2 left-1/5"></div>
-            </div>
+                <div class="absolute inset-0 overflow-hidden">
+                    <!-- Primer círculo en movimiento -->
+                    <div class="absolute w-24 h-24 bg-[#EE4E50] rounded-full opacity-70 animate-bounce-1"></div>
+                    <div class="absolute w-16 h-16 bg-[#C72C41] rounded-full opacity-70 animate-bounce-2"></div>
+                    <div class="absolute w-20 h-20 bg-[#801336] rounded-full opacity-70 animate-bounce-3"></div>
+                    <div class="absolute w-32 h-32 bg-[#2D132C] rounded-full opacity-60 animate-bounce-4"></div>
+                    <div class="absolute w-12 h-12 bg-[#C72C41] rounded-full opacity-60 animate-bounce-5"></div>
+                    <div class="absolute w-10 h-10 bg-[#EE4E50] rounded-full opacity-70 animate-bounce-6"></div>
+                    <div class="absolute w-28 h-28 bg-[#801336] rounded-full opacity-60 animate-bounce-7"></div>
+                </div>
 
-            <!-- Círculos animados en movimiento -->
-            <div class="absolute inset-0 overflow-hidden">
-                <!-- Primer círculo en movimiento -->
-                <div class="absolute w-24 h-24 bg-[#EE4E50] rounded-full opacity-70 animate-bounce-1"></div>
-                <div class="absolute w-16 h-16 bg-[#C72C41] rounded-full opacity-70 animate-bounce-2"></div>
-                <div class="absolute w-20 h-20 bg-[#801336] rounded-full opacity-70 animate-bounce-3"></div>
-                <div class="absolute w-32 h-32 bg-[#2D132C] rounded-full opacity-60 animate-bounce-4"></div>
-                <div class="absolute w-12 h-12 bg-[#C72C41] rounded-full opacity-60 animate-bounce-5"></div>
-                <div class="absolute w-10 h-10 bg-[#EE4E50] rounded-full opacity-70 animate-bounce-6"></div>
-                <div class="absolute w-28 h-28 bg-[#801336] rounded-full opacity-60 animate-bounce-7"></div>
-            </div>
-
-            <!-- Contenido de la página -->
-            <div class="relative z-10">
-
-
-                <!-- Contenido de la página -->
-                <main>
-                    {{ $slot }}
-                </main>
+                <div class="relative z-10">
+                    <main>
+                        {{ $slot }}
+                    </main>
+                </div>
             </div>
         </div>
-
-        <!-- Estilos personalizados para animaciones -->
-        <style>
-            /* Efectos de desenfoque */
-            .blur-2xl {
-                filter: blur(40px);
-            }
-            .blur-3xl {
-                filter: blur(60px);
-            }
-
-            /* Animación de rebote de los círculos */
-            @keyframes bounce {
-                0% { transform: translateY(100vh); }
-                100% { transform: translateY(-100vh); }
-            }
-
-            /* Diferentes velocidades y posiciones para los círculos animados */
-            .animate-bounce-1 { animation: bounce 10s linear infinite; left: 10%; top: 50%; }
-            .animate-bounce-2 { animation: bounce 12s linear infinite; left: 30%; top: 60%; }
-            .animate-bounce-3 { animation: bounce 8s linear infinite; left: 70%; top: 40%; }
-            .animate-bounce-4 { animation: bounce 15s linear infinite; left: 50%; top: 70%; }
-            .animate-bounce-5 { animation: bounce 18s linear infinite; left: 15%; top: 30%; }
-            .animate-bounce-6 { animation: bounce 7s linear infinite; left: 80%; top: 20%; }
-            .animate-bounce-7 { animation: bounce 9s linear infinite; left: 40%; top: 10%; }
-        </style>
     </div>
+
+    <!-- Estilos personalizados para animaciones -->
+    <style>
+        /* Efectos de desenfoque */
+        .blur-2xl {
+            filter: blur(40px);
+        }
+        .blur-3xl {
+            filter: blur(60px);
+        }
+
+        /* Animación de rebote de los círculos */
+        @keyframes bounce {
+            0% { transform: translateY(100vh); }
+            100% { transform: translateY(-100vh); }
+        }
+
+        /* Diferentes velocidades y posiciones para los círculos animados */
+        .animate-bounce-1 { animation: bounce 10s linear infinite; left: 10%; top: 50%; }
+        .animate-bounce-2 { animation: bounce 12s linear infinite; left: 30%; top: 60%; }
+        .animate-bounce-3 { animation: bounce 8s linear infinite; left: 70%; top: 40%; }
+        .animate-bounce-4 { animation: bounce 15s linear infinite; left: 50%; top: 70%; }
+        .animate-bounce-5 { animation: bounce 18s linear infinite; left: 15%; top: 30%; }
+        .animate-bounce-6 { animation: bounce 7s linear infinite; left: 80%; top: 20%; }
+        .animate-bounce-7 { animation: bounce 9s linear infinite; left: 40%; top: 10%; }
+    </style>
 </body>
 </html>
