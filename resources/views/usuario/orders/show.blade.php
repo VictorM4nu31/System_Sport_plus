@@ -1,39 +1,40 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
-        <h1 class="text-2xl font-semibold mb-6">Detalles del Pedido #{{ $order->id }}</h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <h1 class="text-xl sm:text-2xl text-white font-semibold mb-4 sm:mb-6">Detalles del Pedido #{{ $order->id }}</h1>
 
-        <table class="min-w-full bg-white">
-            <thead>
-                <tr>
-                    <th class="px-6 py-3 border-b-2">Producto</th>
-                    <th class="px-6 py-3 border-b-2">Cantidad</th>
-                    <th class="px-6 py-3 border-b-2">Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($order->orderItems as $item)
+        <!-- Tabla responsiva con scroll horizontal en móviles -->
+        <div class="overflow-x-auto rounded-lg shadow">
+            <table class="min-w-full bg-white divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                     <tr>
-                        <td class="px-6 py-3 border-b">{{ $item->product->name }}</td>
-                        <td class="px-6 py-3 border-b">{{ $item->quantity }}</td>
-                        <td class="px-6 py-3 border-b">${{ number_format($item->price, 2) }}</td>
+                        <th class="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                        <th class="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                        <th class="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">Precio</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach ($order->orderItems as $item)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">{{ $item->product->name }}</td>
+                            <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">{{ $item->quantity }}</td>
+                            <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">${{ number_format($item->price, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-        <div class="mt-6">
-            <h2 class="text-xl font-semibold">Subtotal: ${{ number_format($item->price, 2) }}</h2>
-            <h2 class="text-xl font-semibold">
+        <div class="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
+            <h2 class="text-lg sm:text-xl text-white font-semibold">Subtotal: ${{ number_format($item->price, 2) }}</h2>
+            <h2 class="text-lg sm:text-xl text-white font-semibold">
                 Costo de Envío:
                 @if ($item->price > 300)
-                Envío gratis
-
+                <span class="text-green-400">Envío gratis</span>
                 @else
-                    $200.00
-
+                <span class="text-white">$200.00</span>
                 @endif
             </h2>
-            <h2 class="text-xl font-semibold">Total: ${{ number_format($order->total_price + $order->shipping_cost, 2) }}</h2>
+            <h2 class="text-lg sm:text-xl text-white font-semibold">Total: ${{ number_format($order->total_price + $order->shipping_cost, 2) }}</h2>
         </div>
     </div>
 </x-app-layout>

@@ -19,14 +19,13 @@
 
     <!-- Flowbite -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet">
-
 </head>
 <body class="font-sans antialiased">
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
         @include('layouts.navigation')
 
-        <!-- Contenido principal con margen izquierdo -->
-        <div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1] ml-64">
+        <!-- Contenido principal con margen izquierdo responsivo -->
+        <div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1] md:ml-64">
             <header class="bg-[#282E2E] flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
                 <!-- Título en blanco -->
                 <div class="text-xl font-semibold text-white">@yield('title', 'Bienvenido')</div>
@@ -69,7 +68,8 @@
             </header>
 
             <div class="relative min-h-screen bg-gradient-to-b from-[#801336] via-[#801336] to-[#801336] overflow-hidden">
-                <div class="absolute inset-0 -z-10">
+                <!-- Elementos decorativos ocultos en pantallas pequeñas -->
+                <div class="hidden lg:block absolute inset-0 -z-10">
                     <!-- Círculos grandes -->
                     <div class="absolute w-96 h-96 bg-[#EE4E50] opacity-40 rounded-full blur-3xl top-10 left-20"></div>
                     <div class="absolute w-72 h-72 bg-[#C72C41] opacity-30 rounded-full blur-2xl bottom-20 right-10"></div>
@@ -84,7 +84,8 @@
                     <div class="absolute w-20 h-20 bg-[#C72C41] opacity-30 rounded-full blur-2xl top-1/2 left-1/5"></div>
                 </div>
 
-                <div class="absolute inset-0 overflow-hidden">
+                <!-- Animaciones ocultas en pantallas pequeñas -->
+                <div class="hidden lg:block absolute inset-0 overflow-hidden">
                     <!-- Primer círculo en movimiento -->
                     <div class="absolute w-24 h-24 bg-[#EE4E50] rounded-full opacity-70 animate-bounce-1"></div>
                     <div class="absolute w-16 h-16 bg-[#C72C41] rounded-full opacity-70 animate-bounce-2"></div>

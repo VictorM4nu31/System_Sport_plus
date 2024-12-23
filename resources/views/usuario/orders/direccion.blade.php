@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-lg mx-auto py-8 px-6 bg-gray-50 shadow-md">
+    <div class="max-w-full mx-auto sm:px-6 lg:px-8 py-8 bg-gray-50 shadow-md">
         @if (session('error'))
             <div class="bg-red-500 text-white p-4 rounded mb-4">
                 {{ session('error') }}
@@ -59,7 +59,7 @@
             </div>
 
             <!-- Calle y Número -->
-            <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div class="col-span-2">
                     <label for="street" class="block text-gray-700 font-medium text-sm">Calle</label>
                     <input id="street" name="street" type="text" required
