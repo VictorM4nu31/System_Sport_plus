@@ -6,7 +6,7 @@
 
                 <!-- Título de la sección con ícono y color de fondo -->
                 <div class="flex flex-col items-center text-center mb-6">
-                    <img src="../img/" alt="Logo" class="w-24 h-24 mb-4 rounded-full border-4 border-[#801336]" />
+                    <img src="../img/logo.png" alt="Logo" class="w-24 h-24 mb-4 rounded-full border-4 border-[#801336]" />
                     <h3 class="text-3xl font-bold text-[#FFFFFF]">Gestión de Pedidos</h3>
                 </div>
 
@@ -19,6 +19,9 @@
                                 <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Usuario</th>
                                 <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Total</th>
                                 <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Estado</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Dirección</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Teléfono</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Indicaciones</th>
                                 <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Acciones</th>
                             </tr>
                         </thead>
@@ -29,6 +32,15 @@
                                     <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">{{ $order->user->name }}</td>
                                     <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">{{ $order->total_price }}</td>
                                     <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">{{ ucfirst($order->status) }}</td>
+                                    <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">
+                                        {{ $order->address->neighborhood }}, {{ $order->address->street }} {{ $order->address->number }}
+                                    </td>
+                                    <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">
+                                        {{ $order->address->contact_phone }}
+                                    </td>
+                                    <td class="px-6 py-3 border-b border-[#801336] text-[#801336]">
+                                        {{ $order->address->additional_instructions }}
+                                    </td>
                                     <td class="px-6 py-3 border-b border-[#801336]">
                                         <div class="flex items-center gap-4">
                                             <!-- Botón de Ver con ícono -->

@@ -19,7 +19,7 @@ class OrderController extends Controller
     // Mostrar todos los pedidos
     public function index()
     {
-        $orders = Order::all();
+        $orders = Order::with('user', 'address')->get();
         return view('admin.orders.index', compact('orders'));
     }
 

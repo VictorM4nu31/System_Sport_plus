@@ -54,4 +54,10 @@ class AddressController extends Controller
         // Redirige al usuario con un mensaje de éxito
         return redirect()->route('usuario.dashboard')->with('success', 'Dirección agregada exitosamente.');
     }
+
+    public function index()
+    {
+        $addresses = Address::all(); // Obtener todas las direcciones
+        return view('admin.addresses.index', compact('addresses')); // Asegúrate de tener la vista correcta
+    }
 }

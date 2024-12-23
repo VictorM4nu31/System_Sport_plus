@@ -6,7 +6,7 @@
 
                 <!-- Contenedor para el logo centrado -->
                 <div class="flex justify-center mb-4">
-                    <img src="/img/" alt="Logo" class="w-24 h-24 rounded-full border-4 border-[#801336]">
+                    <img src="/img/logo.png" alt="Logo" class="w-24 h-24 rounded-full border-4 border-[#801336]">
                 </div>
 
                 <!-- Título centrado -->
