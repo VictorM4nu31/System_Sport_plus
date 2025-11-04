@@ -11,7 +11,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Bind the payment service interface to the Stripe implementation
+        $this->app->bind(
+            \App\Contracts\PaymentServiceInterface::class,
+            \App\Services\StripePaymentService::class
+        );
+
+        // Bind the order processing service interface
+        $this->app->bind(
+            \App\Contracts\OrderProcessingInterface::class,
+            \App\Services\OrderProcessingService::class
+        );
+
+        // Bind the stock management service interface
+        $this->app->bind(
+            \App\Contracts\StockManagementInterface::class,
+            \App\Services\StockManagementService::class
+        );
     }
 
     /**
@@ -19,6 +35,45 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Environment validation temporarily disabled during development
+        // Will be re-enabled after completing Stripe integration
+        // $this->validateRequiredEnvironmentVariables();
+    }
+
+    /**
+     * Validate that required environment variables are set
+     */
+    private function validateRequiredEnvironmentVariables(): void
+    {
+        $requiredVars = [
+            'APP_KEY',
+            'DB_CONNECTION',
+            'DB_HOST',
+            'DB_DATABASE',
+        ];
+
+        // Add payment-related variables only in production
+        if (app()->environment('production')) {
+            $requiredVars = array_merge($requiredVars, [
+                'STRIPE_KEY',
+                'STRIPE_SECRET',
+                'STRIPE_WEBHOOK_SECRET',
+            ]);
+        }
+
+        $missingVars = [];
+        foreach ($requiredVars as $var) {
+            $value = env($var);
+            if ($value === null || $value === '') {
+                $missingVars[] = $var;
+            }
+        }
+
+        if (!empty($missingVars)) {
+            throw new \RuntimeException(
+                'Missing required environment variables: ' . implode(', ', $missingVars) .
+                '. Please check your .env file and ensure all required variables are set.'
+            );
+        }
     }
 }

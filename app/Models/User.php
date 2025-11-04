@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles; //implentado
+use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , HasRoles; //implementado
+    use HasFactory, Notifiable, HasRoles, Billable; //implementado
 
     /**
      * The attributes that are mass assignable.
@@ -51,9 +52,20 @@ class User extends Authenticatable
 {
     return $this->hasMany(Order::class);
 }
+public function addresses()
+{
+    return $this->hasMany(Address::class); // Relación uno a muchos
+}
+
+public function defaultAddress()
+{
+    return $this->hasOne(Address::class)->where('is_default', true);
+}
+
+// Mantener el método address() para compatibilidad con código existente
 public function address()
 {
-    return $this->hasOne(Address::class); // Relación uno a uno
+    return $this->defaultAddress();
 }
 
 }

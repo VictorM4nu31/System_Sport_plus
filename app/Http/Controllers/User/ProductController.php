@@ -5,30 +5,59 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        // Middleware is handled by routes in Laravel 11
+    }
     public function index(Request $request)
     {
-        $query = Product::query();
+        Gate::authorize('viewAny', Product::class);
 
-        // Filtrar por categoría si se selecciona
-        if ($request->has('category_id') && $request->category_id) {
+        $query = Product::with(['category', 'reviews'])->where('stock', '>', 0);
+
+        // Filtro por búsqueda de nombre
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filtro por categoría
+        if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Filtrar por precio mínimo
-        if ($request->has('min_price') && $request->min_price) {
-            $query->where('price', '>=', $request->min_price);
+        // Filtro por marca
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
         }
 
-        // Filtrar por precio máximo
-        if ($request->has('max_price') && $request->max_price) {
+        // Filtro por tipo de deporte
+        if ($request->filled('sport_type')) {
+            $query->where('sport_type', $request->sport_type);
+        }
+
+        // Filtro por género
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        // Filtro por precio máximo
+        if ($request->filled('max_price')) {
             $query->where('price', '<=', $request->max_price);
         }
 
-        // Obtener los productos filtrados
-        $products = $query->paginate(10);  // Mostrar 10 productos por página
+        // Filtro por productos destacados
+        if ($request->filled('featured')) {
+            $query->where('is_featured', true);
+        }
+
+        // Ordenar por productos destacados primero, luego por nombre
+        $products = $query->orderBy('is_featured', 'desc')
+                         ->orderBy('name', 'asc')
+                         ->get();
 
         // Obtener todas las categorías
         $categories = Category::all();
@@ -39,6 +68,12 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        return view('usuario.products.show', compact('product'));
+        Gate::authorize('view', $product);
+
+        // Pasar los datos a la vista
+        return view('usuario.products.show', [
+            'product' => $product,
+            'reviews' => $product->reviews ?? collect(), // Obtener las reseñas del producto
+        ]);
     }
 }

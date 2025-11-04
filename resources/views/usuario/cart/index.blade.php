@@ -64,64 +64,238 @@
             <h2 class="text-lg sm:text-xl text-white font-semibold pt-2">Total: ${{ number_format($total, 2) }}</h2>
         </div>
 
-        <!-- Contenedor del botón de PayPal -->
+        <!-- Formulario de pago con Stripe -->
         <div class="mt-8 max-w-md mx-auto">
-            <div id="paypal-button-container" class="w-full"></div>
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Información de Pago</h3>
+
+                <!-- Selección de dirección de envío -->
+                @if(auth()->user()->addresses->count() > 0)
+                <div class="mb-4">
+                    <label for="shipping_address_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Dirección de Envío
+                    </label>
+                    <select name="shipping_address_id" id="shipping_address_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        @foreach(auth()->user()->addresses as $address)
+                            <option value="{{ $address->id }}" {{ $address->is_default ? 'selected' : '' }}>
+                                {{ $address->full_name }} - {{ $address->street }} {{ $address->number }}, {{ $address->neighborhood }}, {{ $address->municipality }}, {{ $address->state }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                @else
+                <div class="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                    <p class="text-sm">No tienes direcciones guardadas. <a href="{{ route('usuario.addresses.create') }}" class="underline">Agregar dirección</a></p>
+                </div>
+                @endif
+
+                <!-- Información de facturación -->
+                <div class="mb-4">
+                    <label for="billing_name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre en la tarjeta
+                    </label>
+                    <input type="text" id="billing_name" name="billing_name"
+                           value="{{ auth()->user()->name }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="billing_email" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    <input type="email" id="billing_email" name="billing_email"
+                           value="{{ auth()->user()->email }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           required>
+                </div>
+
+                <!-- Stripe Elements Container -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Información de la Tarjeta
+                    </label>
+                    <div id="stripe-card-element" class="p-3 border border-gray-300 rounded-md">
+                        <!-- Stripe Elements will create form elements here -->
+                    </div>
+                    <div id="stripe-card-errors" class="mt-2 text-red-600 text-sm" role="alert"></div>
+                </div>
+
+                <!-- Botón de pago -->
+                <div id="stripe-payment-container" class="w-full">
+                    <button id="stripe-checkout-button"
+                            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+                            type="button">
+                        Pagar ${{ number_format($total, 2) }}
+                    </button>
+                </div>
+            </div>
         </div>
+
+        <!-- Hidden cart data for JavaScript -->
+        <script type="application/json" id="cart-data">
+            @json(session('cart'))
+        </script>
         @else
             <p class="text-white text-base sm:text-lg">No tienes productos en el carrito.</p>
         @endif
     </div>
 
     @if (session('cart') && count(session('cart')) > 0)
-        <script src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.client_id') }}&currency=MXN"></script>
+        <!-- Stripe JavaScript SDK -->
+        <script src="https://js.stripe.com/v3/"></script>
 
         <script>
-            paypal.Buttons({
+            // Initialize Stripe
+            const stripe = Stripe('{{ config('stripe.key') }}');
+            const elements = stripe.elements();
+
+            // Create card element
+            const cardElement = elements.create('card', {
                 style: {
-                    layout: 'vertical',
-                    color: 'blue',
-                    shape: 'rect',
-                    label: 'paypal'
+                    base: {
+                        fontSize: '16px',
+                        color: '#424770',
+                        '::placeholder': {
+                            color: '#aab7c4',
+                        },
+                    },
+                    invalid: {
+                        color: '#9e2146',
+                    },
                 },
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: {
-                                value: '{{ $total }}'
-                            }
-                        }]
+            });
+
+            // Mount card element
+            cardElement.mount('#stripe-card-element');
+
+            // Handle real-time validation errors from the card Element
+            cardElement.on('change', function(event) {
+                const displayError = document.getElementById('stripe-card-errors');
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+
+            // Handle form submission
+            document.getElementById('stripe-checkout-button').addEventListener('click', async function(event) {
+                event.preventDefault();
+
+                const button = event.target;
+                const originalText = button.textContent;
+
+                // Disable button and show processing state
+                button.disabled = true;
+                button.textContent = 'Procesando...';
+
+                try {
+                    // Get billing details
+                    const billingName = document.getElementById('billing_name').value;
+                    const billingEmail = document.getElementById('billing_email').value;
+                    const shippingAddressId = document.getElementById('shipping_address_id')?.value;
+
+                    if (!billingName || !billingEmail) {
+                        throw new Error('Por favor completa todos los campos requeridos');
+                    }
+
+                    if (!shippingAddressId) {
+                        throw new Error('Por favor selecciona una dirección de envío');
+                    }
+
+                    // Create payment intent
+                    const response = await fetch('{{ route('usuario.cart.create-payment-intent') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            cart: @json(session('cart')),
+                            total: {{ $total }},
+                            shipping_address_id: shippingAddressId
+                        })
                     });
-                },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
-                        // Enviar los datos del pedido al backend para guardar el pedido
-                        return fetch('{{ route('usuario.cart.processOrder') }}', {
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Error al procesar el pago');
+                    }
+
+                    const { client_secret: clientSecret, order_id: orderId } = await response.json();
+
+                    // Confirm payment
+                    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                        payment_method: {
+                            card: cardElement,
+                            billing_details: {
+                                name: billingName,
+                                email: billingEmail,
+                            }
+                        }
+                    });
+
+                    if (error) {
+                        throw new Error(error.message);
+                    }
+
+                    if (paymentIntent.status === 'succeeded') {
+                        // Confirm order on server
+                        const confirmResponse = await fetch('{{ route('usuario.cart.confirm-order') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
                             body: JSON.stringify({
-                                orderID: data.orderID,
-                                total: '{{ $total }}',
-                                cart: @json(session('cart'))
+                                order_id: orderId,
+                                payment_intent_id: paymentIntent.id
                             })
-                        }).then(function(res) {
-                            if (res.ok) {
-                                // Redirigir al historial de pedidos
-                                window.location.href = '{{ route('usuario.orders.history') }}';
-                            } else {
-                                alert('Hubo un problema al procesar el pedido.');
-                            }
                         });
-                    });
-                },
-                onError: function(err) {
-                    console.error(err);
-                    alert('Hubo un error al procesar el pago.');
+
+                        if (confirmResponse.ok) {
+                            // Redirect to order history
+                            window.location.href = '{{ route('usuario.orders.history') }}';
+                        } else {
+                            throw new Error('Error al confirmar la orden');
+                        }
+                    }
+
+                } catch (error) {
+                    // Show error message
+                    showError(error.message);
+                } finally {
+                    // Re-enable button
+                    button.disabled = false;
+                    button.textContent = originalText;
                 }
-            }).render('#paypal-button-container');
+            });
+
+            function showError(message) {
+                // Remove existing error
+                const existingError = document.getElementById('stripe-error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+
+                // Create error element
+                const errorDiv = document.createElement('div');
+                errorDiv.id = 'stripe-error-message';
+                errorDiv.className = 'mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg';
+                errorDiv.textContent = message;
+
+                // Insert error message
+                const container = document.getElementById('stripe-payment-container');
+                container.parentNode.insertBefore(errorDiv, container);
+
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.remove();
+                    }
+                }, 5000);
+            }
         </script>
     @endif
 </x-app-layout>

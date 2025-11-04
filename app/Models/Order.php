@@ -16,6 +16,9 @@ class Order extends Model
         'status',
         'payment_status',
         'shipping_address',
+        'shipping_address_id',
+        'payment_intent_id',
+        'notes',
     ];
 
     // Relación con el usuario (un pedido pertenece a un usuario)
@@ -23,11 +26,19 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relación con la dirección de envío
+    public function shippingAddress()
+    {
+        return $this->belongsTo(Address::class, 'shipping_address_id');
+    }
+
+    // Mantener método address() para compatibilidad
     public function address()
     {
-        return $this->belongsTo(Address::class, 'user_id', 'user_id');
+        return $this->shippingAddress();
     }
-    
+
     // Relación con los items del pedido (un pedido tiene muchos items)
     public function orderItems()
     {

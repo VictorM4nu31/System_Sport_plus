@@ -1,82 +1,147 @@
 <x-app-layout>
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <!-- Título de la sección -->
-        <h1 class="text-2xl sm:text-3xl font-bold text-white mb-6">Productos Disponibles</h1>
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-[#801336] mb-2">Tienda Deportiva</h1>
+            <p class="text-lg text-gray-600">Encuentra el equipamiento perfecto para tu deporte favorito</p>
+        </div>
 
-        <!-- Formulario de Búsqueda y Filtrado -->
-        <form method="GET" action="{{ route('usuario.products.index') }}">
-            <div class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 mb-6">
-                <!-- Campo de búsqueda -->
-                <input type="text"
-                       name="search"
-                       placeholder="Buscar productos"
-                       value="{{ request('search') }}"
-                       class="w-full sm:w-1/2 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" />
+        <!-- Filtros Avanzados -->
+        <div class="bg-white bg-opacity-95 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-[#801336] mb-4">Filtros de Búsqueda</h2>
+            <form method="GET" action="{{ route('usuario.products.index') }}">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <!-- Búsqueda por nombre -->
+                    <div>
+                        <label class="block text-[#801336] font-medium mb-1">Buscar producto</label>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="Nombre del producto..."
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                    </div>
 
-                <!-- Campo de selección de categoría -->
-                <select name="category_id"
-                        class="w-full sm:w-1/3 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
-                    <option value="">Todas las Categorías</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
+                    <!-- Filtro por categoría -->
+                    <div>
+                        <label class="block text-[#801336] font-medium mb-1">Categoría</label>
+                        <select name="category_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                            <option value="">Todas las categorías</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <!-- Botón de Filtrar -->
-                <button type="submit"
-                        class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-4 py-2 transition-colors duration-200">
-                    Filtrar
-                </button>
+                    <!-- Filtro por marca -->
+                    <div>
+                        <label class="block text-[#801336] font-medium mb-1">Marca</label>
+                        <select name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                            <option value="">Todas las marcas</option>
+                            @foreach(['Nike', 'Adidas', 'Puma', 'Under Armour', 'Reebok', 'New Balance', 'Converse', 'Vans', 'Wilson', 'Spalding'] as $brand)
+                                <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Filtro por deporte -->
+                    <div>
+                        <label class="block text-[#801336] font-medium mb-1">Deporte</label>
+                        <select name="sport_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                            <option value="">Todos los deportes</option>
+                            @foreach(['Fútbol', 'Basketball', 'Running', 'Tenis', 'Volleyball', 'Baseball', 'Natación', 'Ciclismo', 'Fitness', 'Casual'] as $sport)
+                                <option value="{{ $sport }}" {{ request('sport_type') == $sport ? 'selected' : '' }}>{{ $sport }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Filtros adicionales -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <!-- Filtro por género -->
+                    <div>
+                        <label class="block text-[#801336] font-medium mb-1">Género</label>
+                        <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                            <option value="">Todos</option>
+                            <option value="hombre" {{ request('gender') == 'hombre' ? 'selected' : '' }}>Hombre</option>
+                            <option value="mujer" {{ request('gender') == 'mujer' ? 'selected' : '' }}>Mujer</option>
+                            <option value="unisex" {{ request('gender') == 'unisex' ? 'selected' : '' }}>Unisex</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro por rango de precio -->
+                    <div>
+                        <label class="block text-[#801336] font-medium mb-1">Precio máximo</label>
+                        <input type="number" name="max_price" value="{{ request('max_price') }}"
+                               placeholder="Ej: 2000"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                    </div>
+
+                    <!-- Solo productos destacados -->
+                    <div class="flex items-center">
+                        <input type="checkbox" name="featured" value="1" {{ request('featured') ? 'checked' : '' }}
+                               class="h-4 w-4 text-[#801336] focus:ring-[#801336] border-gray-300 rounded">
+                        <label class="ml-2 block text-[#801336] font-medium">Solo productos destacados</label>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex space-x-3">
+                    <button type="submit" class="px-6 py-2 bg-[#801336] text-white rounded-md hover:bg-[#9b1a3e] focus:outline-none focus:ring-2 focus:ring-[#801336]">
+                        Aplicar Filtros
+                    </button>
+                    <a href="{{ route('usuario.products.index') }}" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        Limpiar Filtros
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Carrito y estadísticas -->
+        <div class="flex justify-between items-center mb-6">
+            <div class="text-[#801336]">
+                <p class="text-lg font-semibold">{{ $products->count() }} productos encontrados</p>
             </div>
-        </form>
-
-        <!-- Ícono del Carrito -->
-        <div class="mb-6 flex items-center space-x-2">
-            <a href="{{ route('usuario.cart.index') }}" class="flex items-center">
-                <span class="material-icons text-white">shopping_cart</span>
-                <span class="ml-2 text-base sm:text-lg font-semibold text-white">
-                    {{ array_sum(array_column(session('cart', []), 'quantity')) }} artículos
-                </span>
+            <a href="{{ route('usuario.cart.index') }}"
+               class="flex items-center bg-[#801336] text-white px-4 py-2 rounded-md hover:bg-[#9b1a3e] transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
+                </svg>
+                Carrito ({{ array_sum(array_column(session('cart', []), 'quantity')) }})
             </a>
         </div>
 
+        <!-- Productos Destacados -->
+        @if($products->where('is_featured', true)->count() > 0 && !request()->hasAny(['search', 'category_id', 'brand', 'sport_type', 'gender', 'max_price', 'featured']))
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-[#801336] mb-4">⭐ Productos Destacados</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                @foreach ($products->where('is_featured', true)->take(4) as $product)
+                    @include('usuario.products.partials.product-card', ['product' => $product, 'featured' => true])
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- Listado de Productos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            @foreach ($products as $product)
-                <a href="{{ route('usuario.products.show', $product->id) }}"
-                   class="bg-white p-4 sm:p-6 shadow-lg rounded-lg relative transition-transform hover:scale-105 duration-200 block">
-                    <!-- Imagen del Producto -->
-                    <img src="{{ '/storage/' . $product->image }}"
-                         alt="{{ $product->name }}"
-                         class="w-full h-32 sm:h-40 object-cover rounded-md mb-4">
-
-                    <!-- Nombre y Precio del Producto -->
-                    <h2 class="text-lg sm:text-xl font-bold text-gray-800">{{ $product->name }}</h2>
-                    <p class="text-gray-600 mt-2 mb-4">${{ number_format($product->price, 2) }}</p>
-
-                    <!-- Ícono del Corazón -->
-                    <form action="{{ route('usuario.wishlist.add', $product->id) }}" method="POST"
-                          class="absolute top-2 right-2 sm:top-4 sm:right-4">
-                        @csrf
-                        <button type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 fill="currentColor"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor"
-                                 class="w-6 h-6 text-red-500 hover:text-red-600 transition-colors duration-200">
-                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                            </svg>
-                        </button>
-                    </form>
-                </a>
-            @endforeach
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @forelse ($products as $product)
+                @include('usuario.products.partials.product-card', ['product' => $product])
+            @empty
+                <div class="col-span-full text-center py-12">
+                    <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2-2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                    </svg>
+                    <h3 class="text-xl font-medium text-gray-600 mb-2">No se encontraron productos</h3>
+                    <p class="text-gray-500">Intenta ajustar tus filtros de búsqueda</p>
+                </div>
+            @endforelse
         </div>
 
         <!-- Paginación -->
-        <div class="mt-6">
-            {{ $products->links() }}
+        @if($products->hasPages())
+        <div class="mt-8 flex justify-center">
+            {{ $products->appends(request()->query())->links() }}
         </div>
+        @endif
     </div>
 </x-app-layout>

@@ -3,61 +3,200 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Address; // Asegúrate de importar el modelo Address
+use App\Models\Address;
+use App\Services\ValidationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class AddressController extends Controller
 {
-    // Método para mostrar el formulario de dirección
-    public function create()
+    public function __construct()
     {
-        return view('usuario.orders.direccion'); // Asegúrate de tener la vista correcta
+        // Middleware is handled by routes in Laravel 11
     }
-
-    // Método para almacenar la dirección en la base de datos
-    public function store(Request $request)
-    {
-        // Verificar si el usuario ya tiene una dirección
-        if (auth()->user()->address()->exists()) {
-            return redirect()->back()->with('error', 'Ya tienes una dirección registrada. No puedes añadir otra.');
-        }
-
-        // Validación de los datos
-        $request->validate([
-            'full_name' => 'required|string|max:255',
-            'postal_code' => 'required|string|max:10',
-            'state' => 'required|string|max:255',
-            'municipality' => 'required|string|max:255',
-            'neighborhood' => 'required|string|max:255',
-            'street' => 'required|string|max:255',
-            'number' => 'nullable|string|max:10',
-            'interior_number' => 'nullable|string|max:10',
-            'contact_phone' => 'nullable|string|max:15',
-            'additional_instructions' => 'nullable|string|max:255',
-        ]);
-
-        // Guardar la dirección en la base de datos
-        Address::create([
-            'user_id' => auth()->id(), // Asocia la dirección al usuario actual
-            'full_name' => $request->full_name,
-            'postal_code' => $request->postal_code,
-            'state' => $request->state,
-            'municipality' => $request->municipality,
-            'neighborhood' => $request->neighborhood,
-            'street' => $request->street,
-            'number' => $request->number,
-            'interior_number' => $request->interior_number,
-            'contact_phone' => $request->contact_phone,
-            'additional_instructions' => $request->additional_instructions,
-        ]);
-
-        // Redirige al usuario con un mensaje de éxito
-        return redirect()->route('usuario.dashboard')->with('success', 'Dirección agregada exitosamente.');
-    }
-
+    /**
+     * Mostrar todas las direcciones del usuario
+     */
     public function index()
     {
-        $addresses = Address::all(); // Obtener todas las direcciones
-        return view('admin.addresses.index', compact('addresses')); // Asegúrate de tener la vista correcta
+        Gate::authorize('viewAny', Address::class);
+
+        $addresses = Auth::user()->addresses()->orderBy('is_default', 'desc')->get();
+        return view('usuario.addresses.index', compact('addresses'));
+    }
+
+    /**
+     * Mostrar el formulario para crear una nueva dirección
+     */
+    public function create()
+    {
+        Gate::authorize('create', Address::class);
+
+        return view('usuario.addresses.create');
+    }
+
+    /**
+     * Almacenar una nueva dirección
+     */
+    public function store(Request $request)
+    {
+        Gate::authorize('create', Address::class);
+
+        $validated = $this->validateAddress($request);
+
+        // Si es la primera dirección del usuario, establecerla como default
+        $userAddressCount = Auth::user()->addresses()->count();
+        if ($userAddressCount === 0) {
+            $validated['is_default'] = true;
+        }
+
+        // Si se marca como default, desmarcar las otras direcciones
+        if ($request->has('is_default') && $request->is_default) {
+            Auth::user()->addresses()->update(['is_default' => false]);
+            $validated['is_default'] = true;
+        }
+
+        $validated['user_id'] = Auth::id();
+
+        $address = Address::create($validated);
+
+        Log::channel('audit')->info('Address created', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'address_id' => $address->id,
+            'address_type' => $address->address_type,
+            'action' => 'addresses.store',
+            'timestamp' => now(),
+        ]);
+
+        return redirect()->route('usuario.addresses.index')
+            ->with('success', 'Dirección agregada exitosamente.');
+    }
+
+    /**
+     * Mostrar el formulario para editar una dirección
+     */
+    public function edit(Address $address)
+    {
+        Gate::authorize('update', $address);
+
+        return view('usuario.addresses.edit', compact('address'));
+    }
+
+    /**
+     * Actualizar una dirección existente
+     */
+    public function update(Request $request, Address $address)
+    {
+        Gate::authorize('update', $address);
+
+        $oldData = $address->toArray();
+        $validated = $this->validateAddress($request, $address->id);
+
+        // Si se marca como default, desmarcar las otras direcciones
+        if ($request->has('is_default') && $request->is_default) {
+            Auth::user()->addresses()->where('id', '!=', $address->id)
+                ->update(['is_default' => false]);
+            $validated['is_default'] = true;
+        }
+
+        $address->update($validated);
+
+        Log::channel('audit')->info('Address updated', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'address_id' => $address->id,
+            'old_data' => $oldData,
+            'new_data' => $address->fresh()->toArray(),
+            'action' => 'addresses.update',
+            'timestamp' => now(),
+        ]);
+
+        return redirect()->route('usuario.addresses.index')
+            ->with('success', 'Dirección actualizada exitosamente.');
+    }
+
+    /**
+     * Eliminar una dirección
+     */
+    public function destroy(Address $address)
+    {
+        Gate::authorize('delete', $address);
+
+        $addressData = $address->toArray();
+
+        // Si es la dirección por defecto, establecer otra como default
+        if ($address->is_default) {
+            $nextAddress = Auth::user()->addresses()
+                ->where('id', '!=', $address->id)
+                ->first();
+
+            if ($nextAddress) {
+                $nextAddress->update(['is_default' => true]);
+            }
+        }
+
+        $address->delete();
+
+        Log::channel('audit')->info('Address deleted', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'address_id' => $address->id,
+            'address_data' => $addressData,
+            'action' => 'addresses.destroy',
+            'timestamp' => now(),
+        ]);
+
+        return redirect()->route('usuario.addresses.index')
+            ->with('success', 'Dirección eliminada exitosamente.');
+    }
+
+    /**
+     * Establecer una dirección como la por defecto
+     */
+    public function setDefault(Address $address)
+    {
+        Gate::authorize('update', $address);
+
+        $address->setAsDefault();
+
+        Log::channel('audit')->info('Default address changed', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'address_id' => $address->id,
+            'action' => 'addresses.setDefault',
+            'timestamp' => now(),
+        ]);
+
+        return redirect()->route('usuario.addresses.index')
+            ->with('success', 'Dirección establecida como predeterminada.');
+    }
+
+    /**
+     * Obtener direcciones del usuario para AJAX
+     */
+    public function getUserAddresses()
+    {
+        $addresses = Auth::user()->addresses()->orderBy('is_default', 'desc')->get();
+        return response()->json($addresses);
+    }
+
+    /**
+     * Validar datos de dirección
+     */
+    private function validateAddress(Request $request, ?int $addressId = null)
+    {
+        $rules = ValidationService::addressRules();
+        // Override specific rules for this controller
+        $rules['number'] = 'nullable|string|max:10';
+        $rules['interior_number'] = 'nullable|string|max:10';
+        $rules['contact_phone'] = 'required|string|max:15';
+        $rules['address_type'] = ['required', Rule::in(['shipping', 'billing', 'both'])];
+        $rules['is_default'] = 'boolean';
+
+        return ValidationService::validateRequest($request, $rules);
     }
 }

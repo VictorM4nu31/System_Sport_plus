@@ -18,7 +18,6 @@
     },
     "dependencies": {
         "@heroicons/react": "^2.1.5",
-        "@paypal/paypal-js": "^8.1.2",
         "vite": "^7.1.2"
     }
 }
