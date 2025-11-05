@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->text('rejection_reason')->nullable()->after('notes');
-            $table->timestamp('rejected_at')->nullable()->after('rejection_reason');
-            $table->unsignedBigInteger('rejected_by')->nullable()->after('rejected_at');
+            $table->text('rejection_reason')->nullable();
+            $table->timestamp('rejected_at')->nullable();
+            $table->unsignedBigInteger('rejected_by')->nullable();
 
             $table->foreign('rejected_by')->references('id')->on('users')->onDelete('set null');
         });

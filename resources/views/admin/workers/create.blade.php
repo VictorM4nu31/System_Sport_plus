@@ -53,7 +53,7 @@
                         Cancelar
                     </a>
                     <button type="submit"
-                        class="px-6 py-3 bg-primary text-white text-body-md font-medium rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-lg btn-accessible">
+                        class="px-6 py-3 bg-red-600 text-white text-body-md font-medium rounded-md">
                         Registrar Trabajador
                     </button>
                 </div>
