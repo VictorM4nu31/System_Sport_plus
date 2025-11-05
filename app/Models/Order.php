@@ -19,6 +19,9 @@ class Order extends Model
         'shipping_address_id',
         'payment_intent_id',
         'notes',
+        'rejection_reason',
+        'rejected_at',
+        'rejected_by',
     ];
 
     // Relación con el usuario (un pedido pertenece a un usuario)
@@ -43,5 +46,23 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    // Relación con el usuario que rechazó el pedido
+    public function rejectedBy()
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    // Verificar si el pedido fue rechazado
+    public function isRejected()
+    {
+        return $this->status === 'rejected';
+    }
+
+    // Obtener la fecha de rechazo formateada
+    public function getRejectedAtFormattedAttribute()
+    {
+        return $this->rejected_at ? $this->rejected_at->format('d/m/Y H:i') : null;
     }
 }

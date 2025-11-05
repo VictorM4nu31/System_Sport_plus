@@ -16,7 +16,11 @@ use App\Http\Controllers\User\{
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
-Route::view('/dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
+
+// Dashboard redirect based on user role
+Route::get('/dashboard', [App\Http\Controllers\DashboardRedirectController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 // Profile routes
 Route::middleware('auth')->group(function () {
@@ -82,7 +86,8 @@ Route::middleware(['auth', 'role:administrador'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/chart-data', [\App\Http\Controllers\Admin\DashboardController::class, 'chartData'])->name('dashboard.chart-data');
         Route::resource('workers', WorkerController::class)->except(['show']);
         Route::resource('products', ProductController::class);
         Route::post('/products/{id}/sync-stripe', [ProductController::class, 'syncWithStripe'])->name('products.sync-stripe');
@@ -112,7 +117,9 @@ Route::middleware(['auth', 'role:trabajador'])
     ->group(function () {
         Route::controller(OrderController::class)->prefix('pedidos')->group(function () {
             Route::get('/', 'workerIndex')->name('orders.index');
+            Route::get('/{id}', 'workerShow')->name('orders.show');
             Route::patch('/{id}/aceptar', 'acceptOrder')->name('orders.accept');
+            Route::patch('/{id}/rechazar', 'rejectOrder')->name('orders.reject');
         });
         Route::get('/reportes', [ReportController::class, 'workerSalesReport'])->name('reports.sales');
     });

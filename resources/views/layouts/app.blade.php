@@ -9,9 +9,12 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fuentes -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Optimized Font Loading -->
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600,700&display=swap" rel="stylesheet" />
+    <link rel="preload" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap"></noscript>
     <!-- Flowbite -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
 
@@ -29,13 +32,13 @@
         <div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1] md:ml-64">
             <header class="bg-[#282E2E] flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
                 <!-- Título en blanco -->
-                <div class="text-xl font-semibold text-white">@yield('title', 'Bienvenido')</div>
+                <div class="text-heading-lg text-white">@yield('title', 'Bienvenido')</div>
 
                 <!-- Settings Dropdown -->
                 <div class="flex items-center space-x-4">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-white hover:text-white transition ease-in-out duration-150 focus:outline-none">
+                            <button class="flex items-center space-x-1 px-3 py-2 text-body-md font-medium text-white hover:text-white transition ease-in-out duration-150 focus:outline-none">
                                 <span>{{ Auth::user()->name ?? 'Administrador' }}</span>
                                 <svg class="fill-current h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />

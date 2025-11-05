@@ -1,6 +1,6 @@
 <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <h2 class="text-display-sm text-primary font-bold">
         {{ __('Dashboard') }}
     </h2>
-    <p>Bienvenido, {{ auth()->user()->name }}. Este es tu panel de trabajador.</p>
+    <p class="text-body-lg text-primary-light font-regular mt-2">Bienvenido, {{ auth()->user()->name }}. Este es tu panel de trabajador.</p>
 </x-slot>

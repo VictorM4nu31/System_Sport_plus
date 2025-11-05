@@ -335,9 +335,9 @@ class CartController extends Controller
 
             if ($paymentIntent->status === 'succeeded') {
                 DB::transaction(function () use ($order, $paymentIntentId) {
-                    // Update order status
+                    // Update order status - paid but pending worker acceptance
                     $order->update([
-                        'status' => 'confirmed',
+                        'status' => 'paid',
                         'payment_status' => 'paid',
                         'payment_intent_id' => $paymentIntentId
                     ]);

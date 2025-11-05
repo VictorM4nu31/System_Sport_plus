@@ -18,14 +18,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'enhanced.auth' => \App\Http\Middleware\EnhancedAuthMiddleware::class,
-            'security.logging' => \App\Http\Middleware\SecurityLoggingMiddleware::class,
             'input.sanitization' => \App\Http\Middleware\InputSanitizationMiddleware::class,
+            'track.analytics' => \App\Http\Middleware\TrackAnalytics::class,
         ]);
 
-        // Apply security logging and input sanitization to all web routes
+        // Apply input sanitization and analytics tracking to all web routes
         $middleware->web(append: [
-            \App\Http\Middleware\SecurityLoggingMiddleware::class,
             \App\Http\Middleware\InputSanitizationMiddleware::class,
+            \App\Http\Middleware\TrackAnalytics::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

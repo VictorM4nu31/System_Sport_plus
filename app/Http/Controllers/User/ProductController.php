@@ -57,7 +57,7 @@ class ProductController extends Controller
         // Ordenar por productos destacados primero, luego por nombre
         $products = $query->orderBy('is_featured', 'desc')
                          ->orderBy('name', 'asc')
-                         ->get();
+                         ->paginate(12);
 
         // Obtener todas las categorías
         $categories = Category::all();
@@ -65,10 +65,15 @@ class ProductController extends Controller
         return view('usuario.products.index', compact('products', 'categories'));
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
         $product = Product::findOrFail($id);
         Gate::authorize('view', $product);
+
+        // Rastrear vista del producto
+        $analyticsService = app(\App\Services\AnalyticsService::class);
+        $userId = auth()->check() ? auth()->id() : null;
+        $analyticsService->trackProductView($id, $request, $userId);
 
         // Pasar los datos a la vista
         return view('usuario.products.show', [

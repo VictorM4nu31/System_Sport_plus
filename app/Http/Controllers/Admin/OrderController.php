@@ -101,14 +101,99 @@ class OrderController extends Controller
 
     public function workerIndex()
     {
-        $orders = Order::where('status', 'pendiente')->get(); // Solo mostrar pedidos pendientes
+        // Mostrar pedidos pagados que están pendientes de aceptación por el trabajador
+        // Excluir pedidos ya rechazados o confirmados
+        $orders = Order::whereIn('status', ['paid', 'pendiente'])
+                      ->where('payment_status', 'paid')
+                      ->with('user', 'orderItems.product')
+                      ->orderBy('created_at', 'desc')
+                      ->get();
         return view('trabajador.orders.index', compact('orders'));
+    }
+
+    public function workerShow($id)
+    {
+        $order = Order::with(['user', 'orderItems.product', 'shippingAddress'])
+                     ->findOrFail($id);
+
+        // Verificar que el pedido esté en estado válido para el trabajador
+        if (!in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
+            return redirect()->route('trabajador.orders.index')
+                           ->with('error', 'Este pedido no está disponible para revisión.');
+        }
+
+        Log::channel('audit')->info('Worker viewed order details', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'order_id' => $order->id,
+            'order_user_id' => $order->user_id,
+            'action' => 'trabajador.orders.show',
+            'timestamp' => now(),
+        ]);
+
+        return view('trabajador.orders.show', compact('order'));
     }
 
     public function acceptOrder($id)
     {
         $order = Order::findOrFail($id);
-        $order->update(['status' => 'en proceso']); // Actualiza el estado a "en proceso" cuando el trabajador lo acepta
+
+        // Verificar que el pedido esté pagado y pendiente de aceptación
+        if (!in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
+            return redirect()->route('trabajador.orders.index')
+                           ->with('error', 'Este pedido no puede ser aceptado.');
+        }
+
+        $order->update(['status' => 'confirmed']); // Cambiar a confirmed cuando el trabajador acepta
+
+        Log::channel('audit')->info('Order accepted by worker', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'order_id' => $order->id,
+            'order_user_id' => $order->user_id,
+            'action' => 'trabajador.orders.accept',
+            'timestamp' => now(),
+        ]);
+
         return redirect()->route('trabajador.orders.index')->with('success', 'Pedido aceptado con éxito.');
+    }
+
+    public function rejectOrder(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Verificar que el pedido esté pagado y pendiente de aceptación
+        if (!in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
+            return redirect()->route('trabajador.orders.index')
+                           ->with('error', 'Este pedido no puede ser rechazado.');
+        }
+
+        // Validar que se proporcione una razón de rechazo
+        $request->validate([
+            'rejection_reason' => 'required|string|min:10|max:500'
+        ], [
+            'rejection_reason.required' => 'Debe proporcionar una razón para el rechazo.',
+            'rejection_reason.min' => 'La razón debe tener al menos 10 caracteres.',
+            'rejection_reason.max' => 'La razón no puede exceder 500 caracteres.'
+        ]);
+
+        $order->update([
+            'status' => 'rejected',
+            'rejection_reason' => $request->rejection_reason,
+            'rejected_at' => now(),
+            'rejected_by' => Auth::id()
+        ]);
+
+        Log::channel('audit')->info('Order rejected by worker', [
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'order_id' => $order->id,
+            'order_user_id' => $order->user_id,
+            'rejection_reason' => $request->rejection_reason,
+            'action' => 'trabajador.orders.reject',
+            'timestamp' => now(),
+        ]);
+
+        return redirect()->route('trabajador.orders.index')->with('success', 'Pedido rechazado correctamente.');
     }
 }

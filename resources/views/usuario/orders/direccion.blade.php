@@ -1,19 +1,19 @@
 <x-app-layout>
     <div class="max-w-full mx-auto sm:px-6 lg:px-8 py-8 bg-gray-50 shadow-md">
         @if (session('error'))
-            <div class="bg-red-500 text-white p-4 rounded mb-4">
+            <x-alert type="error" dismissible="true" class="mb-4">
                 {{ session('error') }}
-            </div>
+            </x-alert>
         @endif
 
         @if (session('success'))
-            <div class="bg-green-500 text-white p-4 rounded mb-4">
+            <x-alert type="success" dismissible="true" class="mb-4">
                 {{ session('success') }}
-            </div>
+            </x-alert>
         @endif
 
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Agrega un domicilio</h1>
-        <form method="POST" action="{{ route('usuario.orders.direccion') }}" onsubmit="return confirmSubmit()">
+        <form method="POST" action="{{ route('usuario.addresses.store') }}" onsubmit="return confirmSubmit()">
             @csrf
 
             <!-- Nombre y apellido -->
@@ -102,7 +102,7 @@
 
             <!-- Botón de Guardar -->
             <button type="submit"
-                class="bg-[#801336] text-white font-semibold p-2 rounded-md w-full hover:bg-blue-600 transition duration-300">Guardar</button>
+                class="bg-primary text-white font-semibold p-2 rounded-md w-full hover:bg-primary-700 transition duration-300 btn-accessible">Guardar</button>
         </form>
     </div>
 

@@ -2,7 +2,7 @@
     <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 py-6">
         <!-- Contenedor principal con transparencia y bordes redondeados -->
         <div class="bg-[#DDEAF2] bg-opacity-70 shadow-2xl rounded-lg p-8">
-            <h1 class="text-3xl font-bold mb-6 text-[#476D9D]">Reporte de Ventas</h1>
+            <h1 class="text-display-sm text-primary mb-6">Reporte de Ventas</h1>
 
             <!-- Formulario para filtrar por rango de fechas -->
             <form method="GET" action="{{ route('admin.reports.sales') }}" class="mb-8 bg-[#B5DFF5] bg-opacity-60 p-4 rounded-lg shadow-inner">
@@ -27,7 +27,7 @@
             @if ($sales->isEmpty())
                 <p class="text-[#476D9D] italic">No se encontraron ventas en este rango de fechas.</p>
             @else
-                <h2 class="text-2xl font-semibold mb-4 text-[#476D9D]">Ventas por Fecha</h2>
+                <h2 class="text-heading-lg text-primary mb-4">Ventas por Fecha</h2>
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white bg-opacity-90 rounded-lg shadow-lg">
                         <thead>
@@ -49,7 +49,7 @@
             @endif
 
             <!-- Productos más vendidos -->
-            <h2 class="text-2xl font-semibold mt-8 mb-4 text-[#476D9D]">Top 5 Productos Más Vendidos</h2>
+            <h2 class="text-heading-lg text-primary mt-8 mb-4">Top 5 Productos Más Vendidos</h2>
             @if ($topProducts->isEmpty())
                 <p class="text-[#476D9D] italic">No se encontraron productos vendidos en este rango de fechas.</p>
             @else

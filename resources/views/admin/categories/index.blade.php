@@ -7,13 +7,13 @@
                 <!-- Título de la sección con ícono y color de fondo -->
                 <div class="flex flex-col items-center text-center mb-6">
                     <img src="../img/" alt="Logo" class="w-16 h-16 sm:w-24 sm:h-24 mb-4 rounded-full border-4 border-[#801336]" />
-                    <h3 class="text-2xl sm:text-3xl font-bold text-[#FFFFFF]">Gestión de Categorías</h3>
+                    <h3 class="text-display-sm text-white">Gestión de Categorías</h3>
                 </div>
 
                 <!-- Botón de agregar categoría -->
                 <div class="flex justify-center mb-6">
                     <a href="{{ route('admin.categories.create') }}"
-                       class="px-4 py-2 sm:px-5 sm:py-2 bg-[#801336] text-white rounded-md font-semibold hover:bg-[#9b1a3e] transition duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#801336]">
+                       class="px-4 py-2 sm:px-5 sm:py-2 bg-primary text-white rounded-md font-semibold hover:bg-primary-700 transition duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary btn-accessible">
                        Agregar Categoría
                     </a>
                 </div>
@@ -23,8 +23,8 @@
                     <table class="w-full bg-white bg-opacity-95 rounded-lg shadow-lg mt-4">
                         <thead>
                             <tr class="bg-[#801336] text-white">
-                                <th class="px-4 sm:px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Nombre</th>
-                                <th class="px-4 sm:px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Acciones</th>
+                                <th class="px-4 sm:px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Nombre</th>
+                                <th class="px-4 sm:px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

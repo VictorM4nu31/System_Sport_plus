@@ -1,27 +1,39 @@
 <nav x-data="{ open: false }" class="flex">
     <!-- Menú lateral estático y fijo para pantallas grandes -->
     <aside class="hidden md:block bg-[#282E2E] text-white w-64 p-6 fixed h-full">
-        <div class="text-2xl font-semibold mb-8">Campos Sport</div>
+        <div class="text-heading-xl font-semibold mb-8 text-white">Campos Sport</div>
         <nav class="space-y-4">
             <!-- Enlace al Dashboard -->
-            <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
-                <span class="material-icons">dashboard</span>
-                <span>Dashboard</span>
-            </a>
+            @if (auth()->user()->hasRole('administrador'))
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
+                    <span class="material-icons">dashboard</span>
+                    <span class="text-body-md font-medium">Dashboard</span>
+                </a>
+            @elseif (auth()->user()->hasRole('trabajador'))
+                <a href="{{ route('trabajador.orders.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
+                    <span class="material-icons">dashboard</span>
+                    <span class="text-body-md font-medium">Dashboard</span>
+                </a>
+            @elseif (auth()->user()->hasRole('usuario'))
+                <a href="{{ route('usuario.dashboard') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
+                    <span class="material-icons">dashboard</span>
+                    <span class="text-body-md font-medium">Dashboard</span>
+                </a>
+            @endif
 
             <!-- Enlaces para Administradores -->
             @if (auth()->user()->hasRole('administrador'))
                 <a href="{{ route('admin.workers.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">group</span>
-                    <span>Ver Trabajadores</span>
+                    <span class="text-body-md font-medium">Ver Trabajadores</span>
                 </a>
                 <a href="{{ route('admin.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">inventory</span>
-                    <span>Gestión de Productos</span>
+                    <span class="text-body-md font-medium">Gestión de Productos</span>
                 </a>
                 <a href="{{ route('admin.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">assessment</span>
-                    <span>Reportes de Ventas</span>
+                    <span class="text-body-md font-medium">Reportes de Ventas</span>
                 </a>
             @endif
 
@@ -29,11 +41,11 @@
             @if (auth()->user()->hasRole('trabajador'))
                 <a href="{{ route('trabajador.orders.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">shopping_cart</span>
-                    <span>Pedidos</span>
+                    <span class="text-body-md font-medium">Pedidos</span>
                 </a>
                 <a href="{{ route('trabajador.reports.sales') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">bar_chart</span>
-                    <span>Reporte de Ventas</span>
+                    <span class="text-body-md font-medium">Reporte de Ventas</span>
                 </a>
             @endif
 
@@ -41,15 +53,15 @@
             @if (auth()->user()->hasRole('usuario'))
                 <a href="{{ route('usuario.products.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">store</span>
-                    <span>Catálogo de Productos</span>
+                    <span class="text-body-md font-medium">Catálogo de Productos</span>
                 </a>
                 <a href="{{ route('usuario.wishlist.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">favorite</span>
-                    <span>Lista de Deseos</span>
+                    <span class="text-body-md font-medium">Lista de Deseos</span>
                 </a>
-                <a href="{{ route('usuario.orders.direccion') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
+                <a href="{{ route('usuario.addresses.index') }}" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-600">
                     <span class="material-icons">location_on</span>
-                    <span>Administrar Direcciones</span>
+                    <span class="text-body-md font-medium">Administrar Direcciones</span>
                 </a>
             @endif
         </nav>
@@ -69,44 +81,44 @@
             <!-- Enlaces de navegación móvil -->
             <a href="{{ route('dashboard') }}" class="block p-2 rounded-md hover:bg-gray-700">
                 <span class="material-icons align-middle">dashboard</span>
-                <span class="ml-2">Dashboard</span>
+                <span class="ml-2 text-body-md font-medium">Dashboard</span>
             </a>
             @if (auth()->user()->hasRole('administrador'))
                 <a href="{{ route('admin.workers.index') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">group</span>
-                    <span class="ml-2">Ver Trabajadores</span>
+                    <span class="ml-2 text-body-md font-medium">Ver Trabajadores</span>
                 </a>
                 <a href="{{ route('admin.products.index') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">inventory</span>
-                    <span class="ml-2">Gestión de Productos</span>
+                    <span class="ml-2 text-body-md font-medium">Gestión de Productos</span>
                 </a>
                 <a href="{{ route('admin.reports.sales') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">assessment</span>
-                    <span class="ml-2">Reportes de Ventas</span>
+                    <span class="ml-2 text-body-md font-medium">Reportes de Ventas</span>
                 </a>
             @endif
             @if (auth()->user()->hasRole('trabajador'))
                 <a href="{{ route('trabajador.orders.index') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">shopping_cart</span>
-                    <span class="ml-2">Pedidos</span>
+                    <span class="ml-2 text-body-md font-medium">Pedidos</span>
                 </a>
                 <a href="{{ route('trabajador.reports.sales') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">bar_chart</span>
-                    <span class="ml-2">Reporte de Ventas</span>
+                    <span class="ml-2 text-body-md font-medium">Reporte de Ventas</span>
                 </a>
             @endif
             @if (auth()->user()->hasRole('usuario'))
                 <a href="{{ route('usuario.products.index') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">store</span>
-                    <span class="ml-2">Catálogo de Productos</span>
+                    <span class="ml-2 text-body-md font-medium">Catálogo de Productos</span>
                 </a>
                 <a href="{{ route('usuario.wishlist.index') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">favorite</span>
-                    <span class="ml-2">Lista de Deseos</span>
+                    <span class="ml-2 text-body-md font-medium">Lista de Deseos</span>
                 </a>
-                <a href="{{ route('usuario.orders.direccion') }}" class="block p-2 rounded-md hover:bg-gray-700">
+                <a href="{{ route('usuario.addresses.index') }}" class="block p-2 rounded-md hover:bg-gray-700">
                     <span class="material-icons align-middle">location_on</span>
-                    <span class="ml-2">Administrar Direcciones</span>
+                    <span class="ml-2 text-body-md font-medium">Administrar Direcciones</span>
                 </a>
             @endif
         </div>

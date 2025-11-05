@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <!-- Detalles del Pedido -->
-                <h3 class="text-lg font-semibold mb-4 text-gray-800">Detalles del Pedido #{{ $order->id }}</h3>
+                <h3 class="text-heading-md text-primary mb-4">Detalles del Pedido #{{ $order->id }}</h3>
                 <div class="space-y-2">
                     <p><strong class="text-gray-700">Usuario:</strong> {{ $order->user->name }}</p>
                     <p><strong class="text-gray-700">Total:</strong> ${{ $order->total_price }}</p>
@@ -11,14 +11,14 @@
                 </div>
 
                 <!-- Tabla de Productos -->
-                <h4 class="text-lg font-semibold mt-6 text-gray-800">Productos</h4>
+                <h4 class="text-heading-md text-primary mt-6">Productos</h4>
                 <div class="overflow-x-auto mt-4">
                     <table class="min-w-full bg-white border border-gray-200 rounded-lg">
                         <thead>
                             <tr>
-                                <th class="px-4 py-3 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Producto</th>
-                                <th class="px-4 py-3 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Cantidad</th>
-                                <th class="px-4 py-3 border-b bg-gray-100 text-left text-sm font-semibold text-gray-700">Precio</th>
+                                <th class="px-4 py-3 border-b bg-primary-50 text-left text-body-md font-semibold text-primary">Producto</th>
+                                <th class="px-4 py-3 border-b bg-primary-50 text-left text-body-md font-semibold text-primary">Cantidad</th>
+                                <th class="px-4 py-3 border-b bg-primary-50 text-left text-body-md font-semibold text-primary">Precio</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,7 +47,7 @@
                             <option value="cancelado" {{ $order->status == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
                         </select>
                     </div>
-                    <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200">
+                    <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-primary text-white rounded hover:bg-primary-700 transition duration-200 btn-accessible">
                         Actualizar Estado
                     </button>
                 </form>

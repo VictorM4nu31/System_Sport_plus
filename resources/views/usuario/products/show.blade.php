@@ -23,9 +23,9 @@
                 </div>
                 <!-- Información del Producto -->
                 <div class="w-full md:w-1/2 space-y-4">
-                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">{{ $product->name }}</h1>
+                    <h1 class="text-display-md text-primary font-bold">{{ $product->name }}</h1>
                     <!-- Descripción -->
-                    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">
+                    <p class="text-body-md text-primary-light leading-relaxed">
                         {!! nl2br(e($product->description)) !!}
                     </p>
                     <!-- Calificaciones y Ventas -->
@@ -47,13 +47,13 @@
                         @endif
                     </div>
                     <!-- Precio -->
-                    <div class="text-2xl sm:text-3xl font-bold text-gray-900">
+                    <div class="text-heading-lg text-primary font-bold">
                         MX${{ number_format($product->price, 2) }}
                     </div>
                     <!-- Indicador de Stock -->
                     <p class="mb-6">
-                        <span class="font-semibold text-gray-800">Stock:</span>
-                        <span class="{{ $product->stock > 0 ? 'text-green-600' : 'text-red-600' }}">
+                        <span class="font-semibold text-primary">Stock:</span>
+                        <span class="{{ $product->stock > 0 ? 'text-success' : 'text-error' }}">
                             {{ $product->stock > 0 ? 'Disponible' : 'Agotado' }}
                         </span>
                     </p>
@@ -83,12 +83,12 @@
                             </div>
                             <!-- Botón -->
                             <button type="submit"
-                                    class="w-full sm:w-auto px-6 py-3 bg-red-700 text-white font-semibold rounded-lg hover:bg-red-800 transition-colors">
+                                    class="w-full sm:w-auto px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors btn-accessible">
                                 Agregar al carrito
                             </button>
                         </form>
                     @else
-                        <p class="text-red-600 font-semibold">No disponible</p>
+                        <p class="text-error font-semibold">No disponible</p>
                     @endif
                 </div>
             </div>
@@ -115,7 +115,7 @@
                 <label for="review" class="block text-gray-700 font-semibold mt-4">Tu reseña:</label>
                 <textarea name="review" id="review" rows="3" class="border border-gray-300 rounded-lg p-2 w-full"></textarea>
                 <button type="submit"
-                        class="px-6 py-3 bg-red-700 text-white font-semibold rounded-lg">
+                        class="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors btn-accessible">
                     Enviar reseña
                 </button>
             </form>

@@ -7,7 +7,7 @@
                 <!-- Título de la sección con ícono y color de fondo -->
                 <div class="flex flex-col items-center text-center mb-6">
                     <img src="../img/logo.png" alt="Logo" class="w-24 h-24 mb-4 rounded-full border-4 border-[#801336]" />
-                    <h3 class="text-3xl font-bold text-[#FFFFFF]">Gestión de Pedidos</h3>
+                    <h3 class="text-display-sm text-white">Gestión de Pedidos</h3>
                 </div>
 
                 <!-- Tabla de pedidos -->
@@ -15,14 +15,14 @@
                     <table class="w-full bg-white bg-opacity-95 rounded-lg shadow-lg mt-4">
                         <thead>
                             <tr class="bg-[#801336] text-white">
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">ID</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Usuario</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Total</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Estado</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Dirección</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Teléfono</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Indicaciones</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-sm">Acciones</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">ID</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Usuario</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Total</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Estado</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Dirección</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Teléfono</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Indicaciones</th>
+                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

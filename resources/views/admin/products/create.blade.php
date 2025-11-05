@@ -2,40 +2,40 @@
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 py-6">
         <!-- Contenedor principal con opacidad y sombra -->
         <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-8">
-            <h1 class="text-3xl text-center font-bold text-[#801336] mb-8">Agregar Producto Deportivo</h1>
+            <h1 class="text-display-sm text-center font-bold text-primary mb-8">Agregar Producto Deportivo</h1>
 
             <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" id="productForm">
                 @csrf
 
                 <!-- Información Básica -->
                 <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                    <h2 class="text-xl font-semibold text-[#801336] mb-4">Información Básica</h2>
+                    <h2 class="text-heading-lg font-semibold text-primary mb-4">Información Básica</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Nombre -->
                         <div class="mb-4">
-                            <label for="name" class="block text-[#801336] font-semibold mb-2">Nombre del Producto *</label>
+                            <label for="name" class="block text-primary font-semibold mb-2 text-body-md">Nombre del Producto *</label>
                             <input id="name" name="name" type="text" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                                 placeholder="Ej: Tenis Nike Air Max">
                             @error('name')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- SKU -->
                         <div class="mb-4">
-                            <label for="sku" class="block text-[#801336] font-semibold mb-2">Código SKU</label>
+                            <label for="sku" class="block text-primary font-semibold mb-2 text-body-md">Código SKU</label>
                             <input id="sku" name="sku" type="text"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                                 placeholder="Ej: TNK-AM-001">
                             @error('sku')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Marca -->
                         <div class="mb-4">
-                            <label for="brand" class="block text-[#801336] font-semibold mb-2">Marca</label>
+                            <label for="brand" class="block text-primary font-semibold mb-2 text-body-md">Marca</label>
                             <select id="brand" name="brand"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
                                 <option value="">Seleccionar marca</option>
@@ -52,46 +52,46 @@
                                 <option value="Otra">Otra</option>
                             </select>
                             @error('brand')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Modelo -->
                         <div class="mb-4">
-                            <label for="model" class="block text-[#801336] font-semibold mb-2">Modelo</label>
+                            <label for="model" class="block text-primary font-semibold mb-2 text-body-md">Modelo</label>
                             <input id="model" name="model" type="text"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                                 placeholder="Ej: Air Max 270">
                             @error('model')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Precio -->
                         <div class="mb-4">
-                            <label for="price" class="block text-[#801336] font-semibold mb-2">Precio (MXN) *</label>
+                            <label for="price" class="block text-primary font-semibold mb-2 text-body-md">Precio (MXN) *</label>
                             <input id="price" name="price" type="number" step="0.01" min="0.01" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                                 placeholder="0.00">
                             @error('price')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Stock -->
                         <div class="mb-4">
-                            <label for="stock" class="block text-[#801336] font-semibold mb-2">Stock *</label>
+                            <label for="stock" class="block text-primary font-semibold mb-2 text-body-md">Stock *</label>
                             <input id="stock" name="stock" type="number" min="0" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                                 placeholder="0">
                             @error('stock')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Categoría -->
                         <div class="mb-4">
-                            <label for="category" class="block text-[#801336] font-semibold mb-2">Categoría *</label>
+                            <label for="category" class="block text-primary font-semibold mb-2 text-body-md">Categoría *</label>
                             <select id="category" name="category_id" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
                                 <option value="">Seleccionar categoría</option>
@@ -100,13 +100,13 @@
                                 @endforeach
                             </select>
                             @error('category_id')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Tipo de Deporte -->
                         <div class="mb-4">
-                            <label for="sport_type" class="block text-[#801336] font-semibold mb-2">Tipo de Deporte</label>
+                            <label for="sport_type" class="block text-primary font-semibold mb-2 text-body-md">Tipo de Deporte</label>
                             <select id="sport_type" name="sport_type"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
                                 <option value="">Seleccionar deporte</option>
@@ -123,7 +123,7 @@
                                 <option value="Multideporte">Multideporte</option>
                             </select>
                             @error('sport_type')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -131,11 +131,11 @@
 
                 <!-- Características del Producto -->
                 <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                    <h2 class="text-xl font-semibold text-[#801336] mb-4">Características del Producto</h2>
+                    <h2 class="text-heading-lg font-semibold text-primary mb-4">Características del Producto</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Género -->
                         <div class="mb-4">
-                            <label for="gender" class="block text-[#801336] font-semibold mb-2">Género</label>
+                            <label for="gender" class="block text-primary font-semibold mb-2 text-body-md">Género</label>
                             <select id="gender" name="gender"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
                                 <option value="">Seleccionar género</option>
@@ -144,29 +144,29 @@
                                 <option value="unisex">Unisex</option>
                             </select>
                             @error('gender')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Material -->
                         <div class="mb-4">
-                            <label for="material" class="block text-[#801336] font-semibold mb-2">Material</label>
+                            <label for="material" class="block text-primary font-semibold mb-2 text-body-md">Material</label>
                             <input id="material" name="material" type="text"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                                 placeholder="Ej: Cuero sintético, Mesh, Algodón">
                             @error('material')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Peso -->
                         <div class="mb-4">
-                            <label for="weight" class="block text-[#801336] font-semibold mb-2">Peso (kg)</label>
+                            <label for="weight" class="block text-primary font-semibold mb-2 text-body-md">Peso (kg)</label>
                             <input id="weight" name="weight" type="number" step="0.01" min="0"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                                 placeholder="0.00">
                             @error('weight')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
@@ -174,46 +174,46 @@
                         <div class="mb-4 flex items-center">
                             <input id="is_featured" name="is_featured" type="checkbox" value="1"
                                 class="h-4 w-4 text-[#801336] focus:ring-[#801336] border-gray-300 rounded">
-                            <label for="is_featured" class="ml-2 block text-[#801336] font-semibold">Producto Destacado</label>
+                            <label for="is_featured" class="ml-2 block text-primary font-semibold text-body-md">Producto Destacado</label>
                         </div>
                     </div>
                 </div>
 
                 <!-- Variantes -->
                 <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                    <h2 class="text-xl font-semibold text-[#801336] mb-4">Variantes del Producto</h2>
+                    <h2 class="text-heading-lg font-semibold text-primary mb-4">Variantes del Producto</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Tallas -->
                         <div class="mb-4">
-                            <label class="block text-[#801336] font-semibold mb-2">Tallas Disponibles</label>
+                            <label class="block text-primary font-semibold mb-2 text-body-md">Tallas Disponibles</label>
                             <div class="grid grid-cols-4 gap-2">
                                 @foreach(['XS', 'S', 'M', 'L', 'XL', 'XXL', '22', '23', '24', '25', '26', '27', '28', '29', '30'] as $size)
                                 <label class="flex items-center">
                                     <input type="checkbox" name="sizes[]" value="{{ $size }}"
                                         class="h-4 w-4 text-[#801336] focus:ring-[#801336] border-gray-300 rounded">
-                                    <span class="ml-1 text-sm text-gray-700">{{ $size }}</span>
+                                    <span class="ml-1 text-body-sm text-gray-700">{{ $size }}</span>
                                 </label>
                                 @endforeach
                             </div>
                             @error('sizes')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <!-- Colores -->
                         <div class="mb-4">
-                            <label class="block text-[#801336] font-semibold mb-2">Colores Disponibles</label>
+                            <label class="block text-primary font-semibold mb-2 text-body-md">Colores Disponibles</label>
                             <div class="grid grid-cols-3 gap-2">
                                 @foreach(['Negro', 'Blanco', 'Rojo', 'Azul', 'Verde', 'Amarillo', 'Rosa', 'Gris', 'Naranja'] as $color)
                                 <label class="flex items-center">
                                     <input type="checkbox" name="colors[]" value="{{ $color }}"
                                         class="h-4 w-4 text-[#801336] focus:ring-[#801336] border-gray-300 rounded">
-                                    <span class="ml-1 text-sm text-gray-700">{{ $color }}</span>
+                                    <span class="ml-1 text-body-sm text-gray-700">{{ $color }}</span>
                                 </label>
                                 @endforeach
                             </div>
                             @error('colors')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -221,34 +221,34 @@
 
                 <!-- Descripción e Imagen -->
                 <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                    <h2 class="text-xl font-semibold text-[#801336] mb-4">Descripción e Imagen</h2>
+                    <h2 class="text-heading-lg font-semibold text-primary mb-4">Descripción e Imagen</h2>
 
                     <!-- Descripción -->
                     <div class="mb-4">
-                        <label for="description" class="block text-[#801336] font-semibold mb-2">Descripción *</label>
+                        <label for="description" class="block text-primary font-semibold mb-2 text-body-md">Descripción *</label>
                         <textarea id="description" name="description" rows="4" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
                             placeholder="Describe las características, beneficios y detalles del producto..."></textarea>
                         @error('description')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-error text-body-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <!-- Imagen -->
                     <div class="mb-4">
-                        <label for="image" class="block text-[#801336] font-semibold mb-2">Imagen del Producto *</label>
+                        <label for="image" class="block text-primary font-semibold mb-2 text-body-md">Imagen del Producto *</label>
                         <input id="image" name="image" type="file" accept="image/*" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
-                        <p class="text-sm text-gray-600 mt-1">Formatos permitidos: JPG, PNG, GIF, WEBP. Tamaño máximo: 2MB</p>
+                        <p class="text-body-sm text-gray-600 mt-1">Formatos permitidos: JPG, PNG, GIF, WEBP. Tamaño máximo: 2MB</p>
                         @error('image')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            <span class="text-error text-body-sm">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
                 <!-- Especificaciones Técnicas -->
                 <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                    <h2 class="text-xl font-semibold text-[#801336] mb-4">Especificaciones Técnicas (Opcional)</h2>
+                    <h2 class="text-heading-lg font-semibold text-primary mb-4">Especificaciones Técnicas (Opcional)</h2>
                     <div id="specifications-container">
                         <div class="specification-row grid grid-cols-2 gap-4 mb-2">
                             <input type="text" name="spec_keys[]" placeholder="Característica (ej: Suela)"
@@ -266,11 +266,11 @@
                 <!-- Botones -->
                 <div class="flex justify-center space-x-4">
                     <a href="{{ route('admin.products.index') }}"
-                        class="px-6 py-3 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        class="px-6 py-3 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md">
                         Cancelar
                     </a>
                     <button type="submit"
-                        class="px-6 py-3 bg-[#801336] text-white font-semibold rounded-md hover:bg-[#9b1a3e] focus:outline-none focus:ring-2 focus:ring-[#801336] shadow-lg">
+                        class="px-6 py-3 bg-primary text-white font-semibold rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-lg text-body-md">
                         Guardar Producto
                     </button>
                 </div>

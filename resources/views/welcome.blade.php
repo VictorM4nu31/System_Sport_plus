@@ -175,7 +175,7 @@
                         <div class="p-4">
                             <h3 class="text-lg font-semibold">{{ $product->name }}</h3>
                             <p class="text-gray-600 p-3">${{ $product->price }}</p>
-                            <a href="{{ route('login') }}" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Ver Detalles</a>
+                            <a href="{{ route('login') }}" class="mt-2 bg-primary text-white py-2 px-4 rounded hover:bg-primary-700 transition-colors duration-200">Ver Detalles</a>
                         </div>
                     </div>
                 @endforeach
