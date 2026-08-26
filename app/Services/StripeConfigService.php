@@ -7,7 +7,7 @@ class StripeConfigService
     /**
      * Get the Stripe publishable key based on environment
      */
-    public function getPublishableKey(): string
+    public function getPublishableKey(): ?string
     {
         return config('app.env') === 'production'
             ? env('STRIPE_KEY')
@@ -17,7 +17,7 @@ class StripeConfigService
     /**
      * Get the Stripe secret key based on environment
      */
-    public function getSecretKey(): string
+    public function getSecretKey(): ?string
     {
         return config('app.env') === 'production'
             ? env('STRIPE_SECRET')
@@ -27,7 +27,7 @@ class StripeConfigService
     /**
      * Get the Stripe webhook secret based on environment
      */
-    public function getWebhookSecret(): string
+    public function getWebhookSecret(): ?string
     {
         return config('app.env') === 'production'
             ? env('STRIPE_WEBHOOK_SECRET')
