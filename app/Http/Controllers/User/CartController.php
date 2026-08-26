@@ -278,7 +278,7 @@ class CartController extends Controller
 
             // Create payment intent with Stripe
             $paymentIntent = $this->paymentService->createPaymentIntent([
-                'amount' => $total * 100, // Convert to cents
+                'amount' => (int) round($total * 100), // Convertir a centavos (entero, como espera Stripe)
                 'currency' => config('stripe.currency', 'mxn'),
                 'order_id' => $order->id,
                 'customer_email' => Auth::user()->email,
