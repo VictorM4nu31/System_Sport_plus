@@ -4,11 +4,12 @@ namespace App\Services;
 
 use App\Contracts\OrderProcessingInterface;
 use App\Contracts\StockManagementInterface;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
-use App\Services\ErrorHandlingService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
@@ -21,31 +22,28 @@ class OrderProcessingService implements OrderProcessingInterface
     {
         $this->stockService = $stockService;
     }
+
     /**
      * Process a complete order from cart data
      *
-     * @param array $cartData
-     * @param User $user
-     * @param array $paymentData
-     * @return Order
      * @throws \Exception
      */
     public function processOrder(array $cartData, User $user, array $paymentData): Order
     {
         // Validate input data
-        if (!$this->validateOrderData($cartData)) {
+        if (! $this->validateOrderData($cartData)) {
             throw new InvalidArgumentException('Invalid cart data provided');
         }
 
         // Validate stock availability using the stock service
         $stockValidation = $this->validateStockAvailability($cartData);
-        if (!empty($stockValidation['errors'])) {
-            throw new InvalidArgumentException('Stock validation failed: ' . implode(', ', $stockValidation['errors']));
+        if (! empty($stockValidation['errors'])) {
+            throw new InvalidArgumentException('Stock validation failed: '.implode(', ', $stockValidation['errors']));
         }
 
         return DB::transaction(function () use ($cartData, $user, $paymentData) {
             // Reserve stock first using the stock service
-            if (!$this->reserveStock($cartData, $user->id)) {
+            if (! $this->reserveStock($cartData, $user->id)) {
                 throw new \Exception('Failed to reserve stock for order');
             }
 
@@ -60,8 +58,8 @@ class OrderProcessingService implements OrderProcessingInterface
                 $order = Order::create([
                     'user_id' => $user->id,
                     'total_price' => $totalPrice,
-                    'status' => 'pendiente',
-                    'payment_status' => $paymentData['payment_status'] ?? 'pagado',
+                    'status' => OrderStatus::PENDING,
+                    'payment_status' => PaymentStatus::PAID,
                     'shipping_address' => $paymentData['shipping_address'] ?? null, // Mantener para compatibilidad
                     'shipping_address_id' => $shippingAddressId,
                     'payment_intent_id' => $paymentData['payment_intent_id'] ?? null,
@@ -82,7 +80,7 @@ class OrderProcessingService implements OrderProcessingInterface
                 Log::info('Order created successfully', [
                     'order_id' => $order->id,
                     'user_id' => $user->id,
-                    'total_price' => $totalPrice
+                    'total_price' => $totalPrice,
                 ]);
 
                 return $order;
@@ -97,9 +95,6 @@ class OrderProcessingService implements OrderProcessingInterface
 
     /**
      * Validate order data before processing
-     *
-     * @param array $cartData
-     * @return bool
      */
     public function validateOrderData(array $cartData): bool
     {
@@ -109,12 +104,12 @@ class OrderProcessingService implements OrderProcessingInterface
 
         foreach ($cartData as $productId => $details) {
             // Validate required fields
-            if (!isset($details['quantity']) || !isset($details['price'])) {
+            if (! isset($details['quantity']) || ! isset($details['price'])) {
                 return false;
             }
 
             // Validate data types
-            if (!is_numeric($details['quantity']) || !is_numeric($details['price'])) {
+            if (! is_numeric($details['quantity']) || ! is_numeric($details['price'])) {
                 return false;
             }
 
@@ -124,7 +119,7 @@ class OrderProcessingService implements OrderProcessingInterface
             }
 
             // Validate product exists
-            if (!Product::find($productId)) {
+            if (! Product::find($productId)) {
                 return false;
             }
         }
@@ -134,9 +129,6 @@ class OrderProcessingService implements OrderProcessingInterface
 
     /**
      * Calculate the total price for an order
-     *
-     * @param array $cartData
-     * @return float
      */
     public function calculateOrderTotal(array $cartData): float
     {
@@ -151,17 +143,14 @@ class OrderProcessingService implements OrderProcessingInterface
 
     /**
      * Reserve stock for products in the cart
-     *
-     * @param array $cartData
-     * @param int $userId
-     * @return bool
      */
     public function reserveStock(array $cartData, int $userId): bool
     {
         foreach ($cartData as $productId => $details) {
-            if (!$this->stockService->reserveStock($productId, $details['quantity'], $userId)) {
+            if (! $this->stockService->reserveStock($productId, $details['quantity'], $userId)) {
                 // If any reservation fails, release all previous reservations
                 $this->releaseStockFromCartData($cartData, $userId);
+
                 return false;
             }
         }
@@ -171,9 +160,6 @@ class OrderProcessingService implements OrderProcessingInterface
 
     /**
      * Release reserved stock for an order
-     *
-     * @param Order $order
-     * @return void
      */
     public function releaseStock(Order $order): void
     {
@@ -190,10 +176,6 @@ class OrderProcessingService implements OrderProcessingInterface
 
     /**
      * Release stock from cart data (used in rollback scenarios)
-     *
-     * @param array $cartData
-     * @param int $userId
-     * @return void
      */
     private function releaseStockFromCartData(array $cartData, int $userId): void
     {
@@ -204,9 +186,6 @@ class OrderProcessingService implements OrderProcessingInterface
 
     /**
      * Validate stock availability for cart items
-     *
-     * @param array $cartData
-     * @return array
      */
     public function validateStockAvailability(array $cartData): array
     {
@@ -216,8 +195,9 @@ class OrderProcessingService implements OrderProcessingInterface
         foreach ($cartData as $productId => $details) {
             $product = Product::find($productId);
 
-            if (!$product) {
+            if (! $product) {
                 $errors[] = "Product with ID {$productId} not found";
+
                 continue;
             }
 
@@ -234,20 +214,17 @@ class OrderProcessingService implements OrderProcessingInterface
         return [
             'errors' => $errors,
             'warnings' => $warnings,
-            'valid' => empty($errors)
+            'valid' => empty($errors),
         ];
     }
 
     /**
      * Confirm stock reservations after successful payment
-     *
-     * @param Order $order
-     * @return bool
      */
     public function confirmStockReservations(Order $order): bool
     {
         foreach ($order->orderItems as $orderItem) {
-            if (!$this->stockService->confirmReservation(
+            if (! $this->stockService->confirmReservation(
                 $orderItem->product_id,
                 $orderItem->quantity,
                 $order->user_id
@@ -255,22 +232,20 @@ class OrderProcessingService implements OrderProcessingInterface
                 Log::error('Failed to confirm stock reservation', [
                     'order_id' => $order->id,
                     'product_id' => $orderItem->product_id,
-                    'quantity' => $orderItem->quantity
+                    'quantity' => $orderItem->quantity,
                 ]);
+
                 return false;
             }
         }
 
         Log::info('Stock reservations confirmed for order', ['order_id' => $order->id]);
+
         return true;
     }
 
     /**
      * Determine which shipping address to use for the order
-     *
-     * @param User $user
-     * @param array $paymentData
-     * @return int|null
      */
     private function determineShippingAddress(User $user, array $paymentData): ?int
     {

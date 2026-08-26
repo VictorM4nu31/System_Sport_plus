@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\StripeConfigService;
+
 return [
 
     /*
@@ -12,9 +14,9 @@ return [
     |
     */
 
-    'key' => app(\App\Services\StripeConfigService::class)->getPublishableKey(),
+    'key' => app(StripeConfigService::class)->getPublishableKey(),
 
-    'secret' => app(\App\Services\StripeConfigService::class)->getSecretKey(),
+    'secret' => app(StripeConfigService::class)->getSecretKey(),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,7 +29,7 @@ return [
     */
 
     'webhook' => [
-        'secret' => app(\App\Services\StripeConfigService::class)->getWebhookSecret(),
+        'secret' => app(StripeConfigService::class)->getWebhookSecret(),
         'tolerance' => env('STRIPE_WEBHOOK_TOLERANCE', 300),
     ],
 
@@ -42,7 +44,7 @@ return [
     |
     */
 
-    'currency' => env('CASHIER_CURRENCY', 'usd'),
+    'currency' => env('CASHIER_CURRENCY', 'mxn'),
 
     /*
     |--------------------------------------------------------------------------

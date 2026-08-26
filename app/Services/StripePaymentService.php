@@ -2,28 +2,33 @@
 
 namespace App\Services;
 
+use App\Contracts\OrderProcessingInterface;
 use App\Contracts\PaymentServiceInterface;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
+use App\Models\Order;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Stripe\Exception\SignatureVerificationException;
 use Stripe\PaymentIntent;
 use Stripe\Refund;
 use Stripe\Stripe;
 use Stripe\Webhook;
-use Stripe\Exception\SignatureVerificationException;
-use Exception;
 
 class StripePaymentService implements PaymentServiceInterface
 {
-    public function __construct()
+    protected OrderProcessingInterface $orderService;
+
+    public function __construct(OrderProcessingInterface $orderService)
     {
+        $this->orderService = $orderService;
         Stripe::setApiKey(config('stripe.secret'));
     }
 
     /**
      * Create a payment intent for the given order data
-     *
-     * @param array $orderData
-     * @return PaymentIntent
      */
     public function createPaymentIntent(array $orderData): PaymentIntent
     {
@@ -62,9 +67,6 @@ class StripePaymentService implements PaymentServiceInterface
 
     /**
      * Confirm a payment using the payment intent ID
-     *
-     * @param string $paymentIntentId
-     * @return bool
      */
     public function confirmPayment(string $paymentIntentId): bool
     {
@@ -76,6 +78,7 @@ class StripePaymentService implements PaymentServiceInterface
                     'payment_intent_id' => $paymentIntentId,
                     'amount' => $paymentIntent->amount,
                 ]);
+
                 return true;
             }
 
@@ -90,15 +93,13 @@ class StripePaymentService implements PaymentServiceInterface
                 'payment_intent_id' => $paymentIntentId,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
 
     /**
      * Retrieve a payment intent by ID
-     *
-     * @param string $paymentIntentId
-     * @return PaymentIntent
      */
     public function retrievePaymentIntent(string $paymentIntentId): PaymentIntent
     {
@@ -122,9 +123,6 @@ class StripePaymentService implements PaymentServiceInterface
 
     /**
      * Handle incoming webhook requests from Stripe
-     *
-     * @param Request $request
-     * @return void
      */
     public function handleWebhook(Request $request): void
     {
@@ -179,9 +177,7 @@ class StripePaymentService implements PaymentServiceInterface
     /**
      * Process a refund for a payment
      *
-     * @param string $paymentIntentId
-     * @param int|null $amount Amount in cents, null for full refund
-     * @return Refund
+     * @param  int|null  $amount  Amount in cents, null for full refund
      */
     public function refundPayment(string $paymentIntentId, ?int $amount = null): Refund
     {
@@ -213,9 +209,6 @@ class StripePaymentService implements PaymentServiceInterface
 
     /**
      * Convert amount to Stripe format (cents)
-     *
-     * @param float $amount
-     * @return int
      */
     private function convertToStripeAmount(float $amount): int
     {
@@ -224,9 +217,6 @@ class StripePaymentService implements PaymentServiceInterface
 
     /**
      * Handle successful payment webhook
-     *
-     * @param PaymentIntent $paymentIntent
-     * @return void
      */
     private function handlePaymentSucceeded(PaymentIntent $paymentIntent): void
     {
@@ -236,15 +226,64 @@ class StripePaymentService implements PaymentServiceInterface
             'metadata' => $paymentIntent->metadata->toArray(),
         ]);
 
-        // Here you would typically update the order status in the database
-        // This will be implemented in the OrderProcessingService
+        $order = Order::where('payment_intent_id', $paymentIntent->id)->first();
+
+        if (! $order) {
+            Log::channel('payments')->warning('Order not found for succeeded payment intent', [
+                'payment_intent_id' => $paymentIntent->id,
+            ]);
+
+            return;
+        }
+
+        // Idempotency: never reprocess an order already paid.
+        if ($order->payment_status === PaymentStatus::PAID->value) {
+            Log::channel('payments')->info('Payment success event already processed, skipping order', [
+                'order_id' => $order->id,
+                'payment_intent_id' => $paymentIntent->id,
+            ]);
+
+            return;
+        }
+
+        try {
+            DB::transaction(function () use ($order, $paymentIntent) {
+                if (! $this->orderService->confirmStockReservations($order)) {
+                    Log::channel('payments')->error('Failed to confirm stock reservations after payment success', [
+                        'order_id' => $order->id,
+                        'payment_intent_id' => $paymentIntent->id,
+                    ]);
+
+                    $order->update([
+                        'status' => OrderStatus::FAILED,
+                        'payment_status' => PaymentStatus::FAILED,
+                    ]);
+
+                    return;
+                }
+
+                $order->update([
+                    'status' => OrderStatus::PAID,
+                    'payment_status' => PaymentStatus::PAID,
+                ]);
+            });
+
+            Log::channel('payments')->info('Order marked as paid from webhook', [
+                'order_id' => $order->id,
+                'payment_intent_id' => $paymentIntent->id,
+            ]);
+        } catch (Exception $e) {
+            Log::channel('payments')->error('Error processing payment success webhook', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return;
+        }
     }
 
     /**
      * Handle failed payment webhook
-     *
-     * @param PaymentIntent $paymentIntent
-     * @return void
      */
     private function handlePaymentFailed(PaymentIntent $paymentIntent): void
     {
@@ -254,15 +293,40 @@ class StripePaymentService implements PaymentServiceInterface
             'metadata' => $paymentIntent->metadata->toArray(),
         ]);
 
-        // Here you would typically handle the failed payment
-        // This will be implemented in the OrderProcessingService
+        $order = Order::where('payment_intent_id', $paymentIntent->id)->first();
+
+        if (! $order) {
+            Log::channel('payments')->warning('Order not found for failed payment intent', [
+                'payment_intent_id' => $paymentIntent->id,
+            ]);
+
+            return;
+        }
+
+        if ($order->payment_status === PaymentStatus::PAID->value) {
+            Log::channel('payments')->info('Order already paid, ignoring failed event', [
+                'order_id' => $order->id,
+            ]);
+
+            return;
+        }
+
+        // Release stock reservations so the inventory is not kept locked.
+        $this->orderService->releaseStock($order);
+
+        $order->update([
+            'status' => OrderStatus::FAILED,
+            'payment_status' => PaymentStatus::FAILED,
+        ]);
+
+        Log::channel('payments')->info('Order marked as failed from webhook', [
+            'order_id' => $order->id,
+            'payment_intent_id' => $paymentIntent->id,
+        ]);
     }
 
     /**
      * Handle canceled payment webhook
-     *
-     * @param PaymentIntent $paymentIntent
-     * @return void
      */
     private function handlePaymentCanceled(PaymentIntent $paymentIntent): void
     {
@@ -271,7 +335,30 @@ class StripePaymentService implements PaymentServiceInterface
             'metadata' => $paymentIntent->metadata->toArray(),
         ]);
 
-        // Here you would typically handle the canceled payment
-        // This will be implemented in the OrderProcessingService
+        $order = Order::where('payment_intent_id', $paymentIntent->id)->first();
+
+        if (! $order) {
+            Log::channel('payments')->warning('Order not found for canceled payment intent', [
+                'payment_intent_id' => $paymentIntent->id,
+            ]);
+
+            return;
+        }
+
+        if (in_array($order->payment_status, [PaymentStatus::PAID->value, PaymentStatus::COMPLETED->value], true)) {
+            return;
+        }
+
+        $this->orderService->releaseStock($order);
+
+        $order->update([
+            'status' => OrderStatus::FAILED,
+            'payment_status' => PaymentStatus::FAILED,
+        ]);
+
+        Log::channel('payments')->info('Order marked as failed from canceled webhook', [
+            'order_id' => $order->id,
+            'payment_intent_id' => $paymentIntent->id,
+        ]);
     }
 }

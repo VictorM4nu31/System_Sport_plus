@@ -40,24 +40,19 @@
 
         <!-- Calcular el total del carrito -->
         @php
-            $subtotal = array_sum(
-                array_map(function ($details) {
-                    return $details['price'] * $details['quantity'];
-                }, session('cart')),
-            );
-
-                $shippingCost = $subtotal < 300 ? 200 : 0;
-                $total = $subtotal + $shippingCost;
+            $subtotal = $totals['subtotal'] ?? 0;
+            $shippingCost = $totals['shipping'] ?? 0;
+            $total = $totals['total'] ?? ($subtotal + $shippingCost);
         @endphp
         <div class="mt-6 space-y-3">
             <h2 class="text-lg sm:text-xl text-white font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
             <h2 class="text-lg sm:text-xl text-white font-semibold">
                 Costo de Envío:
                 <span class="block sm:inline mt-1 sm:mt-0">
-                    @if ($subtotal > 300)
-                        Envío gratis
+                    @if ($shippingCost > 0)
+                        ${{ number_format($shippingCost, 2) }}
                     @else
-                        $200.00
+                        Envío gratis
                     @endif
                 </span>
             </h2>

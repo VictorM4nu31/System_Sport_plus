@@ -1,24 +1,29 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MonitoringController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\WorkerController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\User\AddressController;
-
-use App\Http\Controllers\Admin\{
-    WorkerController, ProductController, CategoryController,
-    OrderController, ReportController
-};
-use App\Http\Controllers\User\{
-    ProductController as UserProductController,
-    CartController, OrderController as UserOrderController,
-    UserOrderHistoryController, WishlistController, ReviewController
-};
+use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\User\ProductController as UserProductController;
+use App\Http\Controllers\User\ReviewController;
+use App\Http\Controllers\User\UserOrderHistoryController;
+use App\Http\Controllers\User\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
 // Dashboard redirect based on user role
-Route::get('/dashboard', [App\Http\Controllers\DashboardRedirectController::class, 'index'])
+Route::get('/dashboard', [DashboardRedirectController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -42,13 +47,11 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
     Route::get('/productos', [UserProductController::class, 'index'])->name('usuario.products.index');
     Route::get('/productos/{id}', [UserProductController::class, 'show'])->name('usuario.products.show');
 
-
     // Cart routes
     Route::controller(CartController::class)->group(function () {
         Route::get('/carrito', 'index')->name('usuario.cart.index');
         Route::post('/carrito/{id}/agregar', 'add')->name('usuario.cart.add');
         Route::post('/carrito/{id}/eliminar', 'remove')->name('usuario.cart.remove');
-        Route::post('/carrito/procesar-pedido', 'processOrder')->name('usuario.cart.processOrder');
 
         // Stripe payment routes
         Route::post('/carrito/create-payment-intent', 'createPaymentIntent')->name('usuario.cart.create-payment-intent');
@@ -74,7 +77,7 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
         Route::post('/{id}/eliminar', 'remove')->name('usuario.wishlist.remove');
     });
 
-        // Review routes
+    // Review routes
     Route::controller(ReviewController::class)->prefix('productos')->group(function () {
         Route::post('/{id}/reseñas', 'store')->name('usuario.reviews.store'); // Ruta para guardar reseñas
         Route::get('/{id}/reseñas', 'index')->name('usuario.reviews.index'); // Ruta para mostrar reseñas de un producto
@@ -86,8 +89,8 @@ Route::middleware(['auth', 'role:administrador'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard/chart-data', [\App\Http\Controllers\Admin\DashboardController::class, 'chartData'])->name('dashboard.chart-data');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
         Route::resource('workers', WorkerController::class)->except(['show']);
         Route::resource('products', ProductController::class);
         Route::post('/products/{id}/sync-stripe', [ProductController::class, 'syncWithStripe'])->name('products.sync-stripe');
@@ -98,7 +101,7 @@ Route::middleware(['auth', 'role:administrador'])
         Route::get('reports/sales', [ReportController::class, 'salesReport'])->name('reports.sales');
 
         // Monitoring routes
-        Route::controller(\App\Http\Controllers\Admin\MonitoringController::class)->prefix('monitoring')->group(function () {
+        Route::controller(MonitoringController::class)->prefix('monitoring')->group(function () {
             Route::get('/dashboard', 'dashboard')->name('monitoring.dashboard');
             Route::get('/health-status', 'healthStatus')->name('monitoring.health-status');
             Route::get('/metrics', 'metrics')->name('monitoring.metrics');
@@ -137,15 +140,13 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
     });
 
     // Dashboard del usuario
-    Route::get('/usuario/dashboard', [App\Http\Controllers\User\OrderController::class, 'dashboard'])->name('usuario.dashboard');
+    Route::get('/usuario/dashboard', [UserOrderController::class, 'dashboard'])->name('usuario.dashboard');
 });
-
-
 
 Route::get('/api/address/{postalCode}', [ProfileController::class, 'getAddressByPostalCode']);
 
 // Stripe webhook route (no authentication required)
-Route::post('/stripe/webhook', [App\Http\Controllers\StripeWebhookController::class, 'handle'])
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
     ->name('stripe.webhook');
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

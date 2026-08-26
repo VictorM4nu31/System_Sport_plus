@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\StripeProductService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use App\Services\StripeProductService;
 
 class Product extends Model
 {
@@ -48,20 +47,7 @@ class Product extends Model
 
     public function getFormattedPriceAttribute()
     {
-        return '$' . number_format($this->price, 2);
-    }
-
-    // Nuevo método para reservas de stock
-    public function reserveStock(int $quantity): bool
-    {
-        return DB::transaction(function () use ($quantity) {
-            $this->lockForUpdate();
-            if ($this->stock >= $quantity) {
-                $this->decrement('stock', $quantity);
-                return true;
-            }
-            return false;
-        });
+        return '$'.number_format($this->price, 2);
     }
 
     // Relación con las reseñas
@@ -75,44 +61,17 @@ class Product extends Model
         return round($this->reviews()->avg('rating'), 1) ?: 0; // Retorna 0 si no hay reseñas
     }
 
-    // Eventos del modelo para sincronizar con Stripe
-    protected static function booted()
-    {
-        // Crear producto en Stripe después de crearlo localmente
-        static::created(function ($product) {
-            if (config('stripe.auto_sync', true)) {
-                $stripeService = new StripeProductService();
-                $stripeService->createStripeProduct($product);
-            }
-        });
-
-        // Actualizar producto en Stripe después de actualizarlo localmente
-        static::updated(function ($product) {
-            if (config('stripe.auto_sync', true) && $product->stripe_product_id) {
-                $stripeService = new StripeProductService();
-                $stripeService->updateStripeProduct($product);
-            }
-        });
-
-        // Archivar producto en Stripe antes de eliminarlo localmente
-        static::deleting(function ($product) {
-            if (config('stripe.auto_sync', true) && $product->stripe_product_id) {
-                $stripeService = new StripeProductService();
-                $stripeService->deleteStripeProduct($product);
-            }
-        });
-    }
-
     // Método para sincronizar manualmente con Stripe
     public function syncWithStripe()
     {
-        $stripeService = new StripeProductService();
+        $stripeService = new StripeProductService;
+
         return $stripeService->syncWithStripe($this);
     }
 
     // Verificar si el producto está sincronizado con Stripe
     public function isSyncedWithStripe()
     {
-        return !empty($this->stripe_product_id) && !empty($this->stripe_price_id);
+        return ! empty($this->stripe_product_id) && ! empty($this->stripe_price_id);
     }
 }
