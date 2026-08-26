@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -57,7 +58,7 @@ class Order extends Model
     // Verificar si el pedido fue rechazado
     public function isRejected()
     {
-        return $this->status === 'rejected';
+        return $this->status === OrderStatus::REJECTED->value;
     }
 
     // Obtener la fecha de rechazo formateada

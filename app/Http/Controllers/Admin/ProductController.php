@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Product;
 use App\Models\Category;
-use App\Services\ValidationService;
+use App\Models\Product;
 use App\Services\StripeProductService;
+use App\Services\ValidationService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -19,6 +19,7 @@ class ProductController extends Controller
     {
         // Middleware is handled by routes in Laravel 11
     }
+
     // Mostrar todos los productos con filtros
     public function index(Request $request)
     {
@@ -28,7 +29,7 @@ class ProductController extends Controller
 
         // Filtro por búsqueda de nombre
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         // Filtro por marca
@@ -53,8 +54,8 @@ class ProductController extends Controller
 
         // Ordenar por productos destacados primero, luego por nombre
         $products = $query->orderBy('is_featured', 'desc')
-                         ->orderBy('name', 'asc')
-                         ->get();
+            ->orderBy('name', 'asc')
+            ->get();
 
         Log::channel('audit')->info('Admin viewed products list', [
             'user_id' => Auth::id(),
@@ -73,6 +74,7 @@ class ProductController extends Controller
         Gate::authorize('create', Product::class);
 
         $categories = Category::all(); // Obtener todas las categorías
+
         return view('admin.products.create', compact('categories'));
     }
 
@@ -115,6 +117,8 @@ class ProductController extends Controller
             'timestamp' => now(),
         ]);
 
+        $this->syncProductWithStripe($product);
+
         return redirect()->route('admin.products.index')->with('success', 'Producto creado con éxito.');
     }
 
@@ -125,9 +129,9 @@ class ProductController extends Controller
         Gate::authorize('update', $product);
 
         $categories = Category::all(); // Obtener todas las categorías
+
         return view('admin.products.edit', compact('product', 'categories'));
     }
-
 
     // Actualizar un producto existente
     public function update(Request $request, $id)
@@ -178,9 +182,10 @@ class ProductController extends Controller
             'timestamp' => now(),
         ]);
 
+        $this->syncProductWithStripe($product);
+
         return redirect()->route('admin.products.index')->with('success', 'Producto actualizado con éxito.');
     }
-
 
     // Eliminar un producto
     public function destroy($id)
@@ -189,6 +194,9 @@ class ProductController extends Controller
         Gate::authorize('delete', $product);
 
         $productData = $product->toArray();
+
+        $this->archiveProductOnStripe($product);
+
         $product->delete();
 
         Log::channel('audit')->info('Product deleted', [
@@ -208,21 +216,22 @@ class ProductController extends Controller
     {
         if ($request->hasFile('image')) {
             // Generar nombre único para evitar conflictos
-            $fileName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $fileName = time().'_'.$request->file('image')->getClientOriginalName();
 
             // Optimizar imagen antes de guardar (opcional)
             $path = $request->file('image')->storeAs('products', $fileName, 'public');
 
             return $fileName;
         }
+
         return null;
     }
 
     // Método para eliminar imagen anterior
     protected function deleteOldImage($imagePath)
     {
-        if ($imagePath && Storage::disk('public')->exists('products/' . $imagePath)) {
-            Storage::disk('public')->delete('products/' . $imagePath);
+        if ($imagePath && Storage::disk('public')->exists('products/'.$imagePath)) {
+            Storage::disk('public')->delete('products/'.$imagePath);
         }
     }
 
@@ -236,7 +245,7 @@ class ProductController extends Controller
             $values = $request->spec_values;
 
             for ($i = 0; $i < count($keys); $i++) {
-                if (!empty($keys[$i]) && !empty($values[$i])) {
+                if (! empty($keys[$i]) && ! empty($values[$i])) {
                     $specifications[$keys[$i]] = $values[$i];
                 }
             }
@@ -244,6 +253,7 @@ class ProductController extends Controller
 
         return $specifications;
     }
+
     // Mostrar detalles de un producto
     public function show($id)
     {
@@ -252,10 +262,12 @@ class ProductController extends Controller
 
         return view('admin.products.show', compact('product'));
     }
+
     // Mostrar productos en la vista de welcome
     public function welcome()
     {
         $products = Product::all();
+
         return view('welcome', compact('products'));
     }
 
@@ -265,7 +277,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         Gate::authorize('update', $product);
 
-        $stripeService = new StripeProductService();
+        $stripeService = new StripeProductService;
         $result = $stripeService->syncWithStripe($product);
 
         if ($result['success']) {
@@ -279,7 +291,7 @@ class ProductController extends Controller
 
             return redirect()->back()->with('success', 'Producto sincronizado con Stripe exitosamente.');
         } else {
-            return redirect()->back()->with('error', 'Error al sincronizar con Stripe: ' . $result['error']);
+            return redirect()->back()->with('error', 'Error al sincronizar con Stripe: '.$result['error']);
         }
     }
 
@@ -289,12 +301,54 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         Gate::authorize('view', $product);
 
-        $stripeService = new StripeProductService();
+        $stripeService = new StripeProductService;
         $stripeInfo = $stripeService->getStripeProduct($product);
 
         return response()->json($stripeInfo);
     }
 
+    /**
+     * Sincronizar el producto con Stripe sin que un fallo de la API rompa el
+     * guardado local del producto.
+     */
+    private function syncProductWithStripe(Product $product): void
+    {
+        if (! config('stripe.auto_sync', true)) {
+            return;
+        }
+
+        try {
+            if ($product->stripe_product_id) {
+                (new StripeProductService)->updateStripeProduct($product);
+            } else {
+                (new StripeProductService)->createStripeProduct($product);
+            }
+        } catch (\Throwable $e) {
+            Log::channel('audit')->error('Stripe product sync failed', [
+                'product_id' => $product->id,
+                'error' => $e->getMessage(),
+                'action' => 'products.sync_stripe',
+            ]);
+        }
+    }
+
+    /**
+     * Archivar el producto en Stripe antes de eliminarlo localmente.
+     */
+    private function archiveProductOnStripe(Product $product): void
+    {
+        if (! config('stripe.auto_sync', true) || ! $product->stripe_product_id) {
+            return;
+        }
+
+        try {
+            (new StripeProductService)->deleteStripeProduct($product);
+        } catch (\Throwable $e) {
+            Log::channel('audit')->error('Stripe product archive failed', [
+                'product_id' => $product->id,
+                'error' => $e->getMessage(),
+                'action' => 'products.archive_stripe',
+            ]);
+        }
+    }
 }
-
-
