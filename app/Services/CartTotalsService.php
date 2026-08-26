@@ -25,7 +25,7 @@ class CartTotalsService
         }
 
         $subtotal = round($subtotal, 2);
-        $shipping = $subtotal < self::FREE_SHIPPING_THRESHOLD ? self::SHIPPING_COST : 0.0;
+        $shipping = $subtotal > 0 && $subtotal < self::FREE_SHIPPING_THRESHOLD ? self::SHIPPING_COST : 0.0;
 
         return [
             'subtotal' => $subtotal,
