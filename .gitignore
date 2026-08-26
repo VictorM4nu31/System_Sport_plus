@@ -19,3 +19,9 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+# Encrypted Stripe Configuration
+storage/app/secure/
+*.enc
+
+# Kiro directory
+/.kiro/

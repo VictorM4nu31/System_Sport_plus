@@ -49,6 +49,8 @@ return [
 
     'encrypt' => env('SESSION_ENCRYPT', false),
 
+    'serialization' => 'json',
+
     /*
     |--------------------------------------------------------------------------
     | Session File Location
