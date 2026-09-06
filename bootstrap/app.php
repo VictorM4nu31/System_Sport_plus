@@ -1,9 +1,18 @@
 <?php
 
+use App\Exceptions\OrderProcessingException;
+use App\Exceptions\PaymentProcessingException;
+use App\Exceptions\StockManagementException;
+use App\Http\Middleware\EnhancedAuthMiddleware;
+use App\Http\Middleware\InputSanitizationMiddleware;
+use App\Http\Middleware\TrackAnalytics;
+use App\Services\ErrorHandlingService;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,59 +22,67 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Stripe envía el webhook sin token CSRF
+        $middleware->preventRequestForgery(except: [
+            'stripe/*',
+        ]);
+
         $middleware->alias([
-            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'enhanced.auth' => \App\Http\Middleware\EnhancedAuthMiddleware::class,
-            'input.sanitization' => \App\Http\Middleware\InputSanitizationMiddleware::class,
-            'track.analytics' => \App\Http\Middleware\TrackAnalytics::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'enhanced.auth' => EnhancedAuthMiddleware::class,
+            'input.sanitization' => InputSanitizationMiddleware::class,
+            'track.analytics' => TrackAnalytics::class,
         ]);
 
         // Apply input sanitization and analytics tracking to all web routes
         $middleware->web(append: [
-            \App\Http\Middleware\InputSanitizationMiddleware::class,
-            \App\Http\Middleware\TrackAnalytics::class,
+            InputSanitizationMiddleware::class,
+            TrackAnalytics::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (\App\Exceptions\OrderProcessingException $e, $request) {
+        $exceptions->render(function (OrderProcessingException $e, $request) {
             if ($request->expectsJson()) {
-                return \App\Services\ErrorHandlingService::jsonErrorResponse(
+                return ErrorHandlingService::jsonErrorResponse(
                     $e->getMessage(),
                     500,
                     ['order_data' => $e->getOrderData()]
                 );
             }
-            return \App\Services\ErrorHandlingService::redirectErrorResponse(
+
+            return ErrorHandlingService::redirectErrorResponse(
                 'usuario.cart.index',
                 $e->getMessage()
             );
         });
 
-        $exceptions->render(function (\App\Exceptions\PaymentProcessingException $e, $request) {
+        $exceptions->render(function (PaymentProcessingException $e, $request) {
             if ($request->expectsJson()) {
-                return \App\Services\ErrorHandlingService::jsonErrorResponse(
+                return ErrorHandlingService::jsonErrorResponse(
                     $e->getMessage(),
                     500,
                     ['payment_data' => $e->getPaymentData()]
                 );
             }
-            return \App\Services\ErrorHandlingService::redirectErrorResponse(
+
+            return ErrorHandlingService::redirectErrorResponse(
                 'usuario.cart.index',
                 $e->getMessage()
             );
         });
 
-        $exceptions->render(function (\App\Exceptions\StockManagementException $e, $request) {
+        $exceptions->render(function (StockManagementException $e, $request) {
             if ($request->expectsJson()) {
-                return \App\Services\ErrorHandlingService::jsonErrorResponse(
+                return ErrorHandlingService::jsonErrorResponse(
                     $e->getMessage(),
                     400,
                     ['stock_data' => $e->getStockData()]
                 );
             }
-            return \App\Services\ErrorHandlingService::redirectErrorResponse(
+
+            return ErrorHandlingService::redirectErrorResponse(
                 'usuario.cart.index',
                 $e->getMessage()
             );

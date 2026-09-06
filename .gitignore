@@ -26,3 +26,17 @@ storage/app/secure/
 
 # Kiro directory
 /.kiro/
+
+# AI assistants (no subir al repositorio)
+.ai/
+.agents/
+.opencode/
+opencode.json
+.claude/
+.claude.json
+.cursor/
+.cursorrules
+AGENTS.md
+boost.json
+.playwright-mcp/
+*.playwright-mcp/
