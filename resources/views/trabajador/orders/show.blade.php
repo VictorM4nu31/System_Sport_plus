@@ -75,8 +75,9 @@
                                         <td class="px-6 py-4">
                                             <div class="flex items-center space-x-4">
                                                 @if($item->product->image)
-                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                    <img src="{{ asset('storage/products/' . $item->product->image) }}"
                                                          alt="{{ $item->product->name }}"
+                                                         loading="lazy"
                                                          class="w-16 h-16 object-cover rounded-lg">
                                                 @else
                                                     <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">

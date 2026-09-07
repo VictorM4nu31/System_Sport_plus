@@ -121,6 +121,7 @@
                                         @if($product->image)
                                             <img src="{{ asset('storage/products/' . $product->image) }}"
                                                  class="h-16 w-16 object-cover rounded-md shadow-sm"
+                                                 loading="lazy"
                                                  alt="{{ $product->name }}">
                                         @else
                                             <div class="h-16 w-16 bg-gray-200 rounded-md flex items-center justify-center">

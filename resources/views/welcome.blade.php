@@ -3,6 +3,9 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#131417">
+        <link rel="manifest" href="{{ route('pwa.manifest') }}">
+        <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
         <title>Campos Sport</title>
 
         <!-- Estilos del build Vite único (sin CDN Tailwind duplicado) -->
@@ -59,9 +62,9 @@
     <div class="container mx-auto relative">
         <!-- Slider -->
         <div id="carousel" class="flex transition-transform duration-700 ease-in-out">
-            <img src="{{ asset('img/banner1.jpg') }}" alt="Slide 1" class="w-full object-cover">
-            <img src="{{ asset('img/banner2.jpg') }}" alt="Slide 2" class="w-full object-cover">
-            <img src="{{ asset('img/banner3.jpg') }}" alt="Slide 3" class="w-full object-cover">
+            <img src="{{ asset('img/banner1.jpg') }}" alt="Slide 1" class="w-full object-cover" fetchpriority="high" decoding="async">
+            <img src="{{ asset('img/banner2.jpg') }}" alt="Slide 2" class="w-full object-cover" loading="lazy" decoding="async">
+            <img src="{{ asset('img/banner3.jpg') }}" alt="Slide 3" class="w-full object-cover" loading="lazy" decoding="async">
         </div>
 
         <!-- Navigation -->
@@ -237,6 +240,16 @@
         <p>&copy; 2024 Sports Store. All Rights Reserved.</p>
     </div>
 </footer>
+
+<script>
+    // Registro del Service Worker (solo navegadores compatibles).
+    if ('serviceWorker' in navigator && !window.__swInit) {
+        window.__swInit = true;
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('{{ route('pwa.sw') }}', { scope: '/' }).catch(() => {});
+        });
+    }
+</script>
 
 </body>
 </html>

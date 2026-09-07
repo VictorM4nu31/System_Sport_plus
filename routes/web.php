@@ -22,6 +22,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
+// PWA: manifest y service worker con cabeceras correctas.
+// El checkout y las rutas sensibles nunca se cachean (ver public/sw.js).
+Route::get('/manifest.webmanifest', function () {
+    return response()->file(public_path('manifest.webmanifest'), [
+        'Content-Type' => 'application/manifest+json',
+        'Cache-Control' => 'public, max-age=3600',
+    ]);
+})->name('pwa.manifest');
+
+Route::get('/sw.js', function () {
+    return response()->file(public_path('sw.js'), [
+        'Content-Type' => 'application/javascript',
+        'Cache-Control' => 'no-cache',
+        'Service-Worker-Allowed' => '/',
+    ]);
+})->name('pwa.sw');
+
 // Dashboard redirect based on user role
 Route::get('/dashboard', [DashboardRedirectController::class, 'index'])
     ->middleware(['auth', 'verified'])

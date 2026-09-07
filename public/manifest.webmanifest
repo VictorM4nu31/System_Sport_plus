@@ -1,0 +1,19 @@
+{
+  "name": "Campos Sport",
+  "short_name": "Campos Sport",
+  "description": "Tienda deportiva: catálogo, carrito y pedidos.",
+  "start_url": "/productos",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7F5F0",
+  "theme_color": "#131417",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/img/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

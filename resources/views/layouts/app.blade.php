@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="stripe-key" content="{{ config('stripe.key') }}">
+    <meta name="theme-color" content="#131417">
+    <link rel="manifest" href="{{ route('pwa.manifest') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
@@ -125,6 +128,15 @@
             <p class="mt-2 text-xs text-gray-500">↑↓ navegar · Enter abrir · Escribe #123 para ir al pedido directo</p>
         </div>
     </dialog>
+    <script>
+        // Registro del Service Worker (solo navegadores compatibles; nunca interfiere con el pago).
+        if ('serviceWorker' in navigator && !window.__swInit) {
+            window.__swInit = true;
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('{{ route('pwa.sw') }}', { scope: '/' }).catch(() => {});
+            });
+        }
+    </script>
     <script>
         // Palette ⌘K/Ctrl+K: acciones por rol + búsqueda viva + recientes.
         (() => {

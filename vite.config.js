@@ -9,10 +9,15 @@ export default defineConfig({
         }),
     ],
     build: {
+        // Alerta si un chunk supera ~250 kB gzip (Stripe/Chart van por CDN, fuera del bundle).
+        chunkSizeWarningLimit: 250,
         rollupOptions: {
             output: {
-                manualChunks: undefined, // Simplificar la división de chunks
-            }
-        }
-    }
+                // Vendor separado para mejor cacheo del navegador.
+                manualChunks: {
+                    vendor: ['alpinejs', 'axios'],
+                },
+            },
+        },
+    },
 });
