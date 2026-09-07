@@ -13,18 +13,20 @@
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link rel="dns-prefetch" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=archivo:700,800,900&display=swap" rel="stylesheet" />
     <link rel="preload" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap"></noscript>
     <!-- Scripts (Vite build único; sin CDN duplicados) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
+    <a href="#contenido" class="skip-link">Saltar al contenido</a>
     <div class="flex flex-col md:flex-row">
         @include('layouts.navigation')
 
         <!-- Contenido principal con margen izquierdo responsivo -->
-        <div class="flex-1 overflow-y-auto p-6 bg-[#ECF0F1] md:ml-64">
-            <header class="bg-[#282E2E] flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
+        <div class="flex-1 overflow-y-auto p-6 bg-paper md:ml-64">
+            <header class="bg-carbon flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
                 <!-- Título en blanco -->
                 <div class="text-heading-lg text-white">@yield('title', 'Bienvenido')</div>
 
@@ -67,7 +69,7 @@
 
             <div class="relative min-h-screen overflow-hidden">
                 <div class="relative z-10">
-                    <main>
+                    <main id="contenido">
                         {{ $slot }}
                     </main>
                 </div>

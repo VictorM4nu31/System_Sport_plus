@@ -380,3 +380,189 @@
   background-color: var(--color-error-100);
   color: var(--color-error-800);
 }
+
+/* ============================================================
+   Athletic Editorial — Design Tokens (Fase 2)
+   Convive con las clases legacy (.btn-primary, .text-primary).
+   Paleta: paper / carbon / volt / heritage sobre base existente.
+   ============================================================ */
+:root {
+  --ath-paper: #f7f5f0;
+  --ath-carbon: #131417;
+  --ath-carbon-2: #101214;
+  --ath-line: #e8e3d8;
+  --ath-muted: #6b6f76;
+  --ath-heritage: #7a1230;
+  --ath-volt: #d9f527;
+  --ath-success: #0e7a5f;
+  --ath-warning: #b45309;
+  --ath-error: #c81e1e;
+  --ath-info: #1d4ed8;
+  --ath-radius-sm: 6px;
+  --ath-radius-md: 10px;
+  --ath-radius-lg: 14px;
+  --ath-motion-fast: 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ath-motion-base: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ath-motion-slow: 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer components {
+  /* Botón principal atlético (carbón, no azul SaaS) */
+  .btn-carbon {
+    background-color: var(--ath-carbon);
+    color: #fff;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--ath-radius-md);
+    font-weight: 600;
+    border: 1px solid var(--ath-carbon);
+    cursor: pointer;
+    transition: background-color var(--ath-motion-base), transform var(--ath-motion-fast);
+  }
+
+  .btn-carbon:hover {
+    background-color: #232528;
+  }
+
+  .btn-carbon:active {
+    transform: translateY(1px);
+  }
+
+  /* Acento volt: solo fondo con texto carbón (contraste 15:1) */
+  .btn-volt {
+    background-color: var(--ath-volt);
+    color: var(--ath-carbon);
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--ath-radius-md);
+    font-weight: 700;
+    border: 1px solid var(--ath-carbon);
+    cursor: pointer;
+    transition: filter var(--ath-motion-base), transform var(--ath-motion-fast);
+  }
+
+  .btn-volt:hover {
+    filter: brightness(1.05);
+  }
+
+  .btn-volt:active {
+    transform: translateY(1px);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--ath-carbon);
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--ath-radius-md);
+    font-weight: 600;
+    border: 1px solid var(--ath-line);
+    cursor: pointer;
+    transition: border-color var(--ath-motion-base), background-color var(--ath-motion-base);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--ath-carbon);
+    background-color: rgba(19, 20, 23, 0.04);
+  }
+
+  /* Badges de stock vivo */
+  .badge-stock-ok {
+    background-color: #e6f4ee;
+    color: var(--ath-success);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+
+  .badge-stock-low {
+    background-color: #fef3c7;
+    color: var(--ath-warning);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+
+  .badge-stock-out {
+    background-color: #fee2e2;
+    color: var(--ath-error);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+
+  /* Precio tabular (sin salto de layout al cambiar) */
+  .price-mono {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* Skeleton para carga progresiva (catálogo) */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: #ece8de;
+    border-radius: var(--ath-radius-md);
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+    animation: ath-shimmer 1.4s infinite;
+  }
+
+  @keyframes ath-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Focus visible volt: señal atlética y accesible */
+  .focus-volt:focus-visible {
+    outline: 2px solid var(--ath-carbon);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--ath-volt);
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--ath-carbon);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0 0 var(--ath-radius-md) 0;
+    z-index: 100;
+  }
+
+  .skip-link:focus {
+    left: 0;
+  }
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid #131417;
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

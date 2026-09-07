@@ -13,8 +13,19 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                display: ['Archivo', 'Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                paper: '#F7F5F0',
+                carbon: {
+                    DEFAULT: '#131417',
+                    2: '#101214',
+                },
+                line: '#E8E3D8',
+                muted: '#6B6F76',
+                heritage: '#7A1230',
+                volt: '#D9F527',
+                ink: '#131417',
                 primary: {
                     50: '#fdf2f4',
                     100: '#fce7eb',
