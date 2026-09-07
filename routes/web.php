@@ -46,6 +46,7 @@ Route::middleware('guest')->controller(RegisteredUserController::class)->group(f
 Route::middleware(['auth', 'role:usuario'])->group(function () {
     Route::get('/productos', [UserProductController::class, 'index'])->name('usuario.products.index');
     Route::get('/productos/search', [UserProductController::class, 'search'])->name('usuario.products.search');
+    Route::get('/productos/{id}/ficha', [UserProductController::class, 'ficha'])->name('usuario.products.ficha');
     Route::get('/productos/{id}', [UserProductController::class, 'show'])->name('usuario.products.show');
 
     // Cart routes
@@ -77,6 +78,7 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
         Route::get('/', 'index')->name('usuario.wishlist.index');
         Route::post('/{id}/agregar', 'add')->name('usuario.wishlist.add');
         Route::post('/{id}/eliminar', 'remove')->name('usuario.wishlist.remove');
+        Route::post('/{id}/mover', 'moveToCart')->name('usuario.wishlist.move');
     });
 
     // Review routes

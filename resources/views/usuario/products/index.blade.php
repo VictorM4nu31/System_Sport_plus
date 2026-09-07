@@ -149,9 +149,166 @@
 
         <!-- Paginación -->
         @if($products->hasPages())
-        <div class="mt-8 flex justify-center">
+        <div class="mt-8 flex justify-center" data-catalogo-pagination>
             {{ $products->appends(request()->query())->links() }}
         </div>
         @endif
+
+        <!-- Barra de comparación (aparece al seleccionar productos) -->
+        <div class="fixed bottom-4 left-1/2 z-40 hidden -translate-x-1/2 items-center gap-3 rounded-full border border-carbon bg-carbon px-5 py-3 text-white shadow-lg" data-compare-bar role="status">
+            <span class="text-sm font-medium" data-compare-count>0 seleccionados</span>
+            <button type="button" class="focus-volt rounded-full bg-volt px-4 py-1.5 text-sm font-bold text-carbon" data-compare-open>
+                Comparar
+            </button>
+            <button type="button" class="text-sm text-white/70 hover:text-white underline" data-compare-clear>
+                Limpiar
+            </button>
+        </div>
+
+        <!-- Diálogo de vista rápida -->
+        <dialog data-quickview-dialog class="w-[min(92vw,28rem)] rounded-lg p-0 shadow-lg" aria-labelledby="qv-titulo">
+            <div class="p-6" data-quickview-body>
+                <p class="text-sm text-gray-500">Cargando…</p>
+            </div>
+            <form method="dialog" class="border-t border-line p-4 text-right">
+                <button class="btn-ghost focus-volt text-sm" value="cerrar">Cerrar</button>
+            </form>
+        </dialog>
+
+        <!-- Diálogo del comparador -->
+        <dialog data-compare-dialog class="w-[min(94vw,44rem)] rounded-lg p-0 shadow-lg" aria-labelledby="cmp-titulo">
+            <div class="p-6">
+                <h2 id="cmp-titulo" class="text-lg font-bold text-gray-900 mb-4">Comparar productos</h2>
+                <div class="overflow-x-auto" data-compare-body></div>
+            </div>
+            <form method="dialog" class="border-t border-line p-4 text-right">
+                <button class="btn-ghost focus-volt text-sm" value="cerrar">Cerrar</button>
+            </form>
+        </dialog>
     </div>
+
+    <script>
+        // Vista rápida + comparador (mejora progresiva sobre los enlaces al detalle).
+        (() => {
+            if (window.__tiendaComparadorInit) {
+                return;
+            }
+            window.__tiendaComparadorInit = true;
+
+            const esc = (v) => String(v ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+            const fichaUrl = (id) => `/productos/${encodeURIComponent(id)}/ficha`;
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+            const qvDialog = document.querySelector('[data-quickview-dialog]');
+            const qvBody = document.querySelector('[data-quickview-body]');
+            const cmpDialog = document.querySelector('[data-compare-dialog]');
+            const cmpBody = document.querySelector('[data-compare-body]');
+            const bar = document.querySelector('[data-compare-bar]');
+            const count = document.querySelector('[data-compare-count]');
+            const seleccionados = new Map();
+
+            async function ficha(id) {
+                const r = await fetch(fichaUrl(id), { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!r.ok) {
+                    throw new Error('No se pudo cargar la ficha');
+                }
+                return r.json();
+            }
+
+            function stockBadge(stock) {
+                if (stock <= 0) {
+                    return '<span class="badge-stock-out">Agotado</span>';
+                }
+                return stock <= 10
+                    ? `<span class="badge-stock-low">¡Últimas ${stock}!</span>`
+                    : '<span class="badge-stock-ok">En stock</span>';
+            }
+
+            document.addEventListener('click', async (event) => {
+                const qv = event.target.closest('[data-quickview]');
+                if (qv && qvDialog) {
+                    event.preventDefault();
+                    qvBody.innerHTML = '<p class="text-sm text-gray-500">Cargando…</p>';
+                    qvDialog.showModal();
+                    try {
+                        const p = await ficha(qv.dataset.quickview);
+                        qvBody.innerHTML = `
+                            <div class="flex gap-2 mb-3">${p.is_featured ? '<span class="rounded-full bg-yellow-500 px-2 py-1 text-xs font-bold text-white">⭐ Destacado</span>' : ''}${stockBadge(p.stock)}</div>
+                            <img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="mb-3 h-52 w-full rounded-md object-cover" loading="lazy">
+                            <p class="text-xs text-gray-500">${esc(p.brand ?? '')}${p.sport_type ? ` · ${esc(p.sport_type)}` : ''}</p>
+                            <h2 id="qv-titulo" class="text-lg font-bold text-gray-900">${esc(p.name)}</h2>
+                            <p class="price-mono mt-1 text-xl font-bold text-gray-900">${esc(p.formatted_price)}</p>
+                            <p class="mt-2 text-sm text-gray-600">${esc((p.description ?? '').slice(0, 160))}${(p.description ?? '').length > 160 ? '…' : ''}</p>
+                            <div class="mt-3 flex gap-2">
+                                <a href="${esc(p.url)}" class="btn-carbon focus-volt flex-1 text-center text-sm no-underline">Ver detalle</a>
+                            </div>
+                            ${p.stock > 0 ? `<form action="/carrito/${p.id}/agregar" method="POST" class="mt-2">
+                                <input type="hidden" name="_token" value="${esc(csrf)}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn-volt focus-volt w-full text-sm">Agregar al carrito</button>
+                            </form>` : '<p class="mt-2 text-sm font-semibold text-error">Sin stock por ahora</p>'}`;
+                    } catch (e) {
+                        qvBody.innerHTML = '<p class="text-sm text-error">No se pudo cargar. <a class="underline" href="' + esc(qv.href) + '">Abrir el detalle</a></p>';
+                    }
+                }
+            });
+
+            function pintarBarra() {
+                const n = seleccionados.size;
+                count.textContent = `${n} seleccionado${n === 1 ? '' : 's'}`;
+                bar.classList.toggle('hidden', n === 0);
+                bar.classList.toggle('flex', n > 0);
+            }
+
+            document.addEventListener('change', (event) => {
+                const box = event.target.closest('[data-compare]');
+                if (!box) {
+                    return;
+                }
+                if (box.checked && seleccionados.size >= 3 && !seleccionados.has(box.dataset.compare)) {
+                    box.checked = false;
+                    count.textContent = 'Máximo 3 para comparar';
+                    return;
+                }
+                if (box.checked) {
+                    seleccionados.set(box.dataset.compare, box.dataset.name ?? '');
+                } else {
+                    seleccionados.delete(box.dataset.compare);
+                }
+                pintarBarra();
+            });
+
+            document.querySelector('[data-compare-clear]')?.addEventListener('click', () => {
+                seleccionados.clear();
+                document.querySelectorAll('[data-compare]').forEach((b) => { b.checked = false; });
+                pintarBarra();
+            });
+
+            document.querySelector('[data-compare-open]')?.addEventListener('click', async () => {
+                if (seleccionados.size === 0 || !cmpDialog) {
+                    return;
+                }
+                cmpBody.innerHTML = '<p class="text-sm text-gray-500">Cargando comparación…</p>';
+                cmpDialog.showModal();
+                try {
+                    const fichas = await Promise.all([...seleccionados.keys()].map(ficha));
+                    const fila = (titulo, fn) => `<tr class="border-t border-line"><th class="px-3 py-2 text-left text-sm font-semibold text-gray-700">${titulo}</th>${fichas.map((p) => `<td class="px-3 py-2 text-sm text-gray-800">${fn(p)}</td>`).join('')}</tr>`;
+                    cmpBody.innerHTML = `<table class="min-w-full">
+                        <thead><tr><th class="px-3 py-2"></th>${fichas.map((p) => `<th class="px-3 py-2 text-left"><img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="mb-2 h-24 w-full rounded object-cover" loading="lazy"><a class="text-sm font-bold text-gray-900 hover:underline" href="${esc(p.url)}">${esc(p.name)}</a></th>`).join('')}</tr></thead>
+                        <tbody>
+                            ${fila('Precio', (p) => `<span class="price-mono font-bold">${esc(p.formatted_price)}</span>`)}
+                            ${fila('Marca', (p) => esc(p.brand ?? '—'))}
+                            ${fila('Deporte', (p) => esc(p.sport_type ?? '—'))}
+                            ${fila('Género', (p) => esc(p.gender ?? '—'))}
+                            ${fila('Material', (p) => esc(p.material ?? '—'))}
+                            ${fila('Stock', (p) => esc(String(p.stock)))}
+                            ${fila('Rating', (p) => esc(String(p.average_rating)) + ` (${p.reviews_count})`)}
+                            ${fila('', (p) => `<a class="btn-carbon focus-volt inline-block text-sm no-underline" href="${esc(p.url)}">Elegir este</a>`)}
+                        </tbody></table>`;
+                } catch (e) {
+                    cmpBody.innerHTML = '<p class="text-sm text-error">No se pudo cargar la comparación.</p>';
+                }
+            });
+        })();
+    </script>
 </x-app-layout>

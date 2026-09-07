@@ -126,6 +126,40 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * Ficha pública del producto para vista rápida y comparador (JSON).
+     * Solo campos públicos: nunca expone stripe_product_id / stripe_price_id.
+     */
+    public function ficha($id): JsonResponse
+    {
+        $product = Product::with(['category', 'reviews'])->findOrFail($id);
+        Gate::authorize('view', $product);
+
+        return response()->json([
+            'id' => $product->id,
+            'name' => $product->name,
+            'brand' => $product->brand,
+            'model' => $product->model,
+            'sport_type' => $product->sport_type,
+            'gender' => $product->gender,
+            'material' => $product->material,
+            'weight' => $product->weight ? (float) $product->weight : null,
+            'sizes' => $product->sizes ?? [],
+            'colors' => $product->colors ?? [],
+            'specifications' => $product->specifications ?? [],
+            'description' => $product->description,
+            'price' => (float) $product->price,
+            'formatted_price' => '$'.number_format((float) $product->price, 2),
+            'stock' => $product->stock,
+            'is_featured' => (bool) $product->is_featured,
+            'average_rating' => round((float) ($product->average_rating ?? 0), 1),
+            'reviews_count' => $product->reviews->count(),
+            'image_url' => $product->image ? asset('storage/products/'.$product->image) : asset('img/logo.png'),
+            'category' => $product->category?->name,
+            'url' => route('usuario.products.show', $product->id),
+        ]);
+    }
+
     public function show($id, Request $request)
     {
         $product = Product::findOrFail($id);

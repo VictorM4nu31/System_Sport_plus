@@ -127,5 +127,19 @@
                 Sin Stock
             </button>
         @endif
+
+        <!-- Vista rápida y comparador (mejora progresiva: sin JS navega al detalle) -->
+        <div class="mt-2 flex items-center gap-2">
+            <a href="{{ route('usuario.products.show', $product->id) }}"
+               data-quickview="{{ $product->id }}"
+               class="focus-volt flex-1 rounded-md border border-line py-2 px-4 text-center text-sm font-semibold text-carbon hover:border-carbon transition-colors no-underline">
+                Vista rápida
+            </a>
+            <label class="focus-volt flex cursor-pointer items-center gap-1 rounded-md border border-line py-2 px-3 text-sm font-medium text-carbon hover:border-carbon transition-colors">
+                <input type="checkbox" data-compare="{{ $product->id }}" data-name="{{ $product->name }}"
+                       class="h-4 w-4 accent-[#131417]">
+                <span>Comparar</span>
+            </label>
+        </div>
     </div>
 </div>

@@ -47,6 +47,14 @@ function cardHtml(product, csrf, cartBase) {
                 <input type="hidden" name="quantity" value="1">
                 <button type="submit" class="btn-ghost focus-volt w-full text-sm">Agregar al carrito</button>
             </form>
+            <div class="mt-2 flex items-center gap-2">
+                <a href="${esc(product.url)}" data-quickview="${product.id}"
+                   class="focus-volt flex-1 rounded-md border border-line py-2 px-4 text-center text-sm font-semibold text-carbon hover:border-carbon transition-colors">Vista rápida</a>
+                <label class="flex cursor-pointer items-center gap-1 rounded-md border border-line py-2 px-3 text-sm font-medium text-carbon hover:border-carbon transition-colors">
+                    <input type="checkbox" data-compare="${product.id}" data-name="${esc(product.name)}" class="h-4 w-4 accent-[#131417]">
+                    <span>Comparar</span>
+                </label>
+            </div>
         </div>
     </article>`;
 }
