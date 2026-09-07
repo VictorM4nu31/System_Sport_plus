@@ -1,15 +1,18 @@
 <x-app-layout>
-    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6" data-catalogo
+         data-catalogo-endpoint="{{ route('usuario.products.search') }}"
+         data-catalogo-cart-base="{{ url('/carrito') }}">
         <!-- Título de la sección -->
         <div class="text-center mb-8">
             <h1 class="text-display-md text-primary mb-2">Tienda Deportiva</h1>
             <p class="text-body-lg text-primary-light">Encuentra el equipamiento perfecto para tu deporte favorito</p>
         </div>
 
-        <!-- Filtros Avanzados -->
+        <!-- Filtros Avanzados (con búsqueda instantánea; sin JS el GET clásico sigue funcionando) -->
         <div class="bg-white bg-opacity-95 rounded-lg shadow-lg p-6 mb-8">
             <h2 class="text-heading-md text-primary mb-4">Filtros de Búsqueda</h2>
-            <form method="GET" action="{{ route('usuario.products.index') }}">
+            <p class="sr-only" aria-live="polite" data-catalogo-live></p>
+            <form method="GET" action="{{ route('usuario.products.index') }}" data-catalogo-form>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                     <!-- Búsqueda por nombre -->
                     <div>
@@ -89,17 +92,18 @@
                     <button type="submit" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary text-body-md font-medium btn-accessible">
                         Aplicar Filtros
                     </button>
-                    <a href="{{ route('usuario.products.index') }}" class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md font-medium">
+                    <a href="{{ route('usuario.products.index') }}" data-catalogo-clear class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md font-medium">
                         Limpiar Filtros
                     </a>
                 </div>
             </form>
+            <div class="mt-4 hidden flex-wrap gap-2" data-catalogo-chips aria-label="Filtros activos"></div>
         </div>
 
         <!-- Carrito y estadísticas -->
         <div class="flex justify-between items-center mb-6">
             <div class="text-primary">
-                <p class="text-heading-sm">{{ $products->count() }} productos encontrados</p>
+                <p class="text-heading-sm" data-catalogo-count>{{ $products->total() }} productos encontrados</p>
             </div>
             <a href="{{ route('usuario.cart.index') }}"
                class="flex items-center bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors text-body-md font-medium">
@@ -122,8 +126,8 @@
         </div>
         @endif
 
-        <!-- Listado de Productos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Listado de Productos (server-side; la capa instantánea lo reemplaza con JS) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" data-catalogo-grid>
             @forelse ($products as $product)
                 @include('usuario.products.partials.product-card', ['product' => $product])
             @empty
@@ -135,6 +139,12 @@
                     <p class="text-body-md text-gray-500">Intenta ajustar tus filtros de búsqueda</p>
                 </div>
             @endforelse
+        </div>
+
+        <!-- Resultados instantáneos (solo con JS) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden" data-catalogo-instant aria-live="polite"></div>
+        <div class="mt-8 flex justify-center">
+            <button type="button" data-catalogo-more class="btn-ghost focus-volt hidden">Cargar más</button>
         </div>
 
         <!-- Paginación -->

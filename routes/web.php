@@ -45,6 +45,7 @@ Route::middleware('guest')->controller(RegisteredUserController::class)->group(f
 // User routes
 Route::middleware(['auth', 'role:usuario'])->group(function () {
     Route::get('/productos', [UserProductController::class, 'index'])->name('usuario.products.index');
+    Route::get('/productos/search', [UserProductController::class, 'search'])->name('usuario.products.search');
     Route::get('/productos/{id}', [UserProductController::class, 'show'])->name('usuario.products.show');
 
     // Cart routes
