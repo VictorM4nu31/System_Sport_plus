@@ -43,16 +43,16 @@
             <!-- Estadísticas Principales -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Visitantes Hoy -->
-                <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-lg p-6">
+                <div class="bg-white border border-line text-carbon rounded-lg shadow-lg p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-blue-100 text-body-md font-medium">Visitantes Hoy</p>
-                            <p class="text-display-sm font-bold">{{ number_format($stats['visitors']['today'] ?? 0) }}</p>
-                            <p class="text-blue-100 text-body-sm mt-1">
+                            <p class="text-muted text-body-md font-medium">Visitantes Hoy</p>
+                            <p class="text-display-sm font-bold price-mono">{{ number_format($stats['visitors']['today'] ?? 0) }}</p>
+                            <p class="text-muted text-body-sm mt-1">
                                 Únicos: {{ number_format($stats['visitors']['unique_today'] ?? 0) }}
                             </p>
                         </div>
-                        <div class="bg-blue-400 bg-opacity-30 rounded-full p-3">
+                        <div class="bg-paper border border-line rounded-full p-3">
                             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -61,16 +61,16 @@
                 </div>
 
                 <!-- Ventas del Mes -->
-                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-lg p-6">
+                <div class="bg-white border border-line text-carbon rounded-lg shadow-lg p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="message-success">Ventas del Mes</p>
-                            <p class="text-display-sm font-bold">${{ number_format($stats['sales']['this_month_sales'] ?? 0, 2) }}</p>
-                            <p class="text-gray-800 text-body-sm mt-1 font-medium">
+                            <p class="text-success text-body-md font-semibold">Ventas del Mes</p>
+                            <p class="text-display-sm font-bold price-mono">${{ number_format($stats['sales']['this_month_sales'] ?? 0, 2) }}</p>
+                            <p class="text-muted text-body-sm mt-1 font-medium">
                                 {{ $stats['sales']['orders_this_month'] ?? 0 }} órdenes
                             </p>
                         </div>
-                        <div class="bg-green-400 bg-opacity-30 rounded-full p-3">
+                        <div class="bg-success-light rounded-full p-3">
                             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
                             </svg>
@@ -79,16 +79,16 @@
                 </div>
 
                 <!-- Productos Totales -->
-                <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow-lg p-6">
+                <div class="bg-white border border-line text-carbon rounded-lg shadow-lg p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-purple-100 text-body-md font-medium">Productos Totales</p>
-                            <p class="text-display-sm font-bold">{{ number_format($stats['products']['total_products'] ?? 0) }}</p>
-                            <p class="text-purple-100 text-body-sm mt-1">
+                            <p class="text-muted text-body-md font-medium">Productos Totales</p>
+                            <p class="text-display-sm font-bold price-mono">{{ number_format($stats['products']['total_products'] ?? 0) }}</p>
+                            <p class="text-muted text-body-sm mt-1">
                                 En stock: {{ $stats['products']['products_in_stock'] ?? 0 }}
                             </p>
                         </div>
-                        <div class="bg-purple-400 bg-opacity-30 rounded-full p-3">
+                        <div class="bg-volt rounded-full p-3">
                             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 2L3 7v11a2 2 0 002 2h10a2 2 0 002-2V7l-7-5zM6 9a1 1 0 112 0 1 1 0 01-2 0zm6 0a1 1 0 112 0 1 1 0 01-2 0z" clip-rule="evenodd"/>
                             </svg>
@@ -97,16 +97,16 @@
                 </div>
 
                 <!-- Órdenes Pendientes -->
-                <div class="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg shadow-lg p-6">
+                <div class="bg-white border border-line text-carbon rounded-lg shadow-lg p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="message-warning">Órdenes Pendientes</p>
-                            <p class="text-display-sm font-bold">{{ number_format($stats['orders']['pending_orders'] ?? 0) }}</p>
-                            <p class="text-gray-800 text-body-sm mt-1 font-medium">
+                            <p class="text-warning-dark text-body-md font-semibold">Órdenes Pendientes</p>
+                            <p class="text-display-sm font-bold price-mono">{{ number_format($stats['orders']['pending_orders'] ?? 0) }}</p>
+                            <p class="text-muted text-body-sm mt-1 font-medium">
                                 En proceso: {{ $stats['orders']['processing_orders'] ?? 0 }}
                             </p>
                         </div>
-                        <div class="bg-orange-400 bg-opacity-30 rounded-full p-3">
+                        <div class="bg-warning-light rounded-full p-3">
                             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                             </svg>

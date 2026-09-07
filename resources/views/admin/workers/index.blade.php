@@ -2,7 +2,7 @@
     <div class="py-6">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             <!-- Contenedor principal con transparencia y sombras -->
-            <div class="bg-[#FFFFFF] bg-opacity-50 shadow-xl rounded-lg p-8">
+            <div class="bg-white border border-line shadow-xl rounded-lg p-8">
 
                 <!-- Contenedor para el logo y título alineado -->
                 <div class="flex flex-col items-center text-center mb-6">
@@ -22,18 +22,18 @@
                 <div class="overflow-x-auto">
                     <table class="w-full bg-white bg-opacity-95 rounded-lg shadow-lg mt-4">
                         <thead>
-                            <tr class="bg-[#801336] text-white">
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Nombre</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Correo</th>
-                                <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Acciones</th>
+                            <tr class="bg-carbon text-white">
+                                <th class="px-6 py-3 border-b-2 border-line text-left text-body-md font-semibold">Nombre</th>
+                                <th class="px-6 py-3 border-b-2 border-line text-left text-body-md font-semibold">Correo</th>
+                                <th class="px-6 py-3 border-b-2 border-line text-left text-body-md font-semibold">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($workers as $worker)
-                            <tr class="hover:bg-[#E7E3C4] transition duration-150">
-                                <td class="px-6 py-3 border-b border-[#801336] text-primary text-body-md font-regular">{{ $worker->name }}</td>
-                                <td class="px-6 py-3 border-b border-[#801336] text-primary text-body-md font-regular">{{ $worker->email }}</td>
-                                <td class="px-6 py-3 border-b border-[#801336]">
+                            <tr class="hover:bg-paper transition duration-150">
+                                <td class="px-6 py-3 border-b border-line text-primary text-body-md font-regular">{{ $worker->name }}</td>
+                                <td class="px-6 py-3 border-b border-line text-primary text-body-md font-regular">{{ $worker->email }}</td>
+                                <td class="px-6 py-3 border-b border-line">
                                     <div class="flex items-center gap-4">
                                         <!-- Botón de editar con ícono -->
                                         <a href="{{ route('admin.workers.edit', $worker->id) }}" class="flex items-center text-primary-lighter hover:text-primary text-body-md font-medium space-x-1 transition duration-150">

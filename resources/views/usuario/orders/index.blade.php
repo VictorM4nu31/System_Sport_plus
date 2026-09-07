@@ -6,7 +6,7 @@
             </x-alert>
         @endif
 
-        <h1 class="text-xl sm:text-2xl text-white font-semibold mb-4 sm:mb-6">Mis Pedidos</h1>
+        <h1 class="text-xl sm:text-2xl text-carbon font-semibold mb-4 sm:mb-6">Mis Pedidos</h1>
 
         @if ($orders->count())
             <div class="overflow-x-auto rounded-lg shadow">
@@ -32,7 +32,7 @@
                                             </span>
                                             @break
                                         @case('paid')
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-line text-carbon">
                                                 Pagado - Esperando Confirmación
                                             </span>
                                             @break
@@ -69,7 +69,7 @@
                                 </td>
                                 <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">
                                     <a href="{{ route('usuario.orders.show', $order->id) }}"
-                                       class="text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                                       class="text-info hover:underline transition-colors duration-200">
                                         Ver detalles
                                     </a>
                                 </td>
@@ -79,7 +79,7 @@
                 </table>
             </div>
         @else
-            <p class="text-white text-sm sm:text-base">No has realizado ningún pedido.</p>
+            <p class="text-muted text-sm sm:text-base">No has realizado ningún pedido.</p>
         @endif
     </div>
 </x-app-layout>

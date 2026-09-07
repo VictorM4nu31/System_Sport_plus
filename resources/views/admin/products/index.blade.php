@@ -6,7 +6,7 @@
 
                 <!-- Contenedor para el logo centrado -->
                 <div class="flex justify-center mb-4">
-                    <img src="{{ asset('img/logo.png') }}" alt="Logo" class="w-24 h-24 rounded-full border-4 border-[#801336]">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo" class="w-24 h-24 rounded-full border-4 border-carbon">
                 </div>
 
                 <!-- Título centrado -->
@@ -29,13 +29,13 @@
                             <label class="block text-primary font-medium mb-1 text-body-md">Nombre</label>
                             <input type="text" name="search" value="{{ request('search') }}"
                                 placeholder="Buscar producto..."
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                         </div>
 
                         <!-- Filtro por marca -->
                         <div>
                             <label class="block text-primary font-medium mb-1 text-body-md">Marca</label>
-                            <select name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                            <select name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <option value="">Todas las marcas</option>
                                 @foreach(['Nike', 'Adidas', 'Puma', 'Under Armour', 'Reebok', 'New Balance', 'Converse', 'Vans', 'Wilson', 'Spalding'] as $brand)
                                     <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
@@ -46,7 +46,7 @@
                         <!-- Filtro por deporte -->
                         <div>
                             <label class="block text-primary font-medium mb-1 text-body-md">Deporte</label>
-                            <select name="sport_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                            <select name="sport_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <option value="">Todos los deportes</option>
                                 @foreach(['Fútbol', 'Basketball', 'Running', 'Tenis', 'Volleyball', 'Baseball', 'Natación', 'Ciclismo', 'Fitness', 'Casual'] as $sport)
                                     <option value="{{ $sport }}" {{ request('sport_type') == $sport ? 'selected' : '' }}>{{ $sport }}</option>
@@ -80,7 +80,7 @@
 
                 <!-- Estadísticas rápidas -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-[#801336] text-white p-4 rounded-lg text-center">
+                    <div class="bg-carbon text-white p-4 rounded-lg text-center">
                         <h5 class="text-heading-lg font-semibold">Total Productos</h5>
                         <p class="text-display-md font-bold">{{ $products->count() }}</p>
                     </div>
@@ -88,7 +88,7 @@
                         <h5 class="text-heading-lg font-semibold">En Stock</h5>
                         <p class="text-display-md font-bold">{{ $products->where('stock', '>', 0)->count() }}</p>
                     </div>
-                    <div class="bg-red-600 text-white p-4 rounded-lg text-center">
+                    <div class="bg-error text-white p-4 rounded-lg text-center">
                         <h5 class="text-heading-lg font-semibold">Sin Stock</h5>
                         <p class="text-display-md font-bold">{{ $products->where('stock', '<=', 0)->count() }}</p>
                     </div>
@@ -155,7 +155,7 @@
                                                 <p class="text-body-sm text-gray-600">{{ $product->model }}</p>
                                             @endif
                                             @if($product->gender)
-                                                <span class="inline-block bg-blue-100 text-blue-800 text-body-sm px-2 py-1 rounded-full mt-1">
+                                                <span class="inline-block bg-line text-carbon text-body-sm px-2 py-1 rounded-full mt-1">
                                                     {{ ucfirst($product->gender) }}
                                                 </span>
                                             @endif
@@ -212,7 +212,7 @@
                                         <div class="flex items-center space-x-2">
                                             <!-- Ver -->
                                             <a href="{{ route('admin.products.show', $product->id) }}"
-                                               class="text-primary-lighter hover:text-blue-800 p-1 rounded" title="Ver detalles">
+                                               class="text-primary-lighter hover:text-info p-1 rounded" title="Ver detalles">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -232,7 +232,7 @@
                                             <form action="{{ route('admin.products.sync-stripe', $product->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit"
-                                                        class="text-primary-lighter hover:text-blue-800 p-1 rounded"
+                                                        class="text-primary-lighter hover:text-info p-1 rounded"
                                                         title="Sincronizar con Stripe">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>

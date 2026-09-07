@@ -2,22 +2,22 @@
     <!-- Badge de producto destacado -->
     @if($product->is_featured ?? false)
         <div class="absolute top-2 left-2 z-10">
-            <span class="bg-yellow-500 text-white text-body-sm font-bold px-2 py-1 rounded-full">
+            <span class="bg-volt text-carbon text-body-sm font-bold px-2 py-1 rounded-full border border-carbon">
                 ⭐ Destacado
             </span>
         </div>
     @endif
 
-    <!-- Badge de stock bajo -->
+    <!-- Badge de stock -->
     @if($product->stock <= 10 && $product->stock > 0)
         <div class="absolute top-2 right-2 z-10">
-            <span class="bg-orange-500 text-white text-body-sm font-bold px-2 py-1 rounded-full">
+            <span class="badge-stock-low">
                 ¡Últimas {{ $product->stock }}!
             </span>
         </div>
     @elseif($product->stock <= 0)
         <div class="absolute top-2 right-2 z-10">
-            <span class="bg-red-500 text-white text-body-sm font-bold px-2 py-1 rounded-full">
+            <span class="badge-stock-out">
                 Agotado
             </span>
         </div>
@@ -63,7 +63,7 @@
                 <span class="text-body-sm font-medium text-primary-lighter bg-primary-50 px-2 py-1 rounded">{{ $product->brand }}</span>
             @endif
             @if($product->sport_type)
-                <span class="text-body-sm font-medium text-primary-lighter bg-blue-100 px-2 py-1 rounded">{{ $product->sport_type }}</span>
+                <span class="text-body-sm font-medium text-carbon bg-paper border border-line px-2 py-1 rounded">{{ $product->sport_type }}</span>
             @endif
         </div>
         @endif
@@ -117,7 +117,7 @@
             <form action="{{ route('usuario.cart.add', $product->id) }}" method="POST">
                 @csrf
                 <button type="submit"
-                        class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-700 transition-colors duration-200 text-body-md font-semibold btn-accessible">
+                        class="btn-carbon focus-volt w-full text-body-md">
                     Agregar al Carrito
                 </button>
             </form>

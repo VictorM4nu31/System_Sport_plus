@@ -27,7 +27,7 @@
 <body class="bg-gray-100 text-gray-800">
 
     <!-- Header -->
-<header class="bg-[#282E2E] text-white py-4">
+<header class="bg-carbon text-white py-4">
     <div class="container mx-auto flex justify-between items-center px-6">
         <!-- Logo or Title -->
         <h1 class="text-4xl font-bold bebas-neue-regular">Campos Sport</h1>
@@ -235,7 +235,7 @@
 </section>
 
 <!-- Footer -->
-<footer class="bg-[#282E2E] text-white py-8">
+<footer class="bg-carbon text-white py-8">
     <div class="container mx-auto px-6 text-center">
         <p>&copy; 2024 Sports Store. All Rights Reserved.</p>
     </div>

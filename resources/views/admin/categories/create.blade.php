@@ -6,9 +6,9 @@
                 @csrf
                 <!-- Campo de Nombre -->
                 <div class="mb-3 sm:mb-4">
-                    <label for="name" class="block text-white font-semibold mb-1 sm:mb-2">Nombre</label>
+                    <label for="name" class="block text-carbon font-semibold mb-1 sm:mb-2">Nombre</label>
                     <input id="name" name="name" type="text" required
-                           class="mt-1 block w-full px-2 sm:px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336] text-sm sm:text-base"
+                           class="mt-1 block w-full px-2 sm:px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon text-sm sm:text-base"
                            placeholder="Escribe el nombre de la categoría">
                     @error('name')
                         <span class="text-error text-body-sm mt-1 block">{{ $message }}</span>

@@ -21,7 +21,7 @@
                             </span>
                             @break
                         @case('paid')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-body-sm font-medium bg-blue-100 text-blue-800">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-body-sm font-medium bg-line text-carbon">
                                 Pagado - Esperando Confirmación
                             </span>
                             @break
@@ -169,7 +169,7 @@
         <!-- Botón de regreso -->
         <div class="flex justify-start">
             <a href="{{ route('usuario.orders.index') }}"
-               class="flex items-center text-white hover:text-gray-300 text-body-md font-medium space-x-2 transition duration-150">
+               class="focus-volt flex items-center text-carbon hover:underline text-body-md font-medium space-x-2 transition duration-150">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                     <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
                 </svg>

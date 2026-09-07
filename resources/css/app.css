@@ -554,6 +554,30 @@
   }
 }
 
+@layer components {
+  /* Mensajes semánticos del ecosistema (x-message, validation-errors,
+     badges inline, iconos). Solo color + peso: nunca rompen layout. */
+  .message-success {
+    color: var(--ath-success);
+    font-weight: 600;
+  }
+
+  .message-warning {
+    color: var(--ath-warning);
+    font-weight: 600;
+  }
+
+  .message-error {
+    color: var(--ath-error);
+    font-weight: 600;
+  }
+
+  .message-info {
+    color: var(--ath-info);
+    font-weight: 600;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after {
     animation: none;

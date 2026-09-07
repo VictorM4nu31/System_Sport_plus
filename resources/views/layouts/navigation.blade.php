@@ -1,6 +1,6 @@
 <nav x-data="{ open: false }" class="flex">
     <!-- Menú lateral estático y fijo para pantallas grandes -->
-    <aside class="hidden md:block bg-[#282E2E] text-white w-64 p-6 fixed h-full">
+    <aside class="hidden md:block bg-carbon text-white w-64 p-6 fixed h-full">
         <div class="text-heading-xl font-semibold mb-8 text-white">Campos Sport</div>
         <nav class="space-y-4">
             <!-- Enlace al Dashboard -->
@@ -68,7 +68,7 @@
     </aside>
 
     <!-- Menú desplegable para pantallas pequeñas -->
-    <nav class="bg-[#282E2E] p-4 text-white md:hidden w-full">
+    <nav class="bg-carbon p-4 text-white md:hidden w-full">
         <div class="flex justify-between items-center">
             <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">

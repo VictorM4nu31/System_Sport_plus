@@ -23,7 +23,7 @@
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
                 <thead>
-                    <tr class="bg-[#282E2E] text-white">
+                    <tr class="bg-carbon text-white">
                         <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Producto</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Precio</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Cantidad</th>
@@ -147,7 +147,7 @@
                     </label>
                     <input type="text" id="billing_name" name="billing_name"
                            value="{{ auth()->user()->name }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon"
                            required>
                 </div>
 
@@ -157,7 +157,7 @@
                     </label>
                     <input type="email" id="billing_email" name="billing_email"
                            value="{{ auth()->user()->email }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon"
                            required>
                 </div>
 

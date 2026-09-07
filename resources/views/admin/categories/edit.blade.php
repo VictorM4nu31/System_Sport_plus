@@ -8,9 +8,9 @@
 
                 <!-- Campo de Nombre -->
                 <div class="mb-4">
-                    <label for="name" class="block text-white font-semibold">Nombre</label>
+                    <label for="name" class="block text-carbon font-semibold">Nombre</label>
                     <input id="name" name="name" type="text" value="{{ $category->name }}" required
-                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#801336] focus:border-[#801336]"
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-carbon focus:border-carbon"
                            placeholder="Nombre de la categoría">
                     @error('name')
                         <span class="text-error text-body-sm">{{ $message }}</span>

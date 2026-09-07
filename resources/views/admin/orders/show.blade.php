@@ -40,7 +40,7 @@
                     <div class="mb-4">
                         <label for="status" class="block text-gray-700 font-medium">Estado del Pedido</label>
                         <select id="status" name="status" required
-                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-carbon focus:ring focus:ring-line">
                             <option value="pendiente" {{ $order->status == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
                             <option value="en proceso" {{ $order->status == 'en proceso' ? 'selected' : '' }}>En Proceso</option>
                             <option value="completado" {{ $order->status == 'completado' ? 'selected' : '' }}>Completado</option>

@@ -2,11 +2,11 @@
     <div class="max-w-7xl mx-auto py-6 sm:py-10 px-4 sm:px-6">
         <!-- Navegación con Migas de Pan -->
         <nav class="text-sm text-gray-500 mb-4 sm:mb-8">
-            <a href="{{ route('usuario.products.index') }}" class="text-white hover:underline">Inicio</a>
+            <a href="{{ route('usuario.products.index') }}" class="text-carbon hover:underline">Inicio</a>
             <span class="mx-2 text-gray-400">></span>
-            <a href="#" class="text-white hover:underline">{{ $product->category->name }}</a>
+            <a href="#" class="text-carbon hover:underline">{{ $product->category->name }}</a>
             <span class="mx-2 text-gray-400">></span>
-            <span class="text-white">{{ $product->name }}</span>
+            <span class="text-muted">{{ $product->name }}</span>
         </nav>
 
         <div class="max-w-5xl mx-auto bg-white p-4 sm:p-6 rounded-lg shadow-lg">
@@ -81,7 +81,7 @@
                                 <!-- Campo de Entrada -->
                                 <input type="number" name="quantity" id="quantity" value="1" min="1"
                                        max="{{ $product->stock }}"
-                                       class="w-16 text-center border-t border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all">
+                                       class="w-16 text-center border-t border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon transition-all">
                                 <!-- Botón de Sumar -->
                                 <button type="button"
                                         class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 focus:outline-none transition-all"
@@ -104,7 +104,7 @@
         <!-- Sección de Reseñas -->
         <div class="mt-8 sm:mt-12">
             <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-6">
-                <h2 class="text-xl sm:text-2xl text-white font-bold">Reseñas del artículo</h2>
+                <h2 class="text-xl sm:text-2xl text-carbon font-bold">Reseñas del artículo</h2>
                 <span class="text-gray-400 text-base sm:text-lg">({{ $product->reviews->count() }} reseñas)</span>
             </div>
 
@@ -143,12 +143,12 @@
                                     </svg>
                                 @endfor
                             </div>
-                            <span class="text-sm text-white">{{ $review->user->name }}</span>
+                            <span class="text-sm font-semibold text-carbon">{{ $review->user->name }}</span>
                         </div>
-                        <p class="text-white">{{ $review->review }}</p>
+                        <p class="text-carbon">{{ $review->review }}</p>
                     </div>
                 @empty
-                    <p class="text-white">No hay reseñas aún. Sé el primero en escribir una.</p>
+                    <p class="text-muted">No hay reseñas aún. Sé el primero en escribir una.</p>
                 @endforelse
             </div>
         </div>

@@ -3,7 +3,7 @@
         <div class="bg-white bg-opacity-95 shadow-lg rounded-lg overflow-hidden">
 
             <!-- Header -->
-            <div class="bg-[#801336] text-white p-6">
+            <div class="bg-carbon text-white p-6">
                 <div class="flex justify-between items-center">
                     <div>
                         <h1 class="text-heading-xl font-bold">{{ $product->name }}</h1>
@@ -13,7 +13,7 @@
                     </div>
                     <div class="flex space-x-3">
                         <a href="{{ route('admin.products.edit', $product->id) }}"
-                           class="px-4 py-2 bg-white text-[#801336] rounded-md hover:bg-gray-100 font-semibold">
+                           class="px-4 py-2 bg-white text-carbon rounded-md hover:bg-gray-100 font-semibold">
                             Editar Producto
                         </a>
                         <a href="{{ route('admin.products.index') }}"
@@ -52,11 +52,11 @@
 
                         <!-- Información Básica -->
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h2 class="text-heading-md font-semibold text-[#801336] mb-4">Información Básica</h2>
+                            <h2 class="text-heading-md font-semibold text-carbon mb-4">Información Básica</h2>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-body-sm font-medium text-gray-600">Precio</label>
-                                    <p class="text-heading-lg font-bold text-[#801336]">${{ number_format($product->price, 2) }}</p>
+                                    <p class="text-heading-lg font-bold text-carbon">${{ number_format($product->price, 2) }}</p>
                                 </div>
                                 <div>
                                     <label class="block text-body-sm font-medium text-gray-600">Stock</label>
@@ -93,12 +93,12 @@
 
                         <!-- Características -->
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h2 class="text-heading-md font-semibold text-[#801336] mb-4">Características</h2>
+                            <h2 class="text-heading-md font-semibold text-carbon mb-4">Características</h2>
                             <div class="grid grid-cols-2 gap-4">
                                 @if($product->gender)
                                 <div>
                                     <label class="block text-body-sm font-medium text-gray-600">Género</label>
-                                    <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-body-sm font-medium">
+                                    <span class="inline-block bg-line text-carbon px-3 py-1 rounded-full text-body-sm font-medium">
                                         {{ ucfirst($product->gender) }}
                                     </span>
                                 </div>
@@ -133,14 +133,14 @@
                         <!-- Variantes -->
                         @if(($product->sizes && count($product->sizes) > 0) || ($product->colors && count($product->colors) > 0))
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h2 class="text-heading-md font-semibold text-[#801336] mb-4">Variantes Disponibles</h2>
+                            <h2 class="text-heading-md font-semibold text-carbon mb-4">Variantes Disponibles</h2>
 
                             @if($product->sizes && count($product->sizes) > 0)
                             <div class="mb-4">
                                 <label class="block text-body-sm font-medium text-gray-600 mb-2">Tallas</label>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($product->sizes as $size)
-                                        <span class="inline-block bg-[#801336] text-white px-3 py-1 rounded-md text-body-sm font-medium">
+                                        <span class="inline-block bg-carbon text-white px-3 py-1 rounded-md text-body-sm font-medium">
                                             {{ $size }}
                                         </span>
                                     @endforeach
@@ -167,14 +167,14 @@
 
                 <!-- Descripción -->
                 <div class="mt-8 bg-gray-50 p-6 rounded-lg">
-                    <h2 class="text-heading-md font-semibold text-[#801336] mb-4">Descripción del Producto</h2>
+                    <h2 class="text-heading-md font-semibold text-carbon mb-4">Descripción del Producto</h2>
                     <p class="text-gray-700 leading-relaxed">{{ $product->description }}</p>
                 </div>
 
                 <!-- Especificaciones Técnicas -->
                 @if($product->specifications && count($product->specifications) > 0)
                 <div class="mt-8 bg-gray-50 p-6 rounded-lg">
-                    <h2 class="text-heading-md font-semibold text-[#801336] mb-4">Especificaciones Técnicas</h2>
+                    <h2 class="text-heading-md font-semibold text-carbon mb-4">Especificaciones Técnicas</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         @foreach($product->specifications as $key => $value)
                             <div class="flex justify-between py-2 border-b border-gray-200">
@@ -189,7 +189,7 @@
                 <!-- Reseñas -->
                 @if($product->reviews && $product->reviews->count() > 0)
                 <div class="mt-8 bg-gray-50 p-6 rounded-lg">
-                    <h2 class="text-heading-md font-semibold text-[#801336] mb-4">
+                    <h2 class="text-heading-md font-semibold text-carbon mb-4">
                         Reseñas del Producto
                         <span class="text-body-sm font-regular text-gray-600">
                             ({{ $product->reviews->count() }} reseñas - Promedio: {{ $product->average_rating }}/5)
@@ -221,9 +221,9 @@
                 @endif
 
                 <!-- Información de Stripe -->
-                <div class="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-200">
+                <div class="mt-8 bg-paper p-6 rounded-lg border border-line">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-heading-md font-semibold text-[#801336]">Integración con Stripe</h2>
+                        <h2 class="text-heading-md font-semibold text-carbon">Integración con Stripe</h2>
                         @if(!$product->isSyncedWithStripe())
                             <form action="{{ route('admin.products.sync-stripe', $product->id) }}" method="POST" class="inline">
                                 @csrf
@@ -279,7 +279,7 @@
 
                 <!-- Información de Auditoría -->
                 <div class="mt-8 bg-gray-50 p-6 rounded-lg">
-                    <h2 class="text-heading-md font-semibold text-[#801336] mb-4">Información del Sistema</h2>
+                    <h2 class="text-heading-md font-semibold text-carbon mb-4">Información del Sistema</h2>
                     <div class="grid grid-cols-2 gap-4 text-body-sm">
                         <div>
                             <label class="block font-medium text-gray-600">Fecha de Creación</label>
@@ -301,7 +301,7 @@
 
             if (container.classList.contains('hidden')) {
                 // Mostrar loading
-                container.innerHTML = '<div class="text-center py-4"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#801336] mx-auto"></div><p class="mt-2 text-gray-600">Cargando información de Stripe...</p></div>';
+                container.innerHTML = '<div class="text-center py-4"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-carbon mx-auto"></div><p class="mt-2 text-gray-600">Cargando información de Stripe...</p></div>';
                 container.classList.remove('hidden');
 
                 // Cargar información de Stripe

@@ -20,7 +20,7 @@
             <div class="mb-4">
                 <label for="full_name" class="block text-gray-700 font-medium text-sm">Nombre y apellido</label>
                 <input id="full_name" name="full_name" type="text" required
-                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon"
                     placeholder="Tal cual figure en el INE o IFE">
             </div>
 
@@ -28,9 +28,9 @@
             <div class="mb-4">
                 <label for="postal_code" class="block text-gray-700 font-medium text-sm">Código postal</label>
                 <input id="postal_code" name="postal_code" type="text" required
-                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon"
                     placeholder="Ingresa tu código postal" oninput="fetchAddressData()">
-                <a href="https://micodigopostal.org/" class="text-blue-500 text-xs hover:underline mt-1 inline-block">No
+                <a href="https://micodigopostal.org/" class="text-info text-xs hover:underline mt-1 inline-block">No
                     sé mi código</a>
             </div>
 
@@ -44,7 +44,7 @@
                 <div>
                     <label for="municipality" class="block text-gray-700 font-medium text-sm">Municipio/Alcaldía</label>
                     <select id="municipality" name="municipality" required
-                        class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200 bg-white">
+                        class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon bg-white">
                         <option value="" disabled selected>Selecciona</option>
                     </select>
                 </div>
@@ -54,7 +54,7 @@
             <div class="mb-4">
                 <label for="neighborhood" class="block text-gray-700 font-medium text-sm">Colonia</label>
                 <input id="neighborhood" name="neighborhood" type="text" required
-                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon"
                     placeholder="Escribe tu colonia o localidad">
             </div>
 
@@ -63,12 +63,12 @@
                 <div class="col-span-2">
                     <label for="street" class="block text-gray-700 font-medium text-sm">Calle</label>
                     <input id="street" name="street" type="text" required
-                        class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+                        class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon">
                 </div>
                 <div>
                     <label for="number" class="block text-gray-700 font-medium text-sm">Número</label>
                     <input id="number" name="number" type="text"
-                        class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+                        class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon">
                     <div class="flex items-center mt-1">
                         <input type="checkbox" id="no_number" name="no_number" class="mr-1">
                         <label for="no_number" class="text-gray-600 text-xs">Sin número</label>
@@ -81,14 +81,14 @@
                 <label for="interior_number" class="block text-gray-700 font-medium text-sm">Nº interior/Depto
                     (opcional)</label>
                 <input id="interior_number" name="interior_number" type="text"
-                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon">
             </div>
 
             <!-- Teléfono de contacto -->
             <div class="mb-4">
                 <label for="contact_phone" class="block text-gray-700 font-medium text-sm">Teléfono de contacto</label>
                 <input id="contact_phone" name="contact_phone" type="text" required
-                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200">
+                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon">
             </div>
 
             <!-- Indicaciones adicionales -->
@@ -96,7 +96,7 @@
                 <label for="additional_instructions" class="block text-gray-700 font-medium text-sm">Indicaciones
                     adicionales</label>
                 <textarea id="additional_instructions" name="additional_instructions"
-                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-blue-200"
+                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon"
                     placeholder="Descripción de la fachada, puntos de referencia, etc."></textarea>
             </div>
 

@@ -15,7 +15,7 @@
                         <div class="mb-4">
                             <label for="name" class="block text-primary font-semibold mb-2 text-body-md">Nombre del Producto *</label>
                             <input id="name" name="name" type="text" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="Ej: Tenis Nike Air Max">
                             @error('name')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
@@ -26,7 +26,7 @@
                         <div class="mb-4">
                             <label for="sku" class="block text-primary font-semibold mb-2 text-body-md">Código SKU</label>
                             <input id="sku" name="sku" type="text"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="Ej: TNK-AM-001">
                             @error('sku')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
@@ -37,7 +37,7 @@
                         <div class="mb-4">
                             <label for="brand" class="block text-primary font-semibold mb-2 text-body-md">Marca</label>
                             <select id="brand" name="brand"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <option value="">Seleccionar marca</option>
                                 <option value="Nike">Nike</option>
                                 <option value="Adidas">Adidas</option>
@@ -60,7 +60,7 @@
                         <div class="mb-4">
                             <label for="model" class="block text-primary font-semibold mb-2 text-body-md">Modelo</label>
                             <input id="model" name="model" type="text"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="Ej: Air Max 270">
                             @error('model')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
@@ -71,7 +71,7 @@
                         <div class="mb-4">
                             <label for="price" class="block text-primary font-semibold mb-2 text-body-md">Precio (MXN) *</label>
                             <input id="price" name="price" type="number" step="0.01" min="0.01" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="0.00">
                             @error('price')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
@@ -82,7 +82,7 @@
                         <div class="mb-4">
                             <label for="stock" class="block text-primary font-semibold mb-2 text-body-md">Stock *</label>
                             <input id="stock" name="stock" type="number" min="0" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="0">
                             @error('stock')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
@@ -93,7 +93,7 @@
                         <div class="mb-4">
                             <label for="category" class="block text-primary font-semibold mb-2 text-body-md">Categoría *</label>
                             <select id="category" name="category_id" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <option value="">Seleccionar categoría</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -108,7 +108,7 @@
                         <div class="mb-4">
                             <label for="sport_type" class="block text-primary font-semibold mb-2 text-body-md">Tipo de Deporte</label>
                             <select id="sport_type" name="sport_type"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <option value="">Seleccionar deporte</option>
                                 <option value="Fútbol">Fútbol</option>
                                 <option value="Basketball">Basketball</option>
@@ -137,7 +137,7 @@
                         <div class="mb-4">
                             <label for="gender" class="block text-primary font-semibold mb-2 text-body-md">Género</label>
                             <select id="gender" name="gender"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <option value="">Seleccionar género</option>
                                 <option value="hombre">Hombre</option>
                                 <option value="mujer">Mujer</option>
@@ -152,7 +152,7 @@
                         <div class="mb-4">
                             <label for="material" class="block text-primary font-semibold mb-2 text-body-md">Material</label>
                             <input id="material" name="material" type="text"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="Ej: Cuero sintético, Mesh, Algodón">
                             @error('material')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
@@ -163,7 +163,7 @@
                         <div class="mb-4">
                             <label for="weight" class="block text-primary font-semibold mb-2 text-body-md">Peso (kg)</label>
                             <input id="weight" name="weight" type="number" step="0.01" min="0"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="0.00">
                             @error('weight')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
@@ -227,7 +227,7 @@
                     <div class="mb-4">
                         <label for="description" class="block text-primary font-semibold mb-2 text-body-md">Descripción *</label>
                         <textarea id="description" name="description" rows="4" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                             placeholder="Describe las características, beneficios y detalles del producto..."></textarea>
                         @error('description')
                             <span class="text-error text-body-sm">{{ $message }}</span>
@@ -238,7 +238,7 @@
                     <div class="mb-4">
                         <label for="image" class="block text-primary font-semibold mb-2 text-body-md">Imagen del Producto *</label>
                         <input id="image" name="image" type="file" accept="image/*" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                         <p class="text-body-sm text-gray-600 mt-1">Formatos permitidos: JPG, PNG, GIF, WEBP. Tamaño máximo: 2MB</p>
                         @error('image')
                             <span class="text-error text-body-sm">{{ $message }}</span>
@@ -252,9 +252,9 @@
                     <div id="specifications-container">
                         <div class="specification-row grid grid-cols-2 gap-4 mb-2">
                             <input type="text" name="spec_keys[]" placeholder="Característica (ej: Suela)"
-                                class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                                class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                             <input type="text" name="spec_values[]" placeholder="Valor (ej: Goma antideslizante)"
-                                class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                                class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                         </div>
                     </div>
                     <button type="button" id="add-specification"
@@ -286,10 +286,10 @@
             newRow.className = 'specification-row grid grid-cols-2 gap-4 mb-2';
             newRow.innerHTML = `
                 <input type="text" name="spec_keys[]" placeholder="Característica"
-                    class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                    class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                 <div class="flex">
                     <input type="text" name="spec_values[]" placeholder="Valor"
-                        class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                     <button type="button" onclick="this.parentElement.parentElement.remove()"
                         class="px-3 py-2 bg-red-500 text-white rounded-r-md hover:bg-red-600">×</button>
                 </div>

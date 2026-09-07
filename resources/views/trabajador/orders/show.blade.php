@@ -36,7 +36,7 @@
                     </div>
 
                     <!-- Dirección de Envío -->
-                    <div class="bg-blue-50 rounded-lg p-6">
+                    <div class="bg-paper border border-line rounded-lg p-6">
                         <h3 class="text-heading-md text-primary font-semibold mb-4">Dirección de Envío</h3>
                         @if($order->shippingAddress)
                             <div class="space-y-2">

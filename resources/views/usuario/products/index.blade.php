@@ -19,13 +19,13 @@
                         <label class="block text-primary text-body-md font-medium mb-1">Buscar producto</label>
                         <input type="text" name="search" value="{{ request('search') }}"
                                placeholder="Nombre del producto..."
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                     </div>
 
                     <!-- Filtro por categoría -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Categoría</label>
-                        <select name="category_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                        <select name="category_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                             <option value="">Todas las categorías</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -38,7 +38,7 @@
                     <!-- Filtro por marca -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Marca</label>
-                        <select name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                        <select name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                             <option value="">Todas las marcas</option>
                             @foreach(['Nike', 'Adidas', 'Puma', 'Under Armour', 'Reebok', 'New Balance', 'Converse', 'Vans', 'Wilson', 'Spalding'] as $brand)
                                 <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
@@ -49,7 +49,7 @@
                     <!-- Filtro por deporte -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Deporte</label>
-                        <select name="sport_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                        <select name="sport_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                             <option value="">Todos los deportes</option>
                             @foreach(['Fútbol', 'Basketball', 'Running', 'Tenis', 'Volleyball', 'Baseball', 'Natación', 'Ciclismo', 'Fitness', 'Casual'] as $sport)
                                 <option value="{{ $sport }}" {{ request('sport_type') == $sport ? 'selected' : '' }}>{{ $sport }}</option>
@@ -63,7 +63,7 @@
                     <!-- Filtro por género -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Género</label>
-                        <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                        <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                             <option value="">Todos</option>
                             <option value="hombre" {{ request('gender') == 'hombre' ? 'selected' : '' }}>Hombre</option>
                             <option value="mujer" {{ request('gender') == 'mujer' ? 'selected' : '' }}>Mujer</option>
@@ -76,7 +76,7 @@
                         <label class="block text-primary text-body-md font-medium mb-1">Precio máximo</label>
                         <input type="number" name="max_price" value="{{ request('max_price') }}"
                                placeholder="Ej: 2000"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                     </div>
 
                     <!-- Solo productos destacados -->

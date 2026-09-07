@@ -35,11 +35,11 @@
             @if($addresses->count() > 0)
                 <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     @foreach($addresses as $address)
-                        <div class="bg-white bg-opacity-90 rounded-lg shadow-lg p-6 {{ $address->is_default ? 'ring-2 ring-blue-500' : '' }}">
+                        <div class="bg-white bg-opacity-90 rounded-lg shadow-lg p-6 {{ $address->is_default ? 'ring-2 ring-carbon' : '' }}">
                             <!-- Badge de dirección por defecto -->
                             @if($address->is_default)
                                 <div class="flex justify-between items-start mb-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-body-sm font-medium bg-[#801336] text-white">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-body-sm font-medium bg-carbon text-white">
                                         <span class="material-icons text-body-sm mr-1">star</span>
                                         Por defecto
                                     </span>

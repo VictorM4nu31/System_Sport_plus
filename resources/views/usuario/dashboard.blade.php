@@ -14,7 +14,7 @@
                 <h3 class="text-heading-lg text-primary mb-4">Opciones de Usuario</h3>
                 <nav class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                     <!-- Botón Carrito de Compras -->
-                    <a href="{{ route('usuario.cart.index') }}" class="px-6 py-3 bg-[#059669] hover:bg-[#047857] text-white rounded-lg flex items-center space-x-2 transition duration-200 shadow-md">
+                    <a href="{{ route('usuario.cart.index') }}" class="px-6 py-3 bg-success hover:bg-success-dark text-white rounded-lg flex items-center space-x-2 transition duration-200 shadow-md">
                         <span class="material-icons">shopping_cart</span>
                         <span class="text-body-md font-medium">Carrito de Compras</span>
                     </a>

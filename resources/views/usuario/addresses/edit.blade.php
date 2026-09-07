@@ -43,7 +43,7 @@
                                name="full_name"
                                value="{{ old('full_name', $address->full_name) }}"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                placeholder="Nombre y apellidos completos">
                     </div>
 
@@ -58,7 +58,7 @@
                                value="{{ old('postal_code', $address->postal_code) }}"
                                required
                                maxlength="5"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                placeholder="12345"
                                oninput="fetchAddressData()">
                         <p class="mt-1 text-body-sm text-gray-500">
@@ -89,7 +89,7 @@
                             <select id="municipality"
                                     name="municipality"
                                     required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <option value="{{ $address->municipality }}" selected>{{ $address->municipality }}</option>
                             </select>
                         </div>
@@ -105,7 +105,7 @@
                                name="neighborhood"
                                value="{{ old('neighborhood', $address->neighborhood) }}"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                placeholder="Nombre de la colonia">
                     </div>
 
@@ -120,7 +120,7 @@
                                    name="street"
                                    value="{{ old('street', $address->street) }}"
                                    required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                    placeholder="Nombre de la calle">
                         </div>
                         <div>
@@ -131,7 +131,7 @@
                                    id="number"
                                    name="number"
                                    value="{{ old('number', $address->number) }}"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                    placeholder="123">
                         </div>
                     </div>
@@ -145,7 +145,7 @@
                                id="interior_number"
                                name="interior_number"
                                value="{{ old('interior_number', $address->interior_number) }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                placeholder="Depto 4B, Int. 2, etc.">
                     </div>
 
@@ -159,7 +159,7 @@
                                name="contact_phone"
                                value="{{ old('contact_phone', $address->contact_phone) }}"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                placeholder="55 1234 5678">
                     </div>
 
@@ -171,7 +171,7 @@
                         <textarea id="additional_instructions"
                                   name="additional_instructions"
                                   rows="3"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                   placeholder="Referencias, descripción de la fachada, etc.">{{ old('additional_instructions', $address->additional_instructions) }}</textarea>
                     </div>
 
@@ -186,7 +186,7 @@
                                        name="address_type"
                                        value="shipping"
                                        {{ old('address_type', $address->address_type) === 'shipping' ? 'checked' : '' }}
-                                       class="mr-2 text-primary-lighter focus:ring-blue-500">
+                                       class="mr-2 text-primary-lighter focus:ring-carbon">
                                 <span class="text-body-md text-gray-700">Solo para envíos</span>
                             </label>
                             <label class="flex items-center">
@@ -194,7 +194,7 @@
                                        name="address_type"
                                        value="billing"
                                        {{ old('address_type', $address->address_type) === 'billing' ? 'checked' : '' }}
-                                       class="mr-2 text-primary-lighter focus:ring-blue-500">
+                                       class="mr-2 text-primary-lighter focus:ring-carbon">
                                 <span class="text-body-md text-gray-700">Solo para facturación</span>
                             </label>
                             <label class="flex items-center">
@@ -202,7 +202,7 @@
                                        name="address_type"
                                        value="both"
                                        {{ old('address_type', $address->address_type) === 'both' ? 'checked' : '' }}
-                                       class="mr-2 text-primary-lighter focus:ring-blue-500">
+                                       class="mr-2 text-primary-lighter focus:ring-carbon">
                                 <span class="text-body-md text-gray-700">Para envíos y facturación</span>
                             </label>
                         </div>
@@ -215,7 +215,7 @@
                                    name="is_default"
                                    value="1"
                                    {{ old('is_default', $address->is_default) ? 'checked' : '' }}
-                                   class="mr-2 text-primary-lighter focus:ring-blue-500">
+                                   class="mr-2 text-primary-lighter focus:ring-carbon">
                             <span class="text-body-md text-gray-700">Establecer como dirección predeterminada</span>
                         </label>
                     </div>
