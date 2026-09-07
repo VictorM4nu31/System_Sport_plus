@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
         // Stripe payment routes
         Route::post('/carrito/create-payment-intent', 'createPaymentIntent')->name('usuario.cart.create-payment-intent');
         Route::post('/carrito/confirm-order', 'confirmOrder')->name('usuario.cart.confirm-order');
+        Route::get('/carrito/reserva-estado', 'reservaEstado')->name('usuario.cart.reserva-estado');
     });
 
     // Order routes

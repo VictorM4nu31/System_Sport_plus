@@ -10,6 +10,7 @@ use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\StockReservation;
 use App\Services\CartTotalsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -298,9 +299,17 @@ class CartController extends Controller
                 'amount' => $total,
             ]);
 
+            // La reserva creada al cobrar expira (por defecto 15 min).
+            // Exponer su vencimiento permite al checkout mostrar la cuenta
+            // regresiva sin cambiar ninguna regla de negocio.
+            $reservaExpiraEn = StockReservation::where('user_id', Auth::id())
+                ->active()
+                ->min('expires_at');
+
             return response()->json([
                 'client_secret' => $paymentIntent->client_secret,
                 'order_id' => $order->id,
+                'reserva_expira_en' => $reservaExpiraEn,
             ]);
 
         } catch (\Exception $e) {
@@ -313,6 +322,30 @@ class CartController extends Controller
                 'message' => 'Error al crear la intención de pago: '.$e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Estado de la reserva activa del usuario (solo lectura, para el countdown).
+     */
+    public function reservaEstado()
+    {
+        $expiraEn = StockReservation::where('user_id', Auth::id())
+            ->active()
+            ->min('expires_at');
+
+        if (! $expiraEn) {
+            return response()->json([
+                'tiene_reserva' => false,
+                'expira_en' => null,
+                'segundos' => 0,
+            ]);
+        }
+
+        return response()->json([
+            'tiene_reserva' => true,
+            'expira_en' => $expiraEn,
+            'segundos' => max(0, now()->diffInSeconds($expiraEn, false)),
+        ]);
     }
 
     /**
@@ -332,6 +365,16 @@ class CartController extends Controller
             $order = Order::where('id', $orderId)
                 ->where('user_id', Auth::id())
                 ->firstOrFail();
+
+            // Idempotencia: doble clic o reintento devuelven éxito sin
+            // reconfirmar reservas ni decrementar stock dos veces.
+            if ($order->payment_status === PaymentStatus::PAID->value
+                && $order->payment_intent_id === $paymentIntentId) {
+                return response()->json([
+                    'message' => 'Orden confirmada exitosamente',
+                    'order_id' => $order->id,
+                ]);
+            }
 
             // Verify payment with Stripe
             $paymentIntent = $this->paymentService->retrievePaymentIntent($paymentIntentId);

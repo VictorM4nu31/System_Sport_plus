@@ -1,9 +1,25 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <h1 class="text-2xl sm:text-3xl text-white font-semibold mb-4 sm:mb-6">Carrito de Compras</h1>
-        <h1 class="text-sm sm:text-base text-white mb-6">(Compras menores a $300.00 se les cobra envio)</h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" data-checkout>
+        <h1 class="text-2xl sm:text-3xl text-carbon font-semibold mb-4 sm:mb-6">Carrito de Compras</h1>
 
         @if (session('cart') && count(session('cart')) > 0)
+        <!-- Stepper del checkout -->
+        <ol class="mb-6 flex items-center gap-2 text-sm font-medium" aria-label="Progreso de compra" data-checkout-steps>
+            <li class="flex items-center gap-2" data-step="1" aria-current="step">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-carbon text-white" data-step-dot>1</span>
+                <span class="text-carbon">Carrito</span>
+            </li>
+            <li class="h-px w-8 bg-carbon/20" aria-hidden="true"></li>
+            <li class="flex items-center gap-2" data-step="2">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-carbon/10 text-carbon" data-step-dot>2</span>
+                <span class="text-carbon">Pago</span>
+            </li>
+            <li class="h-px w-8 bg-carbon/20" aria-hidden="true"></li>
+            <li class="flex items-center gap-2" data-step="3">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-carbon/10 text-carbon" data-step-dot>3</span>
+                <span class="text-carbon">Confirmación</span>
+            </li>
+        </ol>
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
                 <thead>
@@ -45,8 +61,8 @@
             $total = $totals['total'] ?? ($subtotal + $shippingCost);
         @endphp
         <div class="mt-6 space-y-3">
-            <h2 class="text-lg sm:text-xl text-white font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
-            <h2 class="text-lg sm:text-xl text-white font-semibold">
+            <h2 class="text-lg sm:text-xl text-carbon font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
+            <h2 class="text-lg sm:text-xl text-carbon font-semibold">
                 Costo de Envío:
                 <span class="block sm:inline mt-1 sm:mt-0">
                     @if ($shippingCost > 0)
@@ -56,28 +72,68 @@
                     @endif
                 </span>
             </h2>
-            <h2 class="text-lg sm:text-xl text-white font-semibold pt-2">Total: ${{ number_format($total, 2) }}</h2>
+            <h2 class="text-lg sm:text-xl text-carbon font-semibold pt-2 price-mono">Total: ${{ number_format($total, 2) }}</h2>
+
+            <!-- Progreso a envío gratis (umbral: CartTotalsService::FREE_SHIPPING_THRESHOLD) -->
+            @php
+                $freeThreshold = \App\Services\CartTotalsService::FREE_SHIPPING_THRESHOLD;
+                $faltante = max(0, $freeThreshold - $subtotal);
+                $progreso = min(100, $subtotal > 0 ? ($subtotal / $freeThreshold) * 100 : 0);
+            @endphp
+            <div class="rounded-lg border border-line bg-white p-4" role="status">
+                @if ($faltante > 0)
+                    <p class="text-sm text-carbon">Te faltan <strong class="price-mono">${{ number_format($faltante, 2) }}</strong> para el envío gratis</p>
+                @else
+                    <p class="text-sm font-semibold text-carbon">Tienes envío gratis</p>
+                @endif
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-carbon/10" role="progressbar"
+                     aria-valuenow="{{ (int) $progreso }}" aria-valuemin="0" aria-valuemax="100"
+                     aria-label="Progreso hacia envío gratis">
+                    <div class="h-full rounded-full bg-volt transition-all duration-300" style="width: {{ $progreso }}%"></div>
+                </div>
+            </div>
+
+            <a href="#paso-pago" class="btn-volt focus-volt inline-block no-underline">Continuar al pago</a>
         </div>
 
-        <!-- Formulario de pago con Stripe -->
-        <div class="mt-8 max-w-md mx-auto">
+        <!-- Paso 2: pago con Stripe -->
+        <div class="mt-8 max-w-md mx-auto" id="paso-pago">
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Información de Pago</h3>
+                <div class="mb-4 flex items-center justify-between gap-3">
+                    <h3 class="text-lg font-semibold text-gray-800">Información de Pago</h3>
+                    <!-- Cuenta regresiva de la reserva de stock (se activa al crear el PaymentIntent) -->
+                    <p class="hidden items-center gap-2 rounded-full border border-carbon bg-volt px-3 py-1 text-sm font-bold text-carbon"
+                       data-reserva-countdown role="status" aria-live="polite">
+                        Stock apartado <span data-reserva-tiempo class="price-mono">--:--</span>
+                    </p>
+                </div>
+                <p class="mb-4 hidden rounded-md bg-warning-light p-3 text-sm font-medium text-warning-dark" data-reserva-aviso role="alert"></p>
 
                 <!-- Selección de dirección de envío -->
                 @if(auth()->user()->addresses->count() > 0)
-                <div class="mb-4">
-                    <label for="shipping_address_id" class="block text-sm font-medium text-gray-700 mb-2">
+                <fieldset class="mb-4">
+                    <legend class="block text-sm font-medium text-gray-700 mb-2">
                         Dirección de Envío
-                    </label>
-                    <select name="shipping_address_id" id="shipping_address_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </legend>
+                    <div class="space-y-2">
                         @foreach(auth()->user()->addresses as $address)
-                            <option value="{{ $address->id }}" {{ $address->is_default ? 'selected' : '' }}>
-                                {{ $address->full_name }} - {{ $address->street }} {{ $address->number }}, {{ $address->neighborhood }}, {{ $address->municipality }}, {{ $address->state }}
-                            </option>
+                            <label class="focus-volt flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors has-checked:border-carbon has-checked:bg-gray-50">
+                                <input type="radio" name="shipping_address_id" value="{{ $address->id }}"
+                                       {{ $address->is_default ? 'checked' : '' }}
+                                       class="mt-1 h-4 w-4 accent-[#131417]">
+                                <span>
+                                    <span class="block text-sm font-semibold text-gray-800">
+                                        {{ $address->full_name }}
+                                        @if($address->is_default)
+                                            <span class="ml-1 rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-700">Predeterminada</span>
+                                        @endif
+                                    </span>
+                                    <span class="block text-sm text-gray-600">{{ $address->street }} {{ $address->number }}, {{ $address->neighborhood }}, {{ $address->municipality }}, {{ $address->state }}</span>
+                                </span>
+                            </label>
                         @endforeach
-                    </select>
-                </div>
+                    </div>
+                </fieldset>
                 @else
                 <div class="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
                     <p class="text-sm">No tienes direcciones guardadas. <a href="{{ route('usuario.addresses.create') }}" class="underline">Agregar dirección</a></p>
@@ -127,12 +183,47 @@
             </div>
         </div>
 
+        <!-- Paso 3: confirmación (oculto hasta el cobro exitoso) -->
+        <div class="mt-8 hidden max-w-md mx-auto" data-pago-exito>
+            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-volt">
+                    <svg class="h-8 w-8 text-carbon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">¡Pago exitoso!</h3>
+                <p class="mt-1 text-sm text-gray-600">Tu stock quedó confirmado. Así va tu pedido:</p>
+                <ol class="mt-5 space-y-0 text-left" aria-label="Estado del pedido">
+                    <li class="flex gap-3">
+                        <span class="flex flex-col items-center" aria-hidden="true">
+                            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-carbon text-xs font-bold text-white">✓</span>
+                            <span class="h-8 w-px bg-carbon"></span>
+                        </span>
+                        <span class="pb-4"><strong class="block text-sm text-gray-900">Pagado</strong><span class="text-sm text-gray-500">Cobro confirmado por Stripe</span></span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="flex flex-col items-center" aria-hidden="true">
+                            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-volt text-xs font-bold text-carbon">2</span>
+                            <span class="h-8 w-px bg-gray-300"></span>
+                        </span>
+                        <span class="pb-4"><strong class="block text-sm text-gray-900">Preparando</strong><span class="text-sm text-gray-500">La tienda está alistando tus productos</span></span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-500" aria-hidden="true">3</span>
+                        <span><strong class="block text-sm text-gray-900">Listo</strong><span class="text-sm text-gray-500">Te avisaremos cuando esté en camino</span></span>
+                    </li>
+                </ol>
+                <a href="{{ route('usuario.orders.history') }}" class="btn-carbon focus-volt mt-4 inline-block no-underline" data-ver-pedido>Ver mis pedidos ahora</a>
+                <p class="mt-2 text-sm text-gray-500">Redirigiendo en <span data-redirect-cuenta class="price-mono">6</span>s…</p>
+            </div>
+        </div>
+
         <!-- Hidden cart data for JavaScript -->
         <script type="application/json" id="cart-data">
             @json(session('cart'))
         </script>
         @else
-            <p class="text-white text-base sm:text-lg">No tienes productos en el carrito.</p>
+            <p class="text-carbon text-base sm:text-lg">No tienes productos en el carrito.</p>
         @endif
     </div>
 
@@ -189,7 +280,7 @@
                     // Get billing details
                     const billingName = document.getElementById('billing_name').value;
                     const billingEmail = document.getElementById('billing_email').value;
-                    const shippingAddressId = document.getElementById('shipping_address_id')?.value;
+                    const shippingAddressId = document.querySelector('[name="shipping_address_id"]:checked')?.value;
 
                     if (!billingName || !billingEmail) {
                         throw new Error('Por favor completa todos los campos requeridos');
@@ -218,7 +309,12 @@
                         throw new Error(errorData.message || 'Error al procesar el pago');
                     }
 
-                    const { client_secret: clientSecret, order_id: orderId } = await response.json();
+                    const { client_secret: clientSecret, order_id: orderId, reserva_expira_en: reservaExpiraEn } = await response.json();
+
+                    // La reserva de stock ya corre: mostrar cuenta regresiva.
+                    if (reservaExpiraEn) {
+                        iniciarCuentaRegresiva(reservaExpiraEn);
+                    }
 
                     // Confirm payment
                     const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
@@ -250,8 +346,8 @@
                         });
 
                         if (confirmResponse.ok) {
-                            // Redirect to order history
-                            window.location.href = '{{ route('usuario.orders.history') }}';
+                            // Paso 3: mostrar confirmación con timeline antes de redirigir.
+                            mostrarExito('{{ route('usuario.orders.history') }}');
                         } else {
                             throw new Error('Error al confirmar la orden');
                         }
@@ -266,6 +362,125 @@
                     button.textContent = originalText;
                 }
             });
+
+            // --- Cuenta regresiva de la reserva de stock ---
+            let reservaInterval = null;
+            let reservaPoller = null;
+
+            function formatoTiempo(segundos) {
+                const minutos = Math.floor(segundos / 60);
+                const resto = segundos % 60;
+                return `${String(minutos).padStart(2, '0')}:${String(resto).padStart(2, '0')}`;
+            }
+
+            function pintarTiempo(segundos) {
+                const badge = document.querySelector('[data-reserva-countdown]');
+                const tiempo = document.querySelector('[data-reserva-tiempo]');
+                const aviso = document.querySelector('[data-reserva-aviso]');
+                const boton = document.getElementById('stripe-checkout-button');
+                if (!badge || !tiempo) {
+                    return;
+                }
+                badge.classList.remove('hidden');
+                badge.classList.add('inline-flex');
+                if (segundos <= 0) {
+                    tiempo.textContent = '00:00';
+                    if (aviso) {
+                        aviso.textContent = 'Tu reserva expiró y el stock se liberó. Vuelve a intentarlo para apartar tus productos.';
+                        aviso.classList.remove('hidden');
+                    }
+                    if (boton) {
+                        boton.disabled = true;
+                    }
+                    window.clearInterval(reservaInterval);
+                    return;
+                }
+                tiempo.textContent = formatoTiempo(segundos);
+                if (segundos < 120 && aviso) {
+                    aviso.textContent = 'Tu reserva vence en menos de 2 minutos. Completa el pago para no perder tu stock.';
+                    aviso.classList.remove('hidden');
+                }
+            }
+
+            function iniciarCuentaRegresiva(expiraEnIso) {
+                window.clearInterval(reservaInterval);
+                window.clearInterval(reservaPoller);
+                const tick = () => {
+                    const segundos = Math.max(0, Math.round((new Date(expiraEnIso).getTime() - Date.now()) / 1000));
+                    pintarTiempo(segundos);
+                };
+                tick();
+                reservaInterval = window.setInterval(tick, 1000);
+                // Re-sincronizar con el servidor cada 15s (el webhook puede confirmar/liberar).
+                reservaPoller = window.setInterval(async () => {
+                    try {
+                        const estado = await fetch('{{ route('usuario.cart.reserva-estado') }}', {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        });
+                        if (!estado.ok) {
+                            return;
+                        }
+                        const datos = await estado.json();
+                        if (datos.tiene_reserva && datos.expira_en) {
+                            window.clearInterval(reservaInterval);
+                            iniciarCuentaRegresivaSinPoller(datos.expira_en);
+                        } else {
+                            pintarTiempo(0);
+                        }
+                    } catch (e) {
+                        // Sin red: el reloj local sigue corriendo, no bloquear el pago.
+                    }
+                }, 15000);
+            }
+
+            function iniciarCuentaRegresivaSinPoller(expiraEnIso) {
+                window.clearInterval(reservaInterval);
+                const tick = () => {
+                    const segundos = Math.max(0, Math.round((new Date(expiraEnIso).getTime() - Date.now()) / 1000));
+                    pintarTiempo(segundos);
+                };
+                tick();
+                reservaInterval = window.setInterval(tick, 1000);
+            }
+
+            function marcarPaso(numero) {
+                document.querySelectorAll('[data-checkout-steps] [data-step]').forEach((item) => {
+                    const punto = item.querySelector('[data-step-dot]');
+                    const paso = Number(item.dataset.step);
+                    const hecho = paso < numero;
+                    const actual = paso === numero;
+                    item.setAttribute('aria-current', actual ? 'step' : 'false');
+                    if (!punto) {
+                        return;
+                    }
+                    punto.className = 'flex h-7 w-7 items-center justify-center rounded-full ' +
+                        (hecho ? 'bg-volt text-carbon' : (actual ? 'bg-carbon text-white' : 'bg-carbon/10 text-carbon'));
+                    punto.textContent = hecho ? '✓' : String(paso);
+                });
+            }
+
+            function mostrarExito(urlHistorial) {
+                window.clearInterval(reservaInterval);
+                window.clearInterval(reservaPoller);
+                marcarPaso(3);
+                document.querySelector('[data-pago-exito]')?.classList.remove('hidden');
+                document.querySelector('[data-pago-exito]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const cuenta = document.querySelector('[data-redirect-cuenta]');
+                let restantes = 6;
+                const timer = window.setInterval(() => {
+                    restantes -= 1;
+                    if (cuenta) {
+                        cuenta.textContent = String(Math.max(0, restantes));
+                    }
+                    if (restantes <= 0) {
+                        window.clearInterval(timer);
+                        window.location.href = urlHistorial;
+                    }
+                }, 1000);
+            }
+
+            // Al llegar al formulario de pago, marcar el paso 2.
+            document.querySelector('#paso-pago')?.addEventListener('mouseenter', () => marcarPaso(2), { once: true });
 
             function showError(message) {
                 // Remove existing error
