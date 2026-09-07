@@ -1,162 +1,248 @@
 <x-app-layout>
-    <div class="py-6">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-            <!-- Contenedor principal con transparencia y sombra -->
-            <div class="bg-[#FFFFFF] bg-opacity-50 shadow-xl rounded-lg p-8">
-
-                <!-- Título de la sección -->
-                <div class="flex flex-col items-center text-center mb-6">
-                    <h1 class="text-display-sm text-primary font-bold">Pedidos Pagados - Pendientes de Aceptación</h1>
+    <div class="py-6" data-kanban
+         data-accept-url-base="{{ url('/trabajador/pedidos') }}"
+         data-csrf="{{ csrf_token() }}">
+        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+            <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h1 class="text-display-sm text-carbon font-bold">Cola de pedidos</h1>
+                    <p class="text-body-md text-muted mt-1">
+                        {{ $orders->count() }} por aceptar · {{ $acceptedToday->count() }} aceptados hoy.
+                        Arrastra a Aceptados o usa los botones (Ctrl+K para buscar).
+                    </p>
                 </div>
+                <p class="sr-only" aria-live="polite" data-kanban-live></p>
+            </div>
 
-                <!-- Tabla de pedidos -->
-                @if ($orders->count())
-                    <div class="overflow-x-auto">
-                        <table class="w-full bg-white bg-opacity-95 rounded-lg shadow-lg mt-4">
-                            <thead>
-                                <tr class="bg-[#801336] text-white">
-                                    <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">ID</th>
-                                    <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Cliente</th>
-                                    <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Productos</th>
-                                    <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Total</th>
-                                    <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Estado</th>
-                                    <th class="px-6 py-3 border-b-2 border-[#801336] text-left text-body-md font-semibold">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($orders as $order)
-                                    <tr class="hover:bg-[#E7E3C4] transition duration-150">
-                                        <td class="px-6 py-3 border-b border-[#801336] text-primary text-body-md font-regular">{{ $order->id }}</td>
-                                        <td class="px-6 py-3 border-b border-[#801336] text-primary text-body-md font-regular">
-                                            <div>
-                                                <p class="font-medium">{{ $order->user->name }}</p>
-                                                <p class="text-body-sm text-primary-light">{{ $order->user->email }}</p>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-3 border-b border-[#801336] text-body-md">
-                                            <div class="space-y-1">
-                                                @foreach($order->orderItems->take(2) as $item)
-                                                    <p class="text-body-sm">{{ $item->quantity }}x {{ $item->product->name }}</p>
-                                                @endforeach
-                                                @if($order->orderItems->count() > 2)
-                                                    <p class="text-body-sm text-primary-light">+{{ $order->orderItems->count() - 2 }} más...</p>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-3 border-b border-[#801336] text-primary text-body-md font-semibold">${{ number_format($order->total_price, 2) }}</td>
-                                        <td class="px-6 py-3 border-b border-[#801336]">
-                                            <span class="inline-flex items-center px-2 py-1 rounded text-body-sm font-medium bg-success-100 text-success-dark">
-                                                ✓ Pagado
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-3 border-b border-[#801336]">
-                                            <div class="flex flex-wrap gap-2">
-                                                <a href="{{ route('trabajador.orders.show', $order->id) }}"
-                                                   class="flex items-center text-primary hover:text-primary-700 text-body-sm font-medium space-x-1 transition duration-150">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                                        <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd" />
-                                                    </svg>
-                                                    <span>Ver</span>
-                                                </a>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Columna: por aceptar -->
+                <section aria-labelledby="kanban-pendientes" class="rounded-lg border border-line bg-white p-4">
+                    <h2 id="kanban-pendientes" class="text-heading-md text-carbon mb-4">
+                        Por aceptar <span class="price-mono rounded-full bg-volt px-2 py-0.5 text-sm font-bold">{{ $orders->count() }}</span>
+                    </h2>
+                    @if ($orders->count())
+                        <div class="space-y-3" data-cola="pendientes">
+                            @foreach ($orders as $order)
+                                @php
+                                    // diffInMinutes en Carbon 3 devuelve diferencia con signo: usar valor absoluto entero.
+                                    $minutosCola = $order->created_at ? (int) abs(now()->diffInMinutes($order->created_at)) : 0;
+                                    $slaClase = $minutosCola > 240 ? 'badge-stock-out' : ($minutosCola > 60 ? 'badge-stock-low' : 'badge-stock-ok');
+                                    $slaTexto = $minutosCola < 1 ? 'ahora mismo' : ($minutosCola < 60 ? "hace {$minutosCola} min" : 'hace '.intdiv($minutosCola, 60).' h '.($minutosCola % 60).' min');
+                                @endphp
+                                <article class="rounded-md border border-line bg-paper p-4 shadow-sm"
+                                         draggable="true" data-pedido="{{ $order->id }}">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div>
+                                            <p class="font-bold text-carbon price-mono">#{{ $order->id }}</p>
+                                            <p class="text-sm font-medium text-carbon">{{ $order->user->name }}</p>
+                                            <p class="text-xs text-muted">{{ $order->user->email }}</p>
+                                        </div>
+                                        <span class="{{ $slaClase }}">{{ $slaTexto }}</span>
+                                    </div>
+                                    <div class="mt-2 space-y-1 text-sm text-carbon">
+                                        @foreach($order->orderItems->take(2) as $item)
+                                            <p>{{ $item->quantity }}x {{ $item->product->name }}</p>
+                                        @endforeach
+                                        @if($order->orderItems->count() > 2)
+                                            <p class="text-muted">+{{ $order->orderItems->count() - 2 }} más…</p>
+                                        @endif
+                                    </div>
+                                    <p class="price-mono mt-2 font-bold text-carbon">${{ number_format($order->total_price, 2) }}</p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <a href="{{ route('trabajador.orders.show', $order->id) }}"
+                                           class="focus-volt rounded-md border border-line px-3 py-1.5 text-sm font-medium text-carbon hover:border-carbon no-underline">Ver</a>
+                                        <form action="{{ route('trabajador.orders.accept', $order->id) }}" method="POST" class="inline" data-aceptar="{{ $order->id }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn-carbon focus-volt px-3 py-1.5 text-sm">Aceptar</button>
+                                        </form>
+                                        <a href="{{ route('trabajador.orders.show', $order->id) }}#rechazar"
+                                           data-rechazar="{{ $order->id }}"
+                                           class="focus-volt rounded-md border border-line px-3 py-1.5 text-sm font-semibold text-error hover:border-error no-underline">Rechazar</a>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted italic">No hay pedidos pagados pendientes de aceptación.</p>
+                    @endif
+                </section>
 
-                                                <form action="{{ route('trabajador.orders.accept', $order->id) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="flex items-center text-success hover:text-success-dark text-body-sm font-medium space-x-1 transition duration-150"
-                                                            onclick="return confirm('¿Estás seguro de que quieres aceptar este pedido?')">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                                            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        <span>Aceptar</span>
-                                                    </button>
-                                                </form>
-
-                                                <button onclick="openRejectModal({{ $order->id }})"
-                                                        class="flex items-center text-error hover:text-error-dark text-body-sm font-medium space-x-1 transition duration-150">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                                        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
-                                                    </svg>
-                                                    <span>Rechazar</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <!-- Columna: aceptados hoy (zona de drop) -->
+                <section aria-labelledby="kanban-aceptados" class="rounded-lg border border-line bg-white p-4">
+                    <h2 id="kanban-aceptados" class="text-heading-md text-carbon mb-4">
+                        Aceptados hoy <span class="price-mono rounded-full bg-carbon px-2 py-0.5 text-sm font-bold text-white">{{ $acceptedToday->count() }}</span>
+                    </h2>
+                    <p class="mb-3 rounded-md border border-dashed border-line p-3 text-center text-sm text-muted" data-drop-hint>
+                        Suelta aquí para aceptar
+                    </p>
+                    <div class="space-y-3" data-cola="aceptados" aria-live="polite">
+                        @forelse ($acceptedToday as $order)
+                            <article class="rounded-md border border-line bg-paper p-4 opacity-90">
+                                <p class="font-bold text-carbon price-mono">#{{ $order->id }}</p>
+                                <p class="text-sm font-medium text-carbon">{{ $order->user->name }}</p>
+                                <p class="price-mono mt-1 text-sm font-bold text-carbon">${{ number_format($order->total_price, 2) }}</p>
+                                <a href="{{ route('trabajador.orders.show', $order->id) }}" class="mt-2 inline-block text-sm font-medium text-carbon underline">Ver</a>
+                            </article>
+                        @empty
+                            <p class="text-muted italic" data-aceptados-vacio>Aún no aceptas pedidos hoy.</p>
+                        @endforelse
                     </div>
-                @else
-                    <p class="text-primary-light text-body-lg font-regular italic">No hay pedidos pagados pendientes de aceptación.</p>
-                @endif
+                </section>
             </div>
         </div>
-    </div>
 
-    <!-- Modal de Rechazo -->
-    <div id="rejectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-gray-900">Rechazar Pedido</h3>
-                    <button onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+        <!-- Diálogo de rechazo con motivo -->
+        <dialog data-rechazo-dialog class="w-[min(92vw,26rem)] rounded-lg p-0 shadow-lg" aria-labelledby="rechazo-titulo">
+            <form data-rechazo-form class="p-6">
+                <h2 id="rechazo-titulo" class="text-lg font-bold text-gray-900 mb-1">Rechazar pedido <span data-rechazo-id class="price-mono"></span></h2>
+                <p class="text-sm text-gray-500 mb-4">El cliente verá este motivo. Mínimo 10 caracteres.</p>
+                <label for="rechazo-motivo" class="block text-sm font-medium text-gray-700 mb-2">Motivo del rechazo *</label>
+                <textarea id="rechazo-motivo" name="rejection_reason" rows="4" required minlength="10" maxlength="500"
+                          class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-carbon"
+                          placeholder="Explique el motivo por el cual rechaza este pedido..."></textarea>
+                <p class="mt-1 hidden text-sm text-error" data-rechazo-error role="alert"></p>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" class="btn-ghost focus-volt text-sm" data-rechazo-cancelar>Cancelar</button>
+                    <button type="submit" class="focus-volt rounded-md bg-error px-4 py-2 text-sm font-semibold text-white hover:bg-error-dark">Rechazar pedido</button>
                 </div>
-
-                <form id="rejectForm" method="POST">
-                    @csrf
-                    @method('PATCH')
-
-                    <div class="mb-4">
-                        <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-2">
-                            Motivo del rechazo *
-                        </label>
-                        <textarea
-                            id="rejection_reason"
-                            name="rejection_reason"
-                            rows="4"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="Explique el motivo por el cual rechaza este pedido..."
-                            required
-                            minlength="10"
-                            maxlength="500"></textarea>
-                        <p class="text-xs text-gray-500 mt-1">Mínimo 10 caracteres, máximo 500</p>
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeRejectModal()"
-                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-150">
-                            Cancelar
-                        </button>
-                        <button type="submit"
-                                class="px-4 py-2 bg-error text-white rounded-md hover:bg-error-dark transition duration-150">
-                            Rechazar Pedido
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+            </form>
+        </dialog>
     </div>
 
     <script>
-        function openRejectModal(orderId) {
-            document.getElementById('rejectModal').classList.remove('hidden');
-            document.getElementById('rejectForm').action = `/trabajador/pedidos/${orderId}/rechazar`;
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
-            document.getElementById('rejection_reason').value = '';
-        }
-
-        // Cerrar modal al hacer clic fuera de él
-        document.getElementById('rejectModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRejectModal();
+        // Kanban del trabajador: drag & drop + UI optimista con rollback.
+        // Sin JS, los formularios Aceptar y enlaces Ver/Rechazar siguen funcionando.
+        (() => {
+            const root = document.querySelector('[data-kanban]');
+            if (!root || root.dataset.kanbanInit === '1') {
+                return;
             }
-        });
+            root.dataset.kanbanInit = '1';
+
+            const csrf = root.dataset.csrf;
+            const base = root.dataset.acceptUrlBase;
+            const live = root.querySelector('[data-kanban-live]');
+            const pendientes = root.querySelector('[data-cola="pendientes"]');
+            const aceptados = root.querySelector('[data-cola="aceptados"]');
+            const hint = root.querySelector('[data-drop-hint]');
+            const dialogo = root.querySelector('[data-rechazo-dialog]');
+            const formRechazo = root.querySelector('[data-rechazo-form]');
+            const motivo = root.querySelector('#rechazo-motivo');
+            const errorRechazo = root.querySelector('[data-rechazo-error]');
+            let rechazoId = null;
+            let arrastrado = null;
+
+            const anunciar = (msg) => { if (live) { live.textContent = msg; } };
+            const headers = () => ({
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrf,
+            });
+
+            async function aceptar(id, tarjeta) {
+                // UI optimista: mover de inmediato, revertir si falla.
+                const siguiente = tarjeta.nextElementSibling;
+                aceptados.prepend(tarjeta);
+                tarjeta.setAttribute('draggable', 'false');
+                tarjeta.querySelectorAll('button, a').forEach((el) => { el.style.pointerEvents = 'none'; });
+                anunciar(`Aceptando pedido ${id}…`);
+                try {
+                    const r = await fetch(`${base}/${id}/aceptar`, { method: 'PATCH', headers: headers(), body: '{}' });
+                    if (!r.ok) {
+                        throw new Error(`HTTP ${r.status}`);
+                    }
+                    tarjeta.querySelector('.mt-3')?.remove();
+                    const ok = document.createElement('p');
+                    ok.className = 'mt-3 text-sm font-semibold text-success';
+                    ok.textContent = '✓ Aceptado';
+                    tarjeta.appendChild(ok);
+                    document.querySelector('[data-aceptados-vacio]')?.remove();
+                    anunciar(`Pedido ${id} aceptado.`);
+                } catch (e) {
+                    pendientes.insertBefore(tarjeta, siguiente);
+                    tarjeta.setAttribute('draggable', 'true');
+                    tarjeta.querySelectorAll('button, a').forEach((el) => { el.style.pointerEvents = ''; });
+                    anunciar(`No se pudo aceptar el pedido ${id}. Inténtalo de nuevo.`);
+                }
+            }
+
+            // Formularios Aceptar (también funcionan sin JS por POST clásico).
+            root.addEventListener('submit', (event) => {
+                const form = event.target.closest('[data-aceptar]');
+                if (!form) {
+                    return;
+                }
+                event.preventDefault();
+                const tarjeta = form.closest('[data-pedido]');
+                aceptar(form.dataset.aceptar, tarjeta);
+            });
+
+            // Drag & drop hacia Aceptados.
+            root.addEventListener('dragstart', (event) => {
+                const tarjeta = event.target.closest('[data-pedido]');
+                if (!tarjeta || tarjeta.getAttribute('draggable') !== 'true') {
+                    return;
+                }
+                arrastrado = tarjeta;
+                event.dataTransfer.effectAllowed = 'move';
+                hint?.classList.add('bg-volt', 'text-carbon', 'font-semibold');
+            });
+            root.addEventListener('dragend', () => {
+                arrastrado = null;
+                hint?.classList.remove('bg-volt', 'text-carbon', 'font-semibold');
+            });
+            aceptados.addEventListener('dragover', (event) => { event.preventDefault(); });
+            aceptados.addEventListener('drop', (event) => {
+                event.preventDefault();
+                if (arrastrado) {
+                    aceptar(arrastrado.dataset.pedido, arrastrado);
+                }
+            });
+
+            // Rechazo con motivo (fallback sin JS: enlace al detalle).
+            root.addEventListener('click', (event) => {
+                const link = event.target.closest('[data-rechazar]');
+                if (!link) {
+                    return;
+                }
+                event.preventDefault();
+                rechazoId = link.dataset.rechazar;
+                root.querySelector('[data-rechazo-id]').textContent = `#${rechazoId}`;
+                errorRechazo.classList.add('hidden');
+                formRechazo.reset();
+                dialogo.showModal();
+                motivo.focus();
+            });
+            root.querySelector('[data-rechazo-cancelar]')?.addEventListener('click', () => dialogo.close());
+
+            formRechazo.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const razon = motivo.value.trim();
+                if (razon.length < 10) {
+                    errorRechazo.textContent = 'La razón debe tener al menos 10 caracteres.';
+                    errorRechazo.classList.remove('hidden');
+                    return;
+                }
+                try {
+                    const r = await fetch(`${base}/${rechazoId}/rechazar`, {
+                        method: 'PATCH',
+                        headers: headers(),
+                        body: JSON.stringify({ rejection_reason: razon }),
+                    });
+                    if (!r.ok) {
+                        const datos = await r.json().catch(() => ({}));
+                        throw new Error(datos.message ?? `HTTP ${r.status}`);
+                    }
+                    document.querySelector(`[data-pedido="${rechazoId}"]`)?.remove();
+                    dialogo.close();
+                    anunciar(`Pedido ${rechazoId} rechazado.`);
+                } catch (e) {
+                    errorRechazo.textContent = e.message || 'No se pudo rechazar. Inténtalo de nuevo.';
+                    errorRechazo.classList.remove('hidden');
+                }
+            });
+        })();
     </script>
 </x-app-layout>

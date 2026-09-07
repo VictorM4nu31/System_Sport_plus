@@ -124,6 +124,7 @@ Route::middleware(['auth', 'role:trabajador'])
     ->group(function () {
         Route::controller(OrderController::class)->prefix('pedidos')->group(function () {
             Route::get('/', 'workerIndex')->name('orders.index');
+            Route::get('/buscar', 'buscarPedidos')->name('orders.search');
             Route::get('/{id}', 'workerShow')->name('orders.show');
             Route::patch('/{id}/aceptar', 'acceptOrder')->name('orders.accept');
             Route::patch('/{id}/rechazar', 'rejectOrder')->name('orders.reject');

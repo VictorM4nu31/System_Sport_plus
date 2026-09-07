@@ -104,22 +104,62 @@ class OrderController extends Controller
         // Mostrar pedidos pagados que están pendientes de aceptación por el trabajador
         // Excluir pedidos ya rechazados o confirmados
         $orders = Order::whereIn('status', ['paid', 'pendiente'])
-                      ->where('payment_status', 'paid')
-                      ->with('user', 'orderItems.product')
-                      ->orderBy('created_at', 'desc')
-                      ->get();
-        return view('trabajador.orders.index', compact('orders'));
+            ->where('payment_status', 'paid')
+            ->with('user', 'orderItems.product')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Segunda columna del kanban: aceptados hoy (contexto, sin paginación pesada).
+        $acceptedToday = Order::where('status', 'confirmed')
+            ->whereDate('updated_at', today())
+            ->with('user', 'orderItems.product')
+            ->orderBy('updated_at', 'desc')
+            ->limit(20)
+            ->get();
+
+        return view('trabajador.orders.index', compact('orders', 'acceptedToday'));
+    }
+
+    /**
+     * Búsqueda rápida de pedidos para la palette del trabajador (JSON).
+     */
+    public function buscarPedidos(Request $request)
+    {
+        $query = trim((string) $request->query('q', ''));
+
+        $orders = Order::with('user')
+            ->when($query !== '', function ($q) use ($query) {
+                if (ctype_digit($query)) {
+                    $q->where('id', (int) $query);
+                } else {
+                    $q->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$query}%"));
+                }
+            })
+            ->orderBy('created_at', 'desc')
+            ->limit(8)
+            ->get()
+            ->map(fn (Order $order): array => [
+                'id' => $order->id,
+                'cliente' => $order->user?->name ?? '—',
+                'total' => (float) $order->total_price,
+                'formatted_total' => '$'.number_format((float) $order->total_price, 2),
+                'status' => $order->status,
+                'created_at' => $order->created_at?->format('d/m H:i'),
+                'url' => route('trabajador.orders.show', $order->id),
+            ]);
+
+        return response()->json(['data' => $orders]);
     }
 
     public function workerShow($id)
     {
         $order = Order::with(['user', 'orderItems.product', 'shippingAddress'])
-                     ->findOrFail($id);
+            ->findOrFail($id);
 
         // Verificar que el pedido esté en estado válido para el trabajador
-        if (!in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
+        if (! in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
             return redirect()->route('trabajador.orders.index')
-                           ->with('error', 'Este pedido no está disponible para revisión.');
+                ->with('error', 'Este pedido no está disponible para revisión.');
         }
 
         Log::channel('audit')->info('Worker viewed order details', [
@@ -139,9 +179,9 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         // Verificar que el pedido esté pagado y pendiente de aceptación
-        if (!in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
+        if (! in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
             return redirect()->route('trabajador.orders.index')
-                           ->with('error', 'Este pedido no puede ser aceptado.');
+                ->with('error', 'Este pedido no puede ser aceptado.');
         }
 
         $order->update(['status' => 'confirmed']); // Cambiar a confirmed cuando el trabajador acepta
@@ -155,6 +195,15 @@ class OrderController extends Controller
             'timestamp' => now(),
         ]);
 
+        // El kanban opera con fetch + UI optimista: responder JSON sin cambiar la lógica.
+        if (request()->wantsJson()) {
+            return response()->json([
+                'message' => 'Pedido aceptado con éxito.',
+                'order_id' => $order->id,
+                'status' => $order->status,
+            ]);
+        }
+
         return redirect()->route('trabajador.orders.index')->with('success', 'Pedido aceptado con éxito.');
     }
 
@@ -163,25 +212,25 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         // Verificar que el pedido esté pagado y pendiente de aceptación
-        if (!in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
+        if (! in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
             return redirect()->route('trabajador.orders.index')
-                           ->with('error', 'Este pedido no puede ser rechazado.');
+                ->with('error', 'Este pedido no puede ser rechazado.');
         }
 
         // Validar que se proporcione una razón de rechazo
         $request->validate([
-            'rejection_reason' => 'required|string|min:10|max:500'
+            'rejection_reason' => 'required|string|min:10|max:500',
         ], [
             'rejection_reason.required' => 'Debe proporcionar una razón para el rechazo.',
             'rejection_reason.min' => 'La razón debe tener al menos 10 caracteres.',
-            'rejection_reason.max' => 'La razón no puede exceder 500 caracteres.'
+            'rejection_reason.max' => 'La razón no puede exceder 500 caracteres.',
         ]);
 
         $order->update([
             'status' => 'rejected',
             'rejection_reason' => $request->rejection_reason,
             'rejected_at' => now(),
-            'rejected_by' => Auth::id()
+            'rejected_by' => Auth::id(),
         ]);
 
         Log::channel('audit')->info('Order rejected by worker', [
@@ -193,6 +242,14 @@ class OrderController extends Controller
             'action' => 'trabajador.orders.reject',
             'timestamp' => now(),
         ]);
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'message' => 'Pedido rechazado correctamente.',
+                'order_id' => $order->id,
+                'status' => $order->status,
+            ]);
+        }
 
         return redirect()->route('trabajador.orders.index')->with('success', 'Pedido rechazado correctamente.');
     }
