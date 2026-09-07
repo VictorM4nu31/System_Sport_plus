@@ -8,7 +8,7 @@
             <!-- Imagen de perfil (opcional) -->
             <div class="flex justify-center mb-6">
                 <div class="w-24 h-24 rounded-full overflow-hidden bg-primary-50">
-                    <img src="../img/logo.png" alt="Profile Image" class="w-full h-full object-cover object-center">
+                    <img src="{{ asset('img/logo.png') }}" alt="Profile Image" class="w-full h-full object-cover object-center">
                 </div>
             </div>
 

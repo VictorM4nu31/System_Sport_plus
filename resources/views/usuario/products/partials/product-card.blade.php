@@ -29,6 +29,7 @@
             @if($product->image)
                 <img src="{{ asset('storage/products/' . $product->image) }}"
                      alt="{{ $product->name }}"
+                     loading="lazy"
                      class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
             @else
                 <div class="w-full h-48 bg-gray-200 flex items-center justify-center">

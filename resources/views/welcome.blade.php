@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Campos Sport</title>
 
-        <!-- Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Estilos del build Vite único (sin CDN Tailwind duplicado) -->
+        @vite(['resources/css/app.css'])
 
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,9 +59,9 @@
     <div class="container mx-auto relative">
         <!-- Slider -->
         <div id="carousel" class="flex transition-transform duration-700 ease-in-out">
-            <img src="../img/banner1.jpg" alt="Slide 1" class="w-full object-cover">
-            <img src="../img/banner2.jpg" alt="Slide 2" class="w-full object-cover">
-            <img src="../img/banner3.jpg" alt="Slide 3" class="w-full object-cover">
+            <img src="{{ asset('img/banner1.jpg') }}" alt="Slide 1" class="w-full object-cover">
+            <img src="{{ asset('img/banner2.jpg') }}" alt="Slide 2" class="w-full object-cover">
+            <img src="{{ asset('img/banner3.jpg') }}" alt="Slide 3" class="w-full object-cover">
         </div>
 
         <!-- Navigation -->
@@ -143,19 +143,19 @@
             <h2 class="text-3xl font-bold text-center mb-8">Ofertas</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="relative group">
-                    <img src="../img/yoga.png" alt="Yoga Gear" class="rounded-lg shadow-lg object-cover w-full h-60">
+                    <img src="{{ asset('img/yoga.png') }}" alt="Yoga Gear" class="rounded-lg shadow-lg object-cover w-full h-60" loading="lazy">
                     <div class="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-lg font-bold">
                         Shop Yoga Gear
                     </div>
                 </div>
                 <div class="relative group">
-                    <img src="../img/running.png" alt="Running Wear" class="rounded-lg shadow-lg object-cover w-full h-60">
+                    <img src="{{ asset('img/running.png') }}" alt="Running Wear" class="rounded-lg shadow-lg object-cover w-full h-60" loading="lazy">
                     <div class="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-lg font-bold">
                         Shop Running Wear
                     </div>
                 </div>
                 <div class="relative group">
-                    <img src="../img/accesorios.png" alt="Accessories" class="rounded-lg shadow-lg object-cover w-full h-60">
+                    <img src="{{ asset('img/accesorios.png') }}" alt="Accessories" class="rounded-lg shadow-lg object-cover w-full h-60" loading="lazy">
                     <div class="absolute inset-0 bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-lg font-bold">
                         Shop Accessories
                     </div>
@@ -171,7 +171,11 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($products as $product)
                     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                        <img src="{{ '/storage/' . $product->image }}" alt="{{ $product->name }}" class="w-full h-40 object-cover">
+                        @if ($product->image)
+                            <img src="{{ asset('storage/products/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover" loading="lazy">
+                        @else
+                            <img src="{{ asset('img/logo.png') }}" alt="{{ $product->name }}" class="w-full h-40 object-contain bg-gray-100 p-4" loading="lazy">
+                        @endif
                         <div class="p-4">
                             <h3 class="text-lg font-semibold">{{ $product->name }}</h3>
                             <p class="text-gray-600 p-3">${{ $product->price }}</p>
@@ -191,35 +195,35 @@
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="../img/nike.png" alt="Nike" class="object-contain w-16 h-16">
+                    <img src="{{ asset('img/nike.png') }}" alt="Nike" class="object-contain w-16 h-16" loading="lazy">
                 </div>
                 <span class="text-sm font-semibold text-black">Nike</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="../img/adidas.png" alt="Adidas" class="object-contain w-16 h-16">
+                    <img src="{{ asset('img/adidas.png') }}" alt="Adidas" class="object-contain w-16 h-16" loading="lazy">
                 </div>
                 <span class="text-sm font-semibold text-black">Adidas</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="../img/puma.png" alt="Puma" class="object-contain w-16 h-16">
+                    <img src="{{ asset('img/puma.png') }}" alt="Puma" class="object-contain w-16 h-16" loading="lazy">
                 </div>
                 <span class="text-sm font-semibold text-black">Puma</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="../img/Under_armour.png" alt="Under Armour" class="object-contain w-16 h-16">
+                    <img src="{{ asset('img/Under_armour.png') }}" alt="Under Armour" class="object-contain w-16 h-16" loading="lazy">
                 </div>
                 <span class="text-sm font-semibold text-black">Under Armour</span>
             </div>
             <!-- Brand Item -->
             <div class="flex flex-col items-center space-y-2">
                 <div class="w-24 h-24 bg-gray-200 rounded-full flex justify-center items-center overflow-hidden">
-                    <img src="../img/jordan.png" alt="Jordan" class="object-contain w-16 h-16">
+                    <img src="{{ asset('img/jordan.png') }}" alt="Jordan" class="object-contain w-16 h-16" loading="lazy">
                 </div>
                 <span class="text-sm font-semibold text-black">Jordan</span>
             </div>

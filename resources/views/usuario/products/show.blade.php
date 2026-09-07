@@ -14,11 +14,19 @@
                 <!-- Imagen del Producto -->
                 <div class="w-full md:w-1/2">
                     <div class="aspect-square overflow-hidden rounded-lg bg-gray-100">
-                        <img
-                            src="{{ '/storage/' . $product->image }}"
-                            alt="{{ $product->name }}"
-                            class="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
-                        >
+                        @if ($product->image)
+                            <img
+                                src="{{ asset('storage/products/' . $product->image) }}"
+                                alt="{{ $product->name }}"
+                                class="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                            >
+                        @else
+                            <img
+                                src="{{ asset('img/logo.png') }}"
+                                alt="{{ $product->name }}"
+                                class="w-full h-full object-contain bg-gray-100 p-8"
+                            >
+                        @endif
                     </div>
                 </div>
                 <!-- Información del Producto -->

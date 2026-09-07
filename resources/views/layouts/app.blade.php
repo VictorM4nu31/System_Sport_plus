@@ -15,14 +15,8 @@
     <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600,700&display=swap" rel="stylesheet" />
     <link rel="preload" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap"></noscript>
-    <!-- Flowbite -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
-
-    <!-- Scripts -->
+    <!-- Scripts (Vite build único; sin CDN duplicados) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- Flowbite -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet">
 </head>
 <body class="font-sans antialiased">
     <div class="flex flex-col md:flex-row">
@@ -71,35 +65,7 @@
                 </div>
             </header>
 
-            <div class="relative min-h-screen bg-gradient-to-b from-[#801336] via-[#801336] to-[#801336] overflow-hidden">
-                <!-- Elementos decorativos ocultos en pantallas pequeñas -->
-                <div class="hidden lg:block absolute inset-0 -z-10">
-                    <!-- Círculos grandes -->
-                    <div class="absolute w-96 h-96 bg-[#EE4E50] opacity-40 rounded-full blur-3xl top-10 left-20"></div>
-                    <div class="absolute w-72 h-72 bg-[#C72C41] opacity-30 rounded-full blur-2xl bottom-20 right-10"></div>
-                    <div class="absolute w-80 h-80 bg-[#FF8B9B] opacity-30 rounded-full blur-3xl bottom-40 left-40"></div>
-                    <div class="absolute w-48 h-48 bg-[#2D132C] opacity-25 rounded-full blur-2xl top-60 left-1/3"></div>
-
-                    <!-- Nuevos círculos añadidos -->
-                    <div class="absolute w-64 h-64 bg-[#C72C41] opacity-20 rounded-full blur-2xl top-80 left-5"></div>
-                    <div class="absolute w-40 h-40 bg-[#EE4E50] opacity-25 rounded-full blur-2xl bottom-10 left-3/4"></div>
-                    <div class="absolute w-56 h-56 bg-[#FF8B9B] opacity-35 rounded-full blur-3xl top-1/4 right-1/4"></div>
-                    <div class="absolute w-32 h-32 bg-[#2D132C] opacity-20 rounded-full blur-2xl bottom-40 right-1/5"></div>
-                    <div class="absolute w-20 h-20 bg-[#C72C41] opacity-30 rounded-full blur-2xl top-1/2 left-1/5"></div>
-                </div>
-
-                <!-- Animaciones ocultas en pantallas pequeñas -->
-                <div class="hidden lg:block absolute inset-0 overflow-hidden">
-                    <!-- Primer círculo en movimiento -->
-                    <div class="absolute w-24 h-24 bg-[#EE4E50] rounded-full opacity-70 animate-bounce-1"></div>
-                    <div class="absolute w-16 h-16 bg-[#C72C41] rounded-full opacity-70 animate-bounce-2"></div>
-                    <div class="absolute w-20 h-20 bg-[#801336] rounded-full opacity-70 animate-bounce-3"></div>
-                    <div class="absolute w-32 h-32 bg-[#2D132C] rounded-full opacity-60 animate-bounce-4"></div>
-                    <div class="absolute w-12 h-12 bg-[#C72C41] rounded-full opacity-60 animate-bounce-5"></div>
-                    <div class="absolute w-10 h-10 bg-[#EE4E50] rounded-full opacity-70 animate-bounce-6"></div>
-                    <div class="absolute w-28 h-28 bg-[#801336] rounded-full opacity-60 animate-bounce-7"></div>
-                </div>
-
+            <div class="relative min-h-screen overflow-hidden">
                 <div class="relative z-10">
                     <main>
                         {{ $slot }}
@@ -109,30 +75,5 @@
         </div>
     </div>
 
-    <!-- Estilos personalizados para animaciones -->
-    <style>
-        /* Efectos de desenfoque */
-        .blur-2xl {
-            filter: blur(40px);
-        }
-        .blur-3xl {
-            filter: blur(60px);
-        }
-
-        /* Animación de rebote de los círculos */
-        @keyframes bounce {
-            0% { transform: translateY(100vh); }
-            100% { transform: translateY(-100vh); }
-        }
-
-        /* Diferentes velocidades y posiciones para los círculos animados */
-        .animate-bounce-1 { animation: bounce 10s linear infinite; left: 10%; top: 50%; }
-        .animate-bounce-2 { animation: bounce 12s linear infinite; left: 30%; top: 60%; }
-        .animate-bounce-3 { animation: bounce 8s linear infinite; left: 70%; top: 40%; }
-        .animate-bounce-4 { animation: bounce 15s linear infinite; left: 50%; top: 70%; }
-        .animate-bounce-5 { animation: bounce 18s linear infinite; left: 15%; top: 30%; }
-        .animate-bounce-6 { animation: bounce 7s linear infinite; left: 80%; top: 20%; }
-        .animate-bounce-7 { animation: bounce 9s linear infinite; left: 40%; top: 10%; }
-    </style>
 </body>
 </html>

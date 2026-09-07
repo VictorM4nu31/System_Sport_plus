@@ -6,7 +6,7 @@
 
                 <!-- Título de la sección con ícono y color de fondo -->
                 <div class="flex flex-col items-center text-center mb-6">
-                    <img src="../img/" alt="Logo" class="w-16 h-16 sm:w-24 sm:h-24 mb-4 rounded-full border-4 border-[#801336]" />
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo" class="w-16 h-16 sm:w-24 sm:h-24 mb-4 rounded-full border-4 border-[#801336]" />
                     <h3 class="text-display-sm text-white">Gestión de Categorías</h3>
                 </div>
 
