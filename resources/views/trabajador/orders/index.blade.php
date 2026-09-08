@@ -32,12 +32,12 @@
                                 <article class="rounded-md border border-line bg-paper p-4 shadow-sm"
                                          draggable="true" data-pedido="{{ $order->id }}">
                                     <div class="flex items-start justify-between gap-2">
-                                        <div>
+                                        <div class="min-w-0">
                                             <p class="font-bold text-carbon price-mono">#{{ $order->id }}</p>
-                                            <p class="text-sm font-medium text-carbon">{{ $order->user->name }}</p>
-                                            <p class="text-xs text-muted">{{ $order->user->email }}</p>
+                                            <p class="text-sm font-medium text-carbon truncate">{{ $order->user->name }}</p>
+                                            <p class="text-xs text-muted truncate">{{ $order->user->email }}</p>
                                         </div>
-                                        <span class="{{ $slaClase }}">{{ $slaTexto }}</span>
+                                        <span class="{{ $slaClase }} shrink-0">{{ $slaTexto }}</span>
                                     </div>
                                     <div class="mt-2 space-y-1 text-sm text-carbon">
                                         @foreach($order->orderItems->take(2) as $item)
@@ -50,15 +50,15 @@
                                     <p class="price-mono mt-2 font-bold text-carbon">${{ number_format($order->total_price, 2) }}</p>
                                     <div class="mt-3 flex flex-wrap gap-2">
                                         <a href="{{ route('trabajador.orders.show', $order->id) }}"
-                                           class="focus-volt rounded-md border border-line px-3 py-1.5 text-sm font-medium text-carbon hover:border-carbon no-underline">Ver</a>
+                                           class="focus-volt rounded-md border border-line px-4 py-2.5 min-h-[44px] inline-flex items-center text-sm font-medium text-carbon hover:border-carbon no-underline">Ver</a>
                                         <form action="{{ route('trabajador.orders.accept', $order->id) }}" method="POST" class="inline" data-aceptar="{{ $order->id }}">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="btn-carbon focus-volt px-3 py-1.5 text-sm">Aceptar</button>
+                                            <button type="submit" class="btn-carbon focus-volt px-4 py-2.5 min-h-[44px] text-sm">Aceptar</button>
                                         </form>
                                         <a href="{{ route('trabajador.orders.show', $order->id) }}#rechazar"
                                            data-rechazar="{{ $order->id }}"
-                                           class="focus-volt rounded-md border border-line px-3 py-1.5 text-sm font-semibold text-error hover:border-error no-underline">Rechazar</a>
+                                           class="focus-volt rounded-md border border-line px-4 py-2.5 min-h-[44px] inline-flex items-center text-sm font-semibold text-error hover:border-error no-underline">Rechazar</a>
                                     </div>
                                 </article>
                             @endforeach

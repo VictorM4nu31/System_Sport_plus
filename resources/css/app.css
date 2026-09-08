@@ -590,3 +590,153 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Campos Sport product language: editorial utility over decorative chrome. */
+:root {
+  --cs-ink: #111315;
+  --cs-ink-soft: #292d31;
+  --cs-paper: #f4f1e8;
+  --cs-surface: #ffffff;
+  --cs-elevated: #e9e5da;
+  --cs-heritage: #762238;
+  --cs-volt: #d7f23a;
+  --cs-sky: #2e6b8a;
+  --cs-muted: #687078;
+  --cs-line: #d8d4c9;
+  --cs-success: #176b54;
+  --cs-warning: #a85d16;
+  --cs-error: #b83232;
+  --cs-radius-sm: 4px;
+  --cs-radius-md: 8px;
+  --cs-radius-lg: 14px;
+  --cs-motion-fast: 120ms cubic-bezier(.2,.8,.2,1);
+  --cs-motion-base: 200ms cubic-bezier(.2,.8,.2,1);
+  --cs-motion-slow: 320ms cubic-bezier(.2,.8,.2,1);
+}
+
+@layer base {
+  body {
+    background: var(--cs-paper);
+    color: var(--cs-ink);
+  }
+
+  ::selection {
+    background: var(--cs-volt);
+    color: var(--cs-ink);
+  }
+}
+
+@layer components {
+  .cs-surface {
+    border: 1px solid var(--cs-line);
+    background: var(--cs-surface);
+    border-radius: var(--cs-radius-lg);
+  }
+
+  .cs-eyebrow {
+    color: var(--cs-muted);
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .cs-display {
+    color: var(--cs-ink);
+    font-family: 'Archivo', Figtree, sans-serif;
+    font-weight: 800;
+    letter-spacing: -.045em;
+    line-height: .98;
+  }
+
+  .cs-button-primary,
+  .cs-button-signal,
+  .cs-button-secondary {
+    align-items: center;
+    border-radius: var(--cs-radius-md);
+    display: inline-flex;
+    font-size: .875rem;
+    font-weight: 700;
+    gap: .5rem;
+    justify-content: center;
+    min-height: 44px;
+    padding: .625rem 1rem;
+    transition: transform var(--cs-motion-fast), background-color var(--cs-motion-base), border-color var(--cs-motion-base);
+  }
+
+  .cs-button-primary {
+    background: var(--cs-ink);
+    color: white;
+  }
+
+  .cs-button-primary:hover {
+    background: var(--cs-ink-soft);
+    transform: translateY(-1px);
+  }
+
+  .cs-button-signal {
+    background: var(--cs-volt);
+    color: var(--cs-ink);
+  }
+
+  .cs-button-signal:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+  }
+
+  .cs-button-secondary {
+    border: 1px solid var(--cs-line);
+    color: var(--cs-ink);
+  }
+
+  .cs-button-secondary:hover {
+    border-color: var(--cs-ink);
+    background: rgba(17, 19, 21, .04);
+  }
+
+  .cs-focus:focus-visible {
+    outline: 2px solid var(--cs-ink);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px var(--cs-volt);
+  }
+
+  .cs-input {
+    border: 1px solid var(--cs-line);
+    border-radius: var(--cs-radius-md);
+    min-height: 46px;
+    padding: .625rem .75rem;
+    width: 100%;
+  }
+
+  .cs-input:focus {
+    border-color: var(--cs-ink);
+    box-shadow: 0 0 0 3px rgba(215, 242, 58, .65);
+    outline: none;
+  }
+
+  .cs-rule {
+    border-color: var(--cs-line);
+  }
+
+  .cs-noise {
+    background-image: radial-gradient(rgba(17, 19, 21, .08) .6px, transparent .6px);
+    background-size: 7px 7px;
+  }
+
+  .cs-product-tile {
+    border: 1px solid var(--cs-line);
+    border-radius: var(--cs-radius-lg);
+    background: var(--cs-surface);
+    transition: transform var(--cs-motion-base), border-color var(--cs-motion-base);
+  }
+
+  .cs-product-tile:hover {
+    border-color: var(--cs-ink);
+    transform: translateY(-3px);
+  }
+
+  .cs-mobile-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

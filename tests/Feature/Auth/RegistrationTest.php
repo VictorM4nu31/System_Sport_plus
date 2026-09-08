@@ -36,4 +36,20 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
     }
+
+    public function test_new_users_can_register_when_roles_table_is_empty(): void
+    {
+        Role::query()->delete();
+
+        $response = $this->post('/register', [
+            'name' => 'Fresh Install User',
+            'email' => 'fresh@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertTrue(auth()->user()->hasRole('usuario'));
+    }
 }

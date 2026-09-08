@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 py-6">
-        <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-8">
+        <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-4 sm:p-8">
             <h1 class="text-display-sm text-center font-bold text-primary mb-8">Editar Producto Deportivo</h1>
 
             <form method="POST" action="{{ route('admin.products.update', $product->id) }}" enctype="multipart/form-data" id="productForm">
@@ -243,7 +243,7 @@
                     <div id="specifications-container">
                         @if($product->specifications && count($product->specifications) > 0)
                             @foreach($product->specifications as $key => $value)
-                            <div class="specification-row grid grid-cols-2 gap-4 mb-2">
+                            <div class="specification-row grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
                                 <input type="text" name="spec_keys[]" value="{{ $key }}" placeholder="Característica"
                                     class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <div class="flex">
@@ -255,7 +255,7 @@
                             </div>
                             @endforeach
                         @else
-                            <div class="specification-row grid grid-cols-2 gap-4 mb-2">
+                            <div class="specification-row grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
                                 <input type="text" name="spec_keys[]" placeholder="Característica (ej: Suela)"
                                     class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                                 <input type="text" name="spec_values[]" placeholder="Valor (ej: Goma antideslizante)"
@@ -289,7 +289,7 @@
         document.getElementById('add-specification').addEventListener('click', function() {
             const container = document.getElementById('specifications-container');
             const newRow = document.createElement('div');
-            newRow.className = 'specification-row grid grid-cols-2 gap-4 mb-2';
+            newRow.className = 'specification-row grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2';
             newRow.innerHTML = `
                 <input type="text" name="spec_keys[]" placeholder="Característica"
                     class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">

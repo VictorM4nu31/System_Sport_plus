@@ -361,11 +361,13 @@ class CartController extends Controller
         $orderId = $request->input('order_id');
         $paymentIntentId = $request->input('payment_intent_id');
 
-        try {
-            $order = Order::where('id', $orderId)
-                ->where('user_id', Auth::id())
-                ->firstOrFail();
+        // Fuera del try: un pedido ajeno o inexistente debe responder 404,
+        // no 500, y no debe revelar su existencia a otros usuarios.
+        $order = Order::where('id', $orderId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
+        try {
             // Idempotencia: doble clic o reintento devuelven éxito sin
             // reconfirmar reservas ni decrementar stock dos veces.
             if ($order->payment_status === PaymentStatus::PAID->value

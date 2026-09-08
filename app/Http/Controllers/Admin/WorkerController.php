@@ -3,24 +3,33 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Role;
 
 class WorkerController extends Controller
 {
     public function index()
     {
+        Gate::authorize('manage-workers');
+
         $workers = User::role('trabajador')->get();
+
         return view('admin.workers.index', compact('workers'));
     }
 
     public function create()
     {
+        Gate::authorize('manage-workers');
+
         return view('admin.workers.create');
     }
 
     public function store(Request $request)
     {
+        Gate::authorize('manage-workers');
+
         // Validar los datos
         $request->validate([
             'name' => 'required|string|max:255',
@@ -35,27 +44,32 @@ class WorkerController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // Asignar el rol de trabajador
+        // Garantizar el rol aunque el seeder aún no se haya ejecutado.
+        Role::findOrCreate('trabajador', 'web');
         $worker->assignRole('trabajador');
 
         // Redirigir de vuelta al índice de trabajadores con un mensaje de éxito
         return redirect()->route('admin.workers.index')->with('success', 'Trabajador creado con éxito.');
     }
 
-
     public function edit($id)
     {
+        Gate::authorize('manage-workers');
+
         $worker = User::findOrFail($id);
+
         return view('admin.workers.edit', compact('worker'));
     }
 
     public function update(Request $request, $id)
     {
+        Gate::authorize('manage-workers');
+
         $worker = User::findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $worker->id,
+            'email' => 'required|email|unique:users,email,'.$worker->id,
         ]);
 
         $worker->update($request->only('name', 'email'));
@@ -63,16 +77,10 @@ class WorkerController extends Controller
         return redirect()->route('admin.workers.index')->with('success', 'Trabajador actualizado con éxito.');
     }
 
-    public function suspend($id)
-    {
-        $worker = User::findOrFail($id);
-        $worker->update(['is_active' => false]); // Usaremos un campo 'is_active' para manejar la suspensión.
-
-        return redirect()->route('admin.workers.index')->with('success', 'Trabajador suspendido.');
-    }
-
     public function destroy($id)
     {
+        Gate::authorize('manage-workers');
+
         $worker = User::findOrFail($id);
         $worker->delete();
 

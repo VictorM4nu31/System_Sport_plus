@@ -17,14 +17,14 @@
             @endif
 
             <!-- Header -->
-            <div class="bg-white bg-opacity-90 overflow-hidden shadow-lg sm:rounded-lg p-6 mb-6">
-                <div class="flex justify-between items-center">
+            <div class="bg-white bg-opacity-90 overflow-hidden shadow-lg sm:rounded-lg p-4 sm:p-6 mb-6">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                     <div>
                         <h2 class="text-display-sm text-primary mb-2">Mis Direcciones</h2>
                         <p class="text-body-md text-primary-light">Administra tus direcciones de envío y facturación</p>
                     </div>
                     <a href="{{ route('usuario.addresses.create') }}"
-                       class="px-6 py-3 bg-primary hover:bg-primary-700 text-white rounded-lg flex items-center space-x-2 transition duration-200 shadow-md">
+                       class="px-6 py-3 min-h-[44px] bg-primary hover:bg-primary-700 text-white rounded-lg inline-flex items-center justify-center gap-2 transition duration-200 shadow-md w-full sm:w-auto">
                         <span class="material-icons">add</span>
                         <span class="text-body-md font-medium">Nueva Dirección</span>
                     </a>
@@ -91,20 +91,20 @@
                             </div>
 
                             <!-- Acciones -->
-                            <div class="flex space-x-2">
+                            <div class="flex flex-wrap gap-2">
                                 @if(!$address->is_default)
                                     <form method="POST" action="{{ route('usuario.addresses.setDefault', $address) }}" class="inline">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit"
-                                                class="px-3 py-1 bg-[#f4a8ba] hover:bg-[#ed7396] text-primary rounded text-body-sm font-medium transition duration-200">
+                                                class="px-3 py-2 min-h-[36px] bg-[#f4a8ba] hover:bg-[#ed7396] text-primary rounded text-body-sm font-medium transition duration-200">
                                             Hacer predeterminada
                                         </button>
                                     </form>
                                 @endif
 
                                 <a href="{{ route('usuario.addresses.edit', $address) }}"
-                                   class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-body-sm font-medium transition duration-200">
+                                   class="inline-flex items-center px-3 py-2 min-h-[36px] bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-body-sm font-medium transition duration-200">
                                     Editar
                                 </a>
 
@@ -114,7 +114,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="px-3 py-1 bg-red-100 hover:bg-red-200 text-error rounded text-body-sm font-medium transition duration-200">
+                                                class="px-3 py-2 min-h-[36px] bg-red-100 hover:bg-red-200 text-error rounded text-body-sm font-medium transition duration-200">
                                             Eliminar
                                         </button>
                                     </form>

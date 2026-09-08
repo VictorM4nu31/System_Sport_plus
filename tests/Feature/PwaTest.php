@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PwaTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_manifest_is_served_with_correct_content_type(): void
     {
         $response = $this->get('/manifest.webmanifest');

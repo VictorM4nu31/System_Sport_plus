@@ -57,6 +57,36 @@ class DesignCoverageTest extends TestCase
             ->assertSee('Aceptados hoy', false);
     }
 
+    public function test_worker_dashboard_and_reports_render(): void
+    {
+        $this->actingAs($this->worker)->get(route('trabajador.dashboard'))
+            ->assertOk()
+            ->assertSee('Panel de trabajador', false);
+
+        $this->actingAs($this->worker)->get(route('trabajador.reports.sales'))
+            ->assertOk()
+            ->assertSee('Reporte de Ventas', false);
+    }
+
+    public function test_monitoring_dashboard_renders(): void
+    {
+        $this->actingAs($this->admin)->get(route('admin.monitoring.dashboard'))
+            ->assertOk()
+            ->assertSee('Monitoreo del sistema', false);
+    }
+
+    public function test_dashboard_redirect_sends_each_role_home(): void
+    {
+        $this->actingAs($this->admin)->get(route('dashboard'))
+            ->assertRedirect(route('admin.dashboard'));
+
+        $this->actingAs($this->worker)->get(route('dashboard'))
+            ->assertRedirect(route('trabajador.dashboard'));
+
+        $this->actingAs($this->client)->get(route('dashboard'))
+            ->assertRedirect(route('usuario.dashboard'));
+    }
+
     public function test_client_pages_render_with_design_system(): void
     {
         foreach (['usuario.products.index', 'usuario.orders.index', 'usuario.orders.history', 'usuario.wishlist.index', 'usuario.addresses.index', 'usuario.cart.index'] as $route) {

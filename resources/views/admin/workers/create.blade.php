@@ -8,8 +8,8 @@
                 <!-- Campo de Nombre -->
                 <div class="mb-4">
                     <label for="name" class="block text-primary text-body-md font-medium mb-2">Nombre</label>
-                    <input id="name" name="name" type="text" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                    <input id="name" name="name" type="text" required value="{{ old('name') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                         placeholder="Nombre completo del trabajador">
                     @error('name')
                         <span class="text-error text-body-sm">{{ $message }}</span>
@@ -19,8 +19,8 @@
                 <!-- Campo de Email -->
                 <div class="mb-4">
                     <label for="email" class="block text-primary text-body-md font-medium mb-2">Correo Electrónico</label>
-                    <input id="email" name="email" type="email" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                    <input id="email" name="email" type="email" required value="{{ old('email') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                         placeholder="correo@ejemplo.com">
                     @error('email')
                         <span class="text-error text-body-sm">{{ $message }}</span>
@@ -31,7 +31,7 @@
                 <div class="mb-4">
                     <label for="password" class="block text-primary text-body-md font-medium mb-2">Contraseña</label>
                     <input id="password" name="password" type="password" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                         placeholder="Mínimo 8 caracteres">
                     @error('password')
                         <span class="text-error text-body-sm">{{ $message }}</span>
@@ -42,18 +42,18 @@
                 <div class="mb-6">
                     <label for="password_confirmation" class="block text-primary text-body-md font-medium mb-2">Confirmar Contraseña</label>
                     <input id="password_confirmation" name="password_confirmation" type="password" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801336] focus:border-[#801336]"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                         placeholder="Repetir la contraseña">
                 </div>
 
                 <!-- Botones -->
-                <div class="flex justify-center space-x-4">
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
                     <a href="{{ route('admin.workers.index') }}"
-                        class="px-6 py-3 bg-gray-500 text-white text-body-md font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        class="inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-gray-500 text-white text-body-md font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">
                         Cancelar
                     </a>
                     <button type="submit"
-                        class="px-6 py-3 bg-red-600 text-white text-body-md font-medium rounded-md">
+                        class="inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-primary text-white text-body-md font-medium rounded-md hover:bg-primary-700 shadow-lg focus:outline-none focus:ring-2 focus:ring-primary btn-accessible">
                         Registrar Trabajador
                     </button>
                 </div>

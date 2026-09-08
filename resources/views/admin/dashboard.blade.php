@@ -2,13 +2,13 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
-            <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-6 mb-6">
-                <div class="flex items-center justify-between">
-                    <div>
+            <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-4 sm:p-6 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="min-w-0">
                         <h1 class="text-display-sm font-bold text-primary">Dashboard Administrativo</h1>
                         <p class="text-body-md text-primary-600 mt-1">Bienvenido, {{ auth()->user()->name }}. Aquí tienes el resumen de tu tienda deportiva.</p>
                     </div>
-                    <div class="text-right">
+                    <div class="sm:text-right shrink-0">
                         <p class="text-body-sm text-gray-500">{{ now()->format('d/m/Y H:i') }}</p>
                         <p class="text-body-sm text-gray-500">{{ now()->translatedFormat('l') }}</p>
                     </div>
@@ -27,7 +27,7 @@
                     <p class="message-warning">
                         El sistema de analíticas se está configurando. Los datos aparecerán una vez que haya actividad en la tienda.
                     </p>
-                    <div class="flex justify-center space-x-4">
+                    <div class="flex flex-col sm:flex-row gap-3 mt-6">
                         <a href="{{ route('admin.products.index') }}"
                            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-700 font-semibold text-body-md">
                             Gestionar Productos

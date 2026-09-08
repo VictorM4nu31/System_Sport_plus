@@ -1,10 +1,13 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" data-checkout>
-        <h1 class="text-2xl sm:text-3xl text-carbon font-semibold mb-4 sm:mb-6">Carrito de Compras</h1>
+    <div class="mx-auto max-w-7xl py-6" data-checkout>
+        <div class="flex flex-col justify-between gap-5 border-b border-line pb-8 sm:flex-row sm:items-end">
+            <div><p class="cs-eyebrow">Tu selección</p><h1 class="cs-display mt-3 text-5xl">Listo para avanzar.</h1><p class="mt-3 text-sm text-muted">Revisa tu equipo, confirma el envío y asegura tu stock.</p></div>
+            <a href="{{ route('usuario.products.index') }}" class="cs-button-secondary cs-focus no-underline">Seguir explorando <span aria-hidden="true">→</span></a>
+        </div>
 
         @if (session('cart') && count(session('cart')) > 0)
         <!-- Stepper del checkout -->
-        <ol class="mb-6 flex items-center gap-2 text-sm font-medium" aria-label="Progreso de compra" data-checkout-steps>
+        <ol class="my-8 flex items-center gap-2 text-sm font-medium" aria-label="Progreso de compra" data-checkout-steps>
             <li class="flex items-center gap-2" data-step="1" aria-current="step">
                 <span class="flex h-7 w-7 items-center justify-center rounded-full bg-carbon text-white" data-step-dot>1</span>
                 <span class="text-carbon">Carrito</span>
@@ -21,9 +24,9 @@
             </li>
         </ol>
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
+            <table class="min-w-full overflow-hidden rounded-[14px] border border-line bg-white">
                 <thead>
-                    <tr class="bg-carbon text-white">
+                    <tr class="border-b border-line bg-ink text-white">
                         <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Producto</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Precio</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold tracking-wider">Cantidad</th>
@@ -32,7 +35,7 @@
                 </thead>
                 <tbody>
                     @foreach (session('cart') as $id => $details)
-                        <tr class="hover:bg-gray-100 transition-colors duration-200">
+                        <tr class="border-b border-line last:border-0 hover:bg-paper transition-colors duration-200">
                             <td class="px-6 py-4 border-b text-gray-800">{{ $details['name'] }}</td>
                             <td class="px-6 py-4 border-b text-gray-600">${{ number_format($details['price'], 2) }}</td>
                             <td class="px-6 py-4 border-b text-gray-600">{{ $details['quantity'] }}</td>
@@ -60,7 +63,7 @@
             $shippingCost = $totals['shipping'] ?? 0;
             $total = $totals['total'] ?? ($subtotal + $shippingCost);
         @endphp
-        <div class="mt-6 space-y-3">
+        <div class="mt-6 max-w-xl space-y-3 rounded-[14px] border border-line bg-white p-5 sm:p-6">
             <h2 class="text-lg sm:text-xl text-carbon font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
             <h2 class="text-lg sm:text-xl text-carbon font-semibold">
                 Costo de Envío:
@@ -80,7 +83,7 @@
                 $faltante = max(0, $freeThreshold - $subtotal);
                 $progreso = min(100, $subtotal > 0 ? ($subtotal / $freeThreshold) * 100 : 0);
             @endphp
-            <div class="rounded-lg border border-line bg-white p-4" role="status">
+            <div class="rounded-md border border-line bg-paper p-4" role="status">
                 @if ($faltante > 0)
                     <p class="text-sm text-carbon">Te faltan <strong class="price-mono">${{ number_format($faltante, 2) }}</strong> para el envío gratis</p>
                 @else
@@ -93,12 +96,12 @@
                 </div>
             </div>
 
-            <a href="#paso-pago" class="btn-volt focus-volt inline-block no-underline">Continuar al pago</a>
+            <a href="#paso-pago" class="cs-button-signal cs-focus inline-flex no-underline">Continuar al pago <span aria-hidden="true">→</span></a>
         </div>
 
         <!-- Paso 2: pago con Stripe -->
         <div class="mt-8 max-w-md mx-auto" id="paso-pago">
-            <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="cs-surface p-6">
                 <div class="mb-4 flex items-center justify-between gap-3">
                     <h3 class="text-lg font-semibold text-gray-800">Información de Pago</h3>
                     <!-- Cuenta regresiva de la reserva de stock (se activa al crear el PaymentIntent) -->
@@ -175,7 +178,7 @@
                 <!-- Botón de pago -->
                 <div id="stripe-payment-container" class="w-full">
                     <button id="stripe-checkout-button"
-                            class="w-full bg-primary hover:bg-primary-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 btn-accessible"
+                         class="cs-button-signal cs-focus w-full"
                             type="button">
                         Pagar ${{ number_format($total, 2) }}
                     </button>
@@ -185,7 +188,7 @@
 
         <!-- Paso 3: confirmación (oculto hasta el cobro exitoso) -->
         <div class="mt-8 hidden max-w-md mx-auto" data-pago-exito>
-            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="cs-surface p-6 text-center">
                 <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-volt">
                     <svg class="h-8 w-8 text-carbon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
@@ -223,7 +226,11 @@
             @json(session('cart'))
         </script>
         @else
-            <p class="text-carbon text-base sm:text-lg">No tienes productos en el carrito.</p>
+            <div class="cs-surface py-16 text-center">
+                <p class="text-body-lg text-carbon font-semibold">Tu carrito está vacío</p>
+                <p class="text-body-md text-muted mt-1">Explora el catálogo y agrega tus productos favoritos.</p>
+                <a href="{{ route('usuario.products.index') }}" class="cs-button-signal cs-focus mt-4 no-underline">Ver catálogo</a>
+            </div>
         @endif
     </div>
 

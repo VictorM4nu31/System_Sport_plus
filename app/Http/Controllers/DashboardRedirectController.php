@@ -13,7 +13,7 @@ class DashboardRedirectController extends Controller
         if ($user && $user->hasRole('administrador')) {
             return redirect()->route('admin.dashboard');
         } elseif ($user && $user->hasRole('trabajador')) {
-            return redirect()->route('trabajador.orders.index');
+            return redirect()->route('trabajador.dashboard');
         } elseif ($user && $user->hasRole('usuario')) {
             return redirect()->route('usuario.dashboard');
         }

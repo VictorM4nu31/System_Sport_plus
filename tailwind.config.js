@@ -21,11 +21,16 @@ export default {
                     DEFAULT: '#131417',
                     2: '#101214',
                 },
+                ink: {
+                    DEFAULT: '#111315',
+                    soft: '#292D31',
+                },
                 line: '#E8E3D8',
+                elevated: '#E9E5DA',
                 muted: '#6B6F76',
                 heritage: '#7A1230',
                 volt: '#D9F527',
-                ink: '#131417',
+                sky: '#2E6B8A',
                 primary: {
                     50: '#fdf2f4',
                     100: '#fce7eb',

@@ -18,7 +18,7 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">{{ $order->id }}</td>
                                 <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">${{ number_format($order->total_price, 2) }}</td>
-                                <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">{{ ucfirst($order->status) }}</td>
+                                <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm"><x-status-badge type="info">{{ ucfirst($order->status) }}</x-status-badge></td>
                                 <td class="px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-sm">
                                     <a href="{{ route('usuario.orders.show', $order->id) }}"
                                        class="text-info hover:underline transition-colors duration-200">
@@ -31,7 +31,11 @@
                 </table>
             </div>
         @else
-            <p class="text-muted text-sm sm:text-base">No tienes pedidos en tu historial.</p>
+            <div class="py-12 bg-white rounded-lg shadow text-center">
+                <p class="text-body-lg text-carbon font-semibold">Aún no tienes historial</p>
+                <p class="text-body-md text-muted mt-1">Explora el catálogo y haz tu primer pedido.</p>
+                <a href="{{ route('usuario.products.index') }}" class="inline-flex items-center justify-center mt-4 px-4 py-2 min-h-[44px] rounded-md bg-carbon text-white text-body-md">Ver catálogo</a>
+            </div>
         @endif
     </div>
 </x-app-layout>

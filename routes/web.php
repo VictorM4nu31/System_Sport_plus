@@ -139,6 +139,9 @@ Route::middleware(['auth', 'role:trabajador'])
     ->prefix('trabajador')
     ->name('trabajador.')
     ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('trabajador.dashboard');
+        })->name('dashboard');
         Route::controller(OrderController::class)->prefix('pedidos')->group(function () {
             Route::get('/', 'workerIndex')->name('orders.index');
             Route::get('/buscar', 'buscarPedidos')->name('orders.search');

@@ -8,6 +8,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\StockReservation;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -153,5 +154,72 @@ class CheckoutReservaTest extends TestCase
             'tiene_reserva' => false,
             'segundos' => 0,
         ]);
+    }
+
+    public function test_failed_payment_releases_reservation_and_marks_order_failed(): void
+    {
+        $product = $this->productWithPrice(500.00, 10);
+        $address = $this->addressFor($this->user);
+        $this->mockPaymentIntent('pi_test_fail');
+
+        $createResponse = $this
+            ->actingAs($this->user)
+            ->withSession([
+                'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
+            ])
+            ->postJson(route('usuario.cart.create-payment-intent'), [
+                'shipping_address_id' => $address->id,
+            ]);
+
+        $orderId = $createResponse->json('order_id');
+
+        $failed = new PaymentIntent('pi_test_fail');
+        $failed->status = 'requires_payment_method';
+
+        $this->mock(PaymentServiceInterface::class)
+            ->shouldReceive('retrievePaymentIntent')
+            ->once()
+            ->with('pi_test_fail')
+            ->andReturn($failed);
+
+        $this->actingAs($this->user)->postJson(route('usuario.cart.confirm-order'), [
+            'order_id' => $orderId,
+            'payment_intent_id' => 'pi_test_fail',
+        ])->assertStatus(400);
+
+        $order = Order::findOrFail($orderId);
+
+        $this->assertSame(OrderStatus::FAILED->value, $order->status);
+        $this->assertSame(PaymentStatus::FAILED->value, $order->payment_status);
+        $this->assertSame(10, $product->fresh()->stock);
+        $this->assertSame(0, StockReservation::where('product_id', $product->id)->active()->count());
+    }
+
+    public function test_confirm_order_for_another_users_order_returns_404(): void
+    {
+        $product = $this->productWithPrice(500.00, 10);
+        $address = $this->addressFor($this->user);
+        $this->mockPaymentIntent('pi_test_cross');
+
+        $createResponse = $this
+            ->actingAs($this->user)
+            ->withSession([
+                'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
+            ])
+            ->postJson(route('usuario.cart.create-payment-intent'), [
+                'shipping_address_id' => $address->id,
+            ]);
+
+        $orderId = $createResponse->json('order_id');
+
+        $other = User::factory()->create();
+        $other->assignRole('usuario');
+
+        $this->mock(PaymentServiceInterface::class)->shouldNotReceive('retrievePaymentIntent');
+
+        $this->actingAs($other)->postJson(route('usuario.cart.confirm-order'), [
+            'order_id' => $orderId,
+            'payment_intent_id' => 'pi_test_cross',
+        ])->assertNotFound();
     }
 }

@@ -1,16 +1,29 @@
 <x-app-layout>
-    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6" data-catalogo
+    <div class="mx-auto max-w-7xl py-6" data-catalogo
          data-catalogo-endpoint="{{ route('usuario.products.search') }}"
          data-catalogo-cart-base="{{ url('/carrito') }}">
-        <!-- Título de la sección -->
-        <div class="text-center mb-8">
-            <h1 class="text-display-md text-primary mb-2">Tienda Deportiva</h1>
-            <p class="text-body-lg text-primary-light">Encuentra el equipamiento perfecto para tu deporte favorito</p>
+        <!-- Entrada orientada a misión -->
+        <div class="flex flex-col justify-between gap-6 border-b border-line pb-8 md:flex-row md:items-end">
+            <div>
+                <p class="cs-eyebrow">Explorar equipamiento</p>
+                <h1 class="cs-display mt-3 text-5xl sm:text-6xl">Encuentra tu siguiente movimiento.</h1>
+                <p class="mt-4 max-w-xl text-body-lg text-muted">Busca por deporte, intención o presupuesto. El catálogo responde al instante.</p>
+            </div>
+            <a href="{{ route('usuario.cart.index') }}" class="cs-button-signal cs-focus shrink-0 no-underline">
+                <span class="material-icons text-[19px]" aria-hidden="true">shopping_bag</span>
+                Carrito ({{ array_sum(array_column(session('cart', []), 'quantity')) }})
+            </a>
         </div>
 
         <!-- Filtros Avanzados (con búsqueda instantánea; sin JS el GET clásico sigue funcionando) -->
-        <div class="bg-white bg-opacity-95 rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-heading-md text-primary mb-4">Filtros de Búsqueda</h2>
+        <div class="cs-surface mt-8 p-4 sm:p-6">
+            <div class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+                <div>
+                    <p class="cs-eyebrow">Afinar selección</p>
+                    <h2 class="mt-1 text-heading-md font-bold text-ink">¿Qué estás buscando?</h2>
+                </div>
+                <span class="text-xs text-muted">Búsqueda instantánea activada</span>
+            </div>
             <p class="sr-only" aria-live="polite" data-catalogo-live></p>
             <form method="GET" action="{{ route('usuario.products.index') }}" data-catalogo-form>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
@@ -19,13 +32,13 @@
                         <label class="block text-primary text-body-md font-medium mb-1">Buscar producto</label>
                         <input type="text" name="search" value="{{ request('search') }}"
                                placeholder="Nombre del producto..."
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
+                               class="cs-input cs-focus">
                     </div>
 
                     <!-- Filtro por categoría -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Categoría</label>
-                        <select name="category_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
+                        <select name="category_id" class="cs-input cs-focus">
                             <option value="">Todas las categorías</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -38,7 +51,7 @@
                     <!-- Filtro por marca -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Marca</label>
-                        <select name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
+                        <select name="brand" class="cs-input cs-focus">
                             <option value="">Todas las marcas</option>
                             @foreach(['Nike', 'Adidas', 'Puma', 'Under Armour', 'Reebok', 'New Balance', 'Converse', 'Vans', 'Wilson', 'Spalding'] as $brand)
                                 <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
@@ -49,7 +62,7 @@
                     <!-- Filtro por deporte -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Deporte</label>
-                        <select name="sport_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
+                        <select name="sport_type" class="cs-input cs-focus">
                             <option value="">Todos los deportes</option>
                             @foreach(['Fútbol', 'Basketball', 'Running', 'Tenis', 'Volleyball', 'Baseball', 'Natación', 'Ciclismo', 'Fitness', 'Casual'] as $sport)
                                 <option value="{{ $sport }}" {{ request('sport_type') == $sport ? 'selected' : '' }}>{{ $sport }}</option>
@@ -63,7 +76,7 @@
                     <!-- Filtro por género -->
                     <div>
                         <label class="block text-primary text-body-md font-medium mb-1">Género</label>
-                        <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
+                        <select name="gender" class="cs-input cs-focus">
                             <option value="">Todos</option>
                             <option value="hombre" {{ request('gender') == 'hombre' ? 'selected' : '' }}>Hombre</option>
                             <option value="mujer" {{ request('gender') == 'mujer' ? 'selected' : '' }}>Mujer</option>
@@ -76,7 +89,7 @@
                         <label class="block text-primary text-body-md font-medium mb-1">Precio máximo</label>
                         <input type="number" name="max_price" value="{{ request('max_price') }}"
                                placeholder="Ej: 2000"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
+                               class="cs-input cs-focus">
                     </div>
 
                     <!-- Solo productos destacados -->
@@ -89,10 +102,10 @@
 
                 <!-- Botones -->
                 <div class="flex space-x-3">
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary text-body-md font-medium btn-accessible">
+                    <button type="submit" class="cs-button-primary cs-focus">
                         Aplicar Filtros
                     </button>
-                    <a href="{{ route('usuario.products.index') }}" data-catalogo-clear class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md font-medium">
+                    <a href="{{ route('usuario.products.index') }}" data-catalogo-clear class="cs-button-secondary cs-focus no-underline">
                         Limpiar Filtros
                     </a>
                 </div>
@@ -101,12 +114,13 @@
         </div>
 
         <!-- Carrito y estadísticas -->
-        <div class="flex justify-between items-center mb-6">
+        <div class="mt-8 flex items-center justify-between gap-4 border-b border-line pb-4">
             <div class="text-primary">
                 <p class="text-heading-sm" data-catalogo-count>{{ $products->total() }} productos encontrados</p>
             </div>
+            <span class="hidden text-xs text-muted sm:inline">Ordenado por destacados y relevancia</span>
             <a href="{{ route('usuario.cart.index') }}"
-               class="flex items-center bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors text-body-md font-medium">
+               class="cs-button-secondary cs-focus no-underline sm:hidden">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
                 </svg>

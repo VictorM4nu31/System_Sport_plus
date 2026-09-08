@@ -5,10 +5,12 @@ namespace App\Providers;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use App\Policies\AddressPolicy;
 use App\Policies\OrderPolicy;
 use App\Policies\ProductPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -29,5 +31,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+
+        Gate::define('manage-workers', fn (User $user) => $user->hasRole('administrador'));
     }
 }

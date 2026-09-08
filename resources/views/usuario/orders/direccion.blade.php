@@ -1,5 +1,7 @@
 <x-app-layout>
-    <div class="max-w-full mx-auto sm:px-6 lg:px-8 py-8 bg-gray-50 shadow-md">
+    <div class="py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
         @if (session('error'))
             <x-alert type="error" dismissible="true" class="mb-4">
                 {{ session('error') }}
@@ -13,8 +15,10 @@
         @endif
 
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Agrega un domicilio</h1>
-        <form method="POST" action="{{ route('usuario.addresses.store') }}" onsubmit="return confirmSubmit()">
+        <p class="text-body-sm text-muted text-center mb-6">También puedes <a href="{{ route('usuario.addresses.create') }}" class="underline">usar el formulario de direcciones</a>.</p>
+        <form method="POST" action="{{ route('usuario.addresses.store') }}">
             @csrf
+            <x-validation-errors class="mb-4" />
 
             <!-- Nombre y apellido -->
             <div class="mb-4">
@@ -27,9 +31,10 @@
             <!-- Código Postal -->
             <div class="mb-4">
                 <label for="postal_code" class="block text-gray-700 font-medium text-sm">Código postal</label>
-                <input id="postal_code" name="postal_code" type="text" required
-                    class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring focus:ring-carbon"
-                    placeholder="Ingresa tu código postal" oninput="fetchAddressData()">
+                <input id="postal_code" name="postal_code" type="text" required value="{{ old('postal_code') }}"
+                    class="mt-1 block w-full border border-gray-300 p-3 rounded-md shadow-sm focus:ring focus:ring-carbon"
+                    placeholder="Ingresa tu código postal" oninput="fetchAddressData()" aria-describedby="postal-code-error">
+                <p id="postal-code-error" class="hidden mt-1 text-body-sm text-error" role="alert"></p>
                 <a href="https://micodigopostal.org/" class="text-info text-xs hover:underline mt-1 inline-block">No
                     sé mi código</a>
             </div>
@@ -101,18 +106,24 @@
             </div>
 
             <!-- Botón de Guardar -->
-            <button type="submit"
-                class="bg-primary text-white font-semibold p-2 rounded-md w-full hover:bg-primary-700 transition duration-300 btn-accessible">Guardar</button>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="{{ route('usuario.addresses.index') }}" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-paper transition w-full sm:w-auto">Cancelar</a>
+                <button type="submit"
+                    class="bg-primary text-white font-semibold px-4 py-2 min-h-[44px] rounded-md w-full sm:w-auto hover:bg-primary-700 transition duration-300 btn-accessible">Guardar</button>
+            </div>
         </form>
+        </div>
+    </div>
     </div>
 
     <script>
-        function confirmSubmit() {
-            return confirm('¿Estás seguro de que esta dirección es correcta? No podrás editarla después.');
-        }
-
         async function fetchAddressData() {
             const postalCode = document.getElementById('postal_code').value;
+            const errorBox = document.getElementById('postal-code-error');
+            if (errorBox) {
+                errorBox.classList.add('hidden');
+                errorBox.textContent = '';
+            }
             if (postalCode.length === 5) {
                 try {
                     const response = await fetch(`https://api.zippopotam.us/MX/${postalCode}`);
@@ -138,7 +149,10 @@
                     });
                 } catch (error) {
                     console.error(error);
-                    alert('No se pudo cargar la información del código postal.');
+                    if (errorBox) {
+                        errorBox.textContent = 'No se pudo cargar la información del código postal. Verifica el código e intenta de nuevo.';
+                        errorBox.classList.remove('hidden');
+                    }
                 }
             }
         }

@@ -107,12 +107,12 @@
 
             <div class="overflow-x-auto">
                 <table class="w-full bg-white rounded-lg shadow-sm border border-gray-200">
-                    <thead class="bg-primary text-white">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-body-md font-semibold">Producto</th>
-                            <th class="px-6 py-4 text-left text-body-md font-semibold">Cantidad</th>
-                            <th class="px-6 py-4 text-left text-body-md font-semibold">Precio Unit.</th>
-                            <th class="px-6 py-4 text-left text-body-md font-semibold">Subtotal</th>
+                            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Producto</th>
+                            <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Cantidad</th>
+                            <th scope="col" class="px-4 sm:px-6 py-3 text-right text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Precio Unit.</th>
+                            <th scope="col" class="px-4 sm:px-6 py-3 text-right text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">

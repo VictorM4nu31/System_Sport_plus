@@ -4,53 +4,53 @@
             <x-authentication-card-logo />
         </x-slot>
 
-        <div x-data="{ recovery: false }">
-            <div class="mb-4 text-sm text-gray-600 dark:text-gray-400" x-show="! recovery">
-                {{ __('Please confirm access to your account by entering the authentication code provided by your authenticator application.') }}
+        <div x-data="{ recovery: false }" class="mx-auto max-w-md">
+            <p class="cs-eyebrow">Acceso protegido</p>
+            <h1 class="cs-display mt-3 text-4xl">Un paso más.</h1>
+            <div class="mt-4 text-sm leading-6 text-muted" x-show="! recovery">
+                Introduce el código de tu aplicación autenticadora para confirmar tu identidad.
             </div>
 
-            <div class="mb-4 text-sm text-gray-600 dark:text-gray-400" x-cloak x-show="recovery">
-                {{ __('Please confirm access to your account by entering one of your emergency recovery codes.') }}
+            <div class="mt-4 text-sm leading-6 text-muted" x-cloak x-show="recovery">
+                Introduce uno de tus códigos de recuperación de emergencia.
             </div>
 
             <x-validation-errors class="mb-4" />
 
-            <form method="POST" action="{{ route('two-factor.login') }}">
+            <form method="POST" action="{{ route('two-factor.login') }}" class="mt-8 space-y-5">
                 @csrf
 
                 <div class="mt-4" x-show="! recovery">
-                    <x-label for="code" value="{{ __('Code') }}" />
-                    <x-input id="code" class="block mt-1 w-full" type="text" inputmode="numeric" name="code" autofocus x-ref="code" autocomplete="one-time-code" />
+                    <label for="code" class="cs-eyebrow mb-2 block text-ink">Código de autenticación</label>
+                    <x-input id="code" class="cs-input cs-focus" type="text" inputmode="numeric" name="code" autofocus x-ref="code" autocomplete="one-time-code" />
                 </div>
 
                 <div class="mt-4" x-cloak x-show="recovery">
-                    <x-label for="recovery_code" value="{{ __('Recovery Code') }}" />
-                    <x-input id="recovery_code" class="block mt-1 w-full" type="text" name="recovery_code" x-ref="recovery_code" autocomplete="one-time-code" />
+                    <label for="recovery_code" class="cs-eyebrow mb-2 block text-ink">Código de recuperación</label>
+                    <x-input id="recovery_code" class="cs-input cs-focus" type="text" name="recovery_code" x-ref="recovery_code" autocomplete="one-time-code" />
                 </div>
 
-                <div class="flex items-center justify-end mt-4">
-                    <button type="button" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 underline cursor-pointer"
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <button type="button" class="text-left text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink"
                                     x-show="! recovery"
                                     x-on:click="
                                         recovery = true;
                                         $nextTick(() => { $refs.recovery_code.focus() })
                                     ">
-                        {{ __('Use a recovery code') }}
+                        Usar código de recuperación
                     </button>
 
-                    <button type="button" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 underline cursor-pointer"
+                    <button type="button" class="text-left text-sm font-semibold text-muted underline underline-offset-4 hover:text-ink"
                                     x-cloak
                                     x-show="recovery"
                                     x-on:click="
                                         recovery = false;
                                         $nextTick(() => { $refs.code.focus() })
                                     ">
-                        {{ __('Use an authentication code') }}
+                        Usar código de autenticación
                     </button>
 
-                    <x-button class="ms-4">
-                        {{ __('Log in') }}
-                    </x-button>
+                    <button class="cs-button-signal cs-focus">Entrar <span aria-hidden="true">→</span></button>
                 </div>
             </form>
         </div>

@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Campos Sport · Tu próxima sesión</title>
 
     <!-- Optimized Font Loading -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -24,28 +24,30 @@
 </head>
 <body class="font-sans antialiased">
     <a href="#contenido" class="skip-link">Saltar al contenido</a>
-    <div class="flex flex-col md:flex-row">
+    <div class="min-h-screen md:flex">
         @include('layouts.navigation')
 
-        <!-- Contenido principal con margen izquierdo responsivo -->
-        <div class="flex-1 overflow-y-auto p-6 bg-paper md:ml-64">
-            <header class="bg-carbon flex justify-between items-center p-4 shadow-md mb-4 rounded-lg bg-opacity-90">
-                <!-- Título en blanco -->
-                <div class="text-heading-lg text-white">@yield('title', 'Bienvenido')</div>
+        <div class="min-w-0 flex-1 bg-paper md:ml-64">
+            <header class="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-paper/90 px-4 py-4 backdrop-blur sm:px-8 lg:px-10">
+                <div>
+                    <p class="cs-eyebrow">Campos Sport</p>
+                    <div class="mt-1 font-display text-xl font-extrabold tracking-tight text-ink">{{ $header ?? '' }}@yield('title')</div>
+                </div>
 
                 <!-- Settings Dropdown -->
-                <div class="flex items-center space-x-2 sm:space-x-4">
+                <div class="flex items-center gap-2 sm:gap-4">
                     <!-- Command palette (Ctrl/⌘ + K) -->
                     <button type="button" data-palette-open
-                            class="focus-volt hidden sm:flex items-center gap-2 rounded-md border border-white/20 px-3 py-1.5 text-sm text-white/80 hover:border-white/50 hover:text-white transition-colors">
-                        <span aria-hidden="true">⌘K</span>
-                        <span>Buscar…</span>
+                            class="cs-focus flex items-center gap-2 rounded-md border border-line px-3 py-2 text-sm text-muted hover:border-ink hover:text-ink transition-colors"
+                            aria-label="Búsqueda rápida">
+                        <kbd class="rounded border border-line bg-white px-1.5 py-0.5 text-[10px] font-bold text-muted" aria-hidden="true">⌘K</kbd>
+                        <span class="hidden sm:inline">Buscar…</span>
                     </button>
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="flex items-center space-x-1 px-3 py-2 text-body-md font-medium text-white hover:text-white transition ease-in-out duration-150 focus:outline-none">
-                                <span>{{ Auth::user()->name ?? 'Administrador' }}</span>
-                                <svg class="fill-current h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <button class="cs-focus flex items-center gap-1 rounded-md px-3 py-2 text-body-md font-medium text-ink hover:bg-white transition ease-in-out duration-150">
+                                <span class="max-w-[12rem] truncate">{{ Auth::user()->name ?? 'Administrador' }}</span>
+                                <svg class="fill-current h-4 w-4 text-muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                             </button>
@@ -76,13 +78,9 @@
                 </div>
             </header>
 
-            <div class="relative min-h-screen overflow-hidden">
-                <div class="relative z-10">
-                    <main id="contenido">
-                        {{ $slot }}
-                    </main>
-                </div>
-            </div>
+            <main id="contenido" class="px-4 pb-24 pt-4 sm:px-8 sm:pb-10 lg:px-10">
+                    {{ $slot }}
+                </main>
         </div>
     </div>
 

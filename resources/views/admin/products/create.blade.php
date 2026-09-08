@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 py-6">
         <!-- Contenedor principal con opacidad y sombra -->
-        <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-8">
+        <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-4 sm:p-8">
             <h1 class="text-display-sm text-center font-bold text-primary mb-8">Agregar Producto Deportivo</h1>
 
             <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" id="productForm">
@@ -14,7 +14,7 @@
                         <!-- Nombre -->
                         <div class="mb-4">
                             <label for="name" class="block text-primary font-semibold mb-2 text-body-md">Nombre del Producto *</label>
-                            <input id="name" name="name" type="text" required
+                            <input id="name" name="name" type="text" required value="{{ old('name') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="Ej: Tenis Nike Air Max">
                             @error('name')
@@ -25,7 +25,7 @@
                         <!-- SKU -->
                         <div class="mb-4">
                             <label for="sku" class="block text-primary font-semibold mb-2 text-body-md">Código SKU</label>
-                            <input id="sku" name="sku" type="text"
+                            <input id="sku" name="sku" type="text" value="{{ old('sku') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
                                 placeholder="Ej: TNK-AM-001">
                             @error('sku')
@@ -186,15 +186,18 @@
                         <!-- Tallas -->
                         <div class="mb-4">
                             <label class="block text-primary font-semibold mb-2 text-body-md">Tallas Disponibles</label>
-                            <div class="grid grid-cols-4 gap-2">
+                            <fieldset>
+                                <legend class="sr-only">Tallas disponibles</legend>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 @foreach(['XS', 'S', 'M', 'L', 'XL', 'XXL', '22', '23', '24', '25', '26', '27', '28', '29', '30'] as $size)
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="sizes[]" value="{{ $size }}"
+                                <label class="flex items-center min-h-[44px]">
+                                    <input type="checkbox" name="sizes[]" value="{{ $size }}" {{ in_array($size, old('sizes', [])) ? 'checked' : '' }}
                                         class="h-4 w-4 text-[#801336] focus:ring-[#801336] border-gray-300 rounded">
                                     <span class="ml-1 text-body-sm text-gray-700">{{ $size }}</span>
                                 </label>
                                 @endforeach
                             </div>
+                            </fieldset>
                             @error('sizes')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
@@ -203,15 +206,18 @@
                         <!-- Colores -->
                         <div class="mb-4">
                             <label class="block text-primary font-semibold mb-2 text-body-md">Colores Disponibles</label>
-                            <div class="grid grid-cols-3 gap-2">
+                            <fieldset>
+                                <legend class="sr-only">Colores disponibles</legend>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 @foreach(['Negro', 'Blanco', 'Rojo', 'Azul', 'Verde', 'Amarillo', 'Rosa', 'Gris', 'Naranja'] as $color)
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="colors[]" value="{{ $color }}"
+                                <label class="flex items-center min-h-[44px]">
+                                    <input type="checkbox" name="colors[]" value="{{ $color }}" {{ in_array($color, old('colors', [])) ? 'checked' : '' }}
                                         class="h-4 w-4 text-[#801336] focus:ring-[#801336] border-gray-300 rounded">
                                     <span class="ml-1 text-body-sm text-gray-700">{{ $color }}</span>
                                 </label>
                                 @endforeach
                             </div>
+                            </fieldset>
                             @error('colors')
                                 <span class="text-error text-body-sm">{{ $message }}</span>
                             @enderror
@@ -228,7 +234,7 @@
                         <label for="description" class="block text-primary font-semibold mb-2 text-body-md">Descripción *</label>
                         <textarea id="description" name="description" rows="4" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon"
-                            placeholder="Describe las características, beneficios y detalles del producto..."></textarea>
+                            placeholder="Describe las características, beneficios y detalles del producto...">{{ old('description') }}</textarea>
                         @error('description')
                             <span class="text-error text-body-sm">{{ $message }}</span>
                         @enderror
@@ -250,7 +256,7 @@
                 <div class="bg-gray-50 p-6 rounded-lg mb-6">
                     <h2 class="text-heading-lg font-semibold text-primary mb-4">Especificaciones Técnicas (Opcional)</h2>
                     <div id="specifications-container">
-                        <div class="specification-row grid grid-cols-2 gap-4 mb-2">
+                        <div class="specification-row grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
                             <input type="text" name="spec_keys[]" placeholder="Característica (ej: Suela)"
                                 class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                             <input type="text" name="spec_values[]" placeholder="Valor (ej: Goma antideslizante)"
@@ -264,13 +270,13 @@
                 </div>
 
                 <!-- Botones -->
-                <div class="flex justify-center space-x-4">
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
                     <a href="{{ route('admin.products.index') }}"
-                        class="px-6 py-3 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md">
+                        class="inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md w-full sm:w-auto">
                         Cancelar
                     </a>
                     <button type="submit"
-                        class="px-6 py-3 bg-primary text-white font-semibold rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-lg text-body-md">
+                        class="inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-primary text-white font-semibold rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-lg text-body-md w-full sm:w-auto">
                         Guardar Producto
                     </button>
                 </div>
@@ -283,15 +289,15 @@
         document.getElementById('add-specification').addEventListener('click', function() {
             const container = document.getElementById('specifications-container');
             const newRow = document.createElement('div');
-            newRow.className = 'specification-row grid grid-cols-2 gap-4 mb-2';
+            newRow.className = 'specification-row grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2';
             newRow.innerHTML = `
-                <input type="text" name="spec_keys[]" placeholder="Característica"
+                <input type="text" name="spec_keys[]" placeholder="Característica (ej: Suela)"
                     class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
                 <div class="flex">
-                    <input type="text" name="spec_values[]" placeholder="Valor"
+                    <input type="text" name="spec_values[]" placeholder="Valor (ej: Goma antideslizante)"
                         class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-carbon focus:border-carbon">
-                    <button type="button" onclick="this.parentElement.parentElement.remove()"
-                        class="px-3 py-2 bg-red-500 text-white rounded-r-md hover:bg-red-600">×</button>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" aria-label="Eliminar especificación"
+                        class="px-3 py-2 min-h-[44px] bg-red-500 text-white rounded-r-md hover:bg-red-600">×</button>
                 </div>
             `;
             container.appendChild(newRow);

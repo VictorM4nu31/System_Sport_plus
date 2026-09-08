@@ -1,388 +1,247 @@
-@extends('layouts.admin')
-
-@section('title', 'System Monitoring Dashboard')
-
-@section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">System Monitoring Dashboard</h1>
-                <div>
-                    <button id="refresh-btn" class="btn btn-outline-primary btn-sm me-2">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
-                    <button id="health-check-btn" class="btn btn-outline-success btn-sm">
-                        <i class="fas fa-heartbeat"></i> Run Health Check
-                    </button>
+<x-app-layout>
+    <div class="py-6" x-data="{ tab: 'laravel' }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white border border-line rounded-lg shadow-lg p-4 sm:p-6 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h1 class="text-display-sm text-carbon">Monitoreo del sistema</h1>
+                        <p class="text-body-md text-muted mt-1">Estado de salud, métricas y registros recientes.</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="refresh-btn" type="button" class="inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-paper transition">
+                            <span class="material-icons text-base">refresh</span>
+                            <span>Actualizar</span>
+                        </button>
+                        <button id="health-check-btn" type="button" class="inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-md bg-carbon text-white hover:opacity-90 transition">
+                            <span class="material-icons text-base">monitor_heart</span>
+                            <span>Ejecutar revisión</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    @if(isset($error))
-        <div class="alert alert-danger">
-            <i class="fas fa-exclamation-triangle"></i> {{ $error }}
-        </div>
-    @endif
+            @if (isset($error))
+                <div class="bg-white border border-line rounded-lg shadow p-4 mb-6" role="alert">
+                    <p class="text-body-md text-error">{{ $error }}</p>
+                </div>
+            @endif
 
-    <!-- System Status Overview -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">System Health Status</h5>
-                    <span id="health-status-badge" class="badge badge-lg">
-                        @if(isset($healthCheck))
-                            @if($healthCheck['status'] === 'healthy')
-                                <span class="badge bg-success">Healthy</span>
+            <div class="bg-white border border-line rounded-lg shadow-lg p-4 sm:p-6 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                    <h2 class="text-heading-lg text-carbon">Estado de salud</h2>
+                    <span id="health-status-badge">
+                        @if (isset($healthCheck))
+                            @if ($healthCheck['status'] === 'healthy')
+                                <x-status-badge type="success">Saludable</x-status-badge>
                             @else
-                                <span class="badge bg-danger">Unhealthy</span>
+                                <x-status-badge type="error">Con problemas</x-status-badge>
                             @endif
                         @else
-                            <span class="badge bg-secondary">Unknown</span>
+                            <x-status-badge type="neutral">Desconocido</x-status-badge>
                         @endif
                     </span>
                 </div>
-                <div class="card-body">
-                    <div id="health-check-results">
-                        @if(isset($healthCheck))
-                            @if(!empty($healthCheck['alerts']))
-                                <div class="alert alert-warning">
-                                    <h6><i class="fas fa-exclamation-triangle"></i> Active Alerts ({{ count($healthCheck['alerts']) }})</h6>
-                                    <div class="row">
-                                        @foreach($healthCheck['alerts'] as $alert)
-                                            <div class="col-md-6 mb-2">
-                                                <div class="alert alert-{{ $alert['severity'] === 'critical' ? 'danger' : ($alert['severity'] === 'warning' ? 'warning' : 'info') }} alert-sm">
-                                                    <strong>{{ ucfirst($alert['category']) }}</strong>: {{ $alert['type'] }}
-                                                    @if(!empty($alert['data']))
-                                                        <br><small>{{ json_encode($alert['data']) }}</small>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-times"></i> Clear Alerts
-                                    </button>
-                                </div>
-                            @else
-                                <div class="alert alert-success">
-                                    <i class="fas fa-check-circle"></i> All systems are operating normally
-                                </div>
-                            @endif
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Metrics Overview -->
-    <div class="row mb-4">
-        @if(isset($systemMetrics))
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">Orders Today</h5>
-                        <h2 class="text-primary">{{ $systemMetrics['orders_today'] ?? 0 }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">Revenue Today</h5>
-                        <h2 class="text-success">${{ number_format(($systemMetrics['revenue_today'] ?? 0) / 100, 2) }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-warning">Low Stock Items</h5>
-                        <h2 class="text-warning">{{ $systemMetrics['low_stock_count'] ?? 0 }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title text-info">Active Users</h5>
-                        <h2 class="text-info">{{ $systemMetrics['active_users_today'] ?? 0 }}</h2>
-                    </div>
-                </div>
-            </div>
-        @endif
-    </div>
-
-    <!-- Detailed Metrics -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">System Metrics</h5>
-                </div>
-                <div class="card-body">
-                    <div id="system-metrics">
-                        @if(isset($healthCheck['metrics']))
-                            <table class="table table-sm">
-                                @foreach($healthCheck['metrics'] as $metric => $value)
-                                    <tr>
-                                        <td>{{ ucwords(str_replace('_', ' ', $metric)) }}</td>
-                                        <td class="text-end">
-                                            @if(is_numeric($value))
-                                                {{ number_format($value, 2) }}
-                                                @if(str_contains($metric, 'percent'))
-                                                    %
-                                                @elseif(str_contains($metric, 'time'))
-                                                    ms
-                                                @elseif(str_contains($metric, 'gb'))
-                                                    GB
-                                                @endif
-                                            @else
-                                                {{ $value }}
+                <div id="health-check-results">
+                    @if (isset($healthCheck))
+                        @if (! empty($healthCheck['alerts']))
+                            <div class="rounded-md border border-line bg-paper p-4">
+                                <h3 class="text-body-md font-semibold text-carbon">Alertas activas ({{ count($healthCheck['alerts']) }})</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                                    @foreach ($healthCheck['alerts'] as $alert)
+                                        <div class="rounded-md border border-line bg-white p-3">
+                                            <p class="text-body-md text-carbon"><strong>{{ ucfirst($alert['category']) }}</strong>: {{ $alert['type'] }}</p>
+                                            @if (! empty($alert['data']))
+                                                <p class="mt-1 text-body-sm text-muted break-all"><small>{{ json_encode($alert['data']) }}</small></p>
                                             @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </table>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Performance Metrics</h5>
-                </div>
-                <div class="card-body">
-                    <div id="performance-metrics">
-                        @if(isset($performanceMetrics))
-                            <table class="table table-sm">
-                                @if(isset($performanceMetrics['memory_usage']))
-                                    <tr>
-                                        <td>Memory Usage</td>
-                                        <td class="text-end">{{ number_format($performanceMetrics['memory_usage']['current'] / 1024 / 1024, 2) }} MB</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Peak Memory</td>
-                                        <td class="text-end">{{ number_format($performanceMetrics['memory_usage']['peak'] / 1024 / 1024, 2) }} MB</td>
-                                    </tr>
-                                @endif
-                                @if(isset($performanceMetrics['database']))
-                                    <tr>
-                                        <td>DB Connections</td>
-                                        <td class="text-end">{{ $performanceMetrics['database']['active_connections'] }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Slow Queries</td>
-                                        <td class="text-end">{{ $performanceMetrics['database']['slow_queries'] }}</td>
-                                    </tr>
-                                @endif
-                            </table>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Logs -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Recent Log Entries</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="nav nav-tabs" id="logTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="laravel-tab" data-bs-toggle="tab" data-bs-target="#laravel" type="button" role="tab">Application</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">Payments</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">Security</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">Orders</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content mt-3" id="logTabContent">
-                        @if(isset($recentLogs))
-                            @foreach(['laravel', 'payments', 'security', 'orders'] as $logType)
-                                <div class="tab-pane fade {{ $logType === 'laravel' ? 'show active' : '' }}" id="{{ $logType }}" role="tabpanel">
-                                    <div class="log-container" style="max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 5px;">
-                                        <pre style="font-size: 12px; margin: 0;">@if(isset($recentLogs[$logType])){{ implode("\n", $recentLogs[$logType]) }}@else
-No recent entries@endif</pre>
-                                    </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endforeach
+                                <button id="clear-alerts-btn" type="button" class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-white transition">
+                                    <span class="material-icons text-base">close</span>
+                                    <span>Limpiar alertas</span>
+                                </button>
+                            </div>
+                        @else
+                            <p class="text-body-md text-success">Todos los sistemas funcionan con normalidad.</p>
+                        @endif
+                    @endif
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
+                    <p class="text-body-md font-medium text-carbon">Pedidos hoy</p>
+                    <p class="text-display-sm text-carbon mt-1">{{ $systemMetrics['orders_today'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
+                    <p class="text-body-md font-medium text-carbon">Ingresos hoy</p>
+                    <p class="text-display-sm text-carbon mt-1">${{ number_format(($systemMetrics['revenue_today'] ?? 0) / 100, 2) }}</p>
+                </div>
+                <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
+                    <p class="text-body-md font-medium text-carbon">Stock bajo</p>
+                    <p class="text-display-sm text-carbon mt-1">{{ $systemMetrics['low_stock_count'] ?? 0 }}</p>
+                </div>
+                <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
+                    <p class="text-body-md font-medium text-carbon">Usuarios activos</p>
+                    <p class="text-display-sm text-carbon mt-1">{{ $systemMetrics['active_users_today'] ?? 0 }}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                <div class="bg-white border border-line rounded-lg shadow p-4 sm:p-6">
+                    <h2 class="text-heading-lg text-carbon mb-3">Métricas del sistema</h2>
+                    <div id="system-metrics" class="overflow-x-auto">
+                        @if (isset($healthCheck['metrics']))
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr class="bg-carbon text-white">
+                                        <th scope="col" class="px-4 py-3 text-left text-body-sm font-semibold">Métrica</th>
+                                        <th scope="col" class="px-4 py-3 text-right text-body-sm font-semibold">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($healthCheck['metrics'] as $metric => $value)
+                                        <tr class="border-b border-line hover:bg-paper">
+                                            <td class="px-4 py-3 text-body-md text-carbon">{{ ucwords(str_replace('_', ' ', $metric)) }}</td>
+                                            <td class="px-4 py-3 text-body-md text-carbon text-right">
+                                                @if (is_numeric($value))
+                                                    {{ number_format($value, 2) }}
+                                                    @if (str_contains($metric, 'percent'))
+                                                        %
+                                                    @elseif (str_contains($metric, 'time'))
+                                                        ms
+                                                    @elseif (str_contains($metric, 'gb'))
+                                                        GB
+                                                    @endif
+                                                @else
+                                                    {{ $value }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <p class="text-body-md text-muted italic">Sin métricas disponibles.</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="bg-white border border-line rounded-lg shadow p-4 sm:p-6">
+                    <h2 class="text-heading-lg text-carbon mb-3">Rendimiento</h2>
+                    <div id="performance-metrics" class="overflow-x-auto">
+                        @if (isset($performanceMetrics))
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr class="bg-carbon text-white">
+                                        <th scope="col" class="px-4 py-3 text-left text-body-sm font-semibold">Métrica</th>
+                                        <th scope="col" class="px-4 py-3 text-right text-body-sm font-semibold">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (isset($performanceMetrics['memory_usage']))
+                                        <tr class="border-b border-line">
+                                            <td class="px-4 py-3 text-body-md">Memoria en uso</td>
+                                            <td class="px-4 py-3 text-body-md text-right">{{ number_format($performanceMetrics['memory_usage']['current'] / 1024 / 1024, 2) }} MB</td>
+                                        </tr>
+                                        <tr class="border-b border-line">
+                                            <td class="px-4 py-3 text-body-md">Pico de memoria</td>
+                                            <td class="px-4 py-3 text-body-md text-right">{{ number_format($performanceMetrics['memory_usage']['peak'] / 1024 / 1024, 2) }} MB</td>
+                                        </tr>
+                                    @endif
+                                    @if (isset($performanceMetrics['database']))
+                                        <tr class="border-b border-line">
+                                            <td class="px-4 py-3 text-body-md">Conexiones BD</td>
+                                            <td class="px-4 py-3 text-body-md text-right">{{ $performanceMetrics['database']['active_connections'] }}</td>
+                                        </tr>
+                                        <tr class="border-b border-line">
+                                            <td class="px-4 py-3 text-body-md">Consultas lentas</td>
+                                            <td class="px-4 py-3 text-body-md text-right">{{ $performanceMetrics['database']['slow_queries'] }}</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        @else
+                            <p class="text-body-md text-muted italic">Sin métricas de rendimiento.</p>
                         @endif
                     </div>
                 </div>
             </div>
+
+            <div class="bg-white border border-line rounded-lg shadow p-4 sm:p-6">
+                <h2 class="text-heading-lg text-carbon mb-3">Registros recientes</h2>
+                <div class="flex flex-wrap gap-2 mb-4" role="tablist" aria-label="Tipos de registro">
+                    @foreach (['laravel' => 'Aplicación', 'payments' => 'Pagos', 'security' => 'Seguridad', 'orders' => 'Pedidos'] as $key => $label)
+                        <button type="button" role="tab" :aria-selected="tab === '{{ $key }}'" @click="tab = '{{ $key }}'" :class="tab === '{{ $key }}' ? 'bg-carbon text-white' : 'border border-line text-carbon hover:bg-paper'" class="px-4 py-2 min-h-[44px] rounded-md text-body-md transition">
+                            {{ $label }}
+                        </button>
+                    @endforeach
+                </div>
+                @if (isset($recentLogs))
+                    @foreach (['laravel', 'payments', 'security', 'orders'] as $logType)
+                        <div x-show="tab === '{{ $logType }}'" x-cloak role="tabpanel">
+                            <div class="max-h-72 overflow-y-auto rounded-md bg-paper border border-line p-4">
+                                <pre class="text-xs break-all whitespace-pre-wrap m-0">@if (isset($recentLogs[$logType])){{ implode("\n", $recentLogs[$logType]) }}@else Sin entradas recientes @endif</pre>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-body-md text-muted italic">Sin registros disponibles.</p>
+                @endif
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Auto-refresh and AJAX functionality -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let autoRefresh = true;
-    let refreshInterval;
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function refreshData() {
+            fetch('/admin/monitoring/health-status', { headers: { Accept: 'application/json' } })
+                .then((response) => response.json())
+                .then((data) => {
+                    const badge = document.getElementById('health-status-badge');
+                    if (badge) {
+                        badge.textContent = data.status === 'healthy' ? 'Saludable' : 'Con problemas';
+                    }
+                })
+                .catch((error) => console.error('Error refreshing data:', error));
 
-    // Auto-refresh every 30 seconds
-    function startAutoRefresh() {
-        refreshInterval = setInterval(function() {
-            if (autoRefresh) {
-                refreshData();
-            }
-        }, 30000);
-    }
-
-    // Refresh data via AJAX
-    function refreshData() {
-        fetch('/admin/monitoring/health-status')
-            .then(response => response.json())
-            .then(data => {
-                updateHealthStatus(data);
-            })
-            .catch(error => {
-                console.error('Error refreshing data:', error);
-            });
-
-        fetch('/admin/monitoring/metrics')
-            .then(response => response.json())
-            .then(data => {
-                updateMetrics(data.data);
-            })
-            .catch(error => {
-                console.error('Error refreshing metrics:', error);
-            });
-    }
-
-    // Update health status display
-    function updateHealthStatus(data) {
-        const badge = document.getElementById('health-status-badge');
-        const results = document.getElementById('health-check-results');
-
-        if (data.status === 'healthy') {
-            badge.innerHTML = '<span class="badge bg-success">Healthy</span>';
-            results.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> All systems are operating normally</div>';
-        } else {
-            badge.innerHTML = '<span class="badge bg-danger">Unhealthy</span>';
-            let alertsHtml = '<div class="alert alert-warning"><h6><i class="fas fa-exclamation-triangle"></i> Active Alerts (' + data.alerts.length + ')</h6><div class="row">';
-
-            data.alerts.forEach(alert => {
-                const severity = alert.severity === 'critical' ? 'danger' : (alert.severity === 'warning' ? 'warning' : 'info');
-                alertsHtml += '<div class="col-md-6 mb-2"><div class="alert alert-' + severity + ' alert-sm">';
-                alertsHtml += '<strong>' + alert.category.charAt(0).toUpperCase() + alert.category.slice(1) + '</strong>: ' + alert.type;
-                if (alert.data && Object.keys(alert.data).length > 0) {
-                    alertsHtml += '<br><small>' + JSON.stringify(alert.data) + '</small>';
-                }
-                alertsHtml += '</div></div>';
-            });
-
-            alertsHtml += '</div><button id="clear-alerts-btn" class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i> Clear Alerts</button></div>';
-            results.innerHTML = alertsHtml;
+            fetch('/admin/monitoring/metrics', { headers: { Accept: 'application/json' } })
+                .then((response) => response.json())
+                .then(() => {})
+                .catch((error) => console.error('Error refreshing metrics:', error));
         }
-    }
 
-    // Update metrics display
-    function updateMetrics(metrics) {
-        const metricsContainer = document.getElementById('system-metrics');
-        if (metricsContainer && metrics) {
-            let html = '<table class="table table-sm">';
-            Object.entries(metrics).forEach(([key, value]) => {
-                const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                let displayValue = value;
+        document.getElementById('refresh-btn')?.addEventListener('click', refreshData);
 
-                if (typeof value === 'number') {
-                    displayValue = value.toLocaleString();
-                    if (key.includes('percent')) displayValue += '%';
-                    else if (key.includes('time')) displayValue += 'ms';
-                    else if (key.includes('gb')) displayValue += 'GB';
-                }
-
-                html += '<tr><td>' + label + '</td><td class="text-end">' + displayValue + '</td></tr>';
-            });
-            html += '</table>';
-            metricsContainer.innerHTML = html;
-        }
-    }
-
-    // Manual refresh button
-    document.getElementById('refresh-btn').addEventListener('click', function() {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-        refreshData();
-        setTimeout(() => {
-            this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-        }, 1000);
-    });
-
-    // Manual health check button
-    document.getElementById('health-check-btn').addEventListener('click', function() {
-        const btn = this;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running...';
-        btn.disabled = true;
-
-        fetch('/admin/monitoring/run-health-check', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                updateHealthStatus(data.data);
-                // Show success message
-                const alert = document.createElement('div');
-                alert.className = 'alert alert-success alert-dismissible fade show';
-                alert.innerHTML = '<i class="fas fa-check"></i> Health check completed successfully <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-                document.querySelector('.container-fluid').insertBefore(alert, document.querySelector('.row'));
-            } else {
-                console.error('Health check failed:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error running health check:', error);
-        })
-        .finally(() => {
-            btn.innerHTML = '<i class="fas fa-heartbeat"></i> Run Health Check';
-            btn.disabled = false;
-        });
-    });
-
-    // Clear alerts functionality
-    document.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'clear-alerts-btn') {
-            fetch('/admin/monitoring/clear-alerts', {
+        document.getElementById('health-check-btn')?.addEventListener('click', function () {
+            const btn = this;
+            btn.disabled = true;
+            fetch('/admin/monitoring/run-health-check', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                },
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    refreshData();
-                }
-            })
-            .catch(error => {
-                console.error('Error clearing alerts:', error);
-            });
-        }
-    });
+                .then((response) => response.json())
+                .then(() => refreshData())
+                .catch((error) => console.error('Error running health check:', error))
+                .finally(() => { btn.disabled = false; });
+        });
 
-    // Start auto-refresh
-    startAutoRefresh();
-});
-</script>
-@endsection
+        document.addEventListener('click', function (event) {
+            if (event.target && event.target.id === 'clear-alerts-btn') {
+                fetch('/admin/monitoring/clear-alerts', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then((response) => response.json())
+                    .then(() => refreshData())
+                    .catch((error) => console.error('Error clearing alerts:', error));
+            }
+        });
+    });
+    </script>
+</x-app-layout>
