@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\DemoOrdersSeeder;
 use Database\Seeders\DemoUsersSeeder;
 use Database\Seeders\ProfessionalCatalogSeeder;
@@ -92,6 +93,26 @@ class DemoSeedersTest extends TestCase
         }
 
         $this->assertSame(20, Product::count());
+    }
+
+    public function test_database_seeder_completo_corre_de_principio_a_fin(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+
+        foreach (['administrador', 'trabajador', 'usuario'] as $role) {
+            $this->assertDatabaseHas('roles', ['name' => $role]);
+        }
+
+        $this->assertSame(3, User::whereIn('email', [
+            'admin@sportplus.demo',
+            'trabajador@sportplus.demo',
+            'usuario@sportplus.demo',
+        ])->count());
+        $this->assertGreaterThan(0, Category::count());
+        $this->assertSame(20, Product::count());
+
+        $customer = User::where('email', 'usuario@sportplus.demo')->firstOrFail();
+        $this->assertSame(4, Order::where('user_id', $customer->id)->count());
     }
 
     public function test_demo_seeders_son_idempotentes(): void

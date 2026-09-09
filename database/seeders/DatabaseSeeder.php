@@ -2,13 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     /**
      * Seed demo para Laravel Cloud (rama demo/laravel-cloud).
+     *
+     * Sin dependencias de factories ni Faker: el build de Cloud usa
+     * composer install --no-dev y el helper fake() no existe ahí.
      */
     public function run(): void
     {
@@ -19,19 +21,5 @@ class DatabaseSeeder extends Seeder
             ProfessionalCatalogSeeder::class,
             DemoOrdersSeeder::class,
         ]);
-
-        // Compatibilidad: garantiza el admin clásico si alguien lo usa
-        $admin = User::where('email', 'admin@example.com')->first();
-
-        if (! $admin) {
-            $admin = User::factory()->create([
-                'name' => 'Administrador',
-                'email' => 'admin@example.com',
-                'password' => bcrypt('password'), // Asegúrate de cambiar esto en producción
-            ]);
-
-            // Asignar el rol de administrador
-            $admin->assignRole('administrador');
-        }
     }
 }
