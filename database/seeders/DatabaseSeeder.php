@@ -8,13 +8,19 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seed demo para Laravel Cloud (rama demo/laravel-cloud).
      */
     public function run(): void
     {
-        $this->call(RolesSeeder::class);
+        $this->call([
+            RolesSeeder::class,
+            DemoUsersSeeder::class,
+            SportsCategoriesSeeder::class,
+            ProfessionalCatalogSeeder::class,
+            DemoOrdersSeeder::class,
+        ]);
 
-        // Crear un usuario administrador solo si no existe
+        // Compatibilidad: garantiza el admin clásico si alguien lo usa
         $admin = User::where('email', 'admin@example.com')->first();
 
         if (! $admin) {

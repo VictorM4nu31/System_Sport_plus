@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class ProfessionalCatalogSeeder extends Seeder
 {
@@ -419,7 +420,7 @@ class ProfessionalCatalogSeeder extends Seeder
                     'description' => $data['description'],
                     'stock' => $data['stock'],
                     'category_id' => $category->id,
-                    'image' => $data['image'],
+                    'image' => $this->resolveImage($data),
                     'sizes' => $data['sizes'],
                     'colors' => $data['colors'],
                     'material' => $data['material'],
@@ -431,5 +432,28 @@ class ProfessionalCatalogSeeder extends Seeder
                 ]
             );
         }
+    }
+
+    /**
+     * Solo asigna la imagen si el archivo existe en el disco público.
+     * Así la demo no muestra <img> rotos cuando aún no se suben los JPG;
+     * las vistas ya renderizan un placeholder con image = null.
+     * Al subir los archivos y re-ejecutar el seeder, la imagen se asigna.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function resolveImage(array $data): ?string
+    {
+        $image = $data['image'] ?? null;
+
+        if ($image && Storage::disk('public')->exists('products/'.$image)) {
+            return $image;
+        }
+
+        if ($image) {
+            $this->command->warn("Imagen no encontrada: products/{$image} ({$data['name']}), se usa placeholder.");
+        }
+
+        return null;
     }
 }
