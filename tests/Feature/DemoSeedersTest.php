@@ -62,6 +62,38 @@ class DemoSeedersTest extends TestCase
         }
     }
 
+    public function test_catalogo_muestra_los_ejemplos_del_seeder(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(DemoUsersSeeder::class);
+        $this->seed(SportsCategoriesSeeder::class);
+        $this->seed(ProfessionalCatalogSeeder::class);
+
+        $esperados = [
+            'NIK-PEG40-001' => ['Tenis Nike Air Zoom Pegasus 40', '2899.00', 'Calzado Deportivo', 'catalogo-calzado.jpg'],
+            'ADI-AER-PLA-002' => ['Playera Casual Estampado Original', '499.00', 'Ropa Deportiva', 'catalogo-ropa.jpg'],
+            'VOI-BAL-5-003' => ['Balón de Fútbol Voit Profesional No. 5', '999.00', 'Equipamiento de Fútbol', 'catalogo-futbol.jpg'],
+            'SPA-TF1000-004' => ['Balón de Basketball Spalding TF-1000', '1299.00', 'Equipamiento de Basketball', 'catalogo-basketball.jpg'],
+            'AMA-GTS4M-009' => ['Reloj Deportivo Amazfit GTS 4 Mini', '2799.00', 'Accesorios Deportivos', 'catalogo-accesorios.jpg'],
+            'CAS-JER-020' => ['Bicicleta de Ruta Peugeot 700c', '13999.00', 'Ciclismo', 'catalogo-ciclismo2.jpg'],
+        ];
+
+        foreach ($esperados as $sku => [$nombre, $precio, $categoria, $imagen]) {
+            $producto = Product::where('sku', $sku)->first();
+            $this->assertNotNull($producto, "Falta el producto demo {$sku}");
+            $this->assertSame($nombre, $producto->name);
+            $this->assertSame($precio, number_format((float) $producto->price, 2, '.', ''));
+            $this->assertSame($categoria, $producto->category->name);
+            $this->assertSame($imagen, $producto->image);
+            $this->assertTrue(
+                Storage::disk('public')->exists('products/'.$imagen),
+                "Falta el archivo de imagen: products/{$imagen}"
+            );
+        }
+
+        $this->assertSame(20, Product::count());
+    }
+
     public function test_demo_seeders_son_idempotentes(): void
     {
         $this->seed(RolesSeeder::class);
