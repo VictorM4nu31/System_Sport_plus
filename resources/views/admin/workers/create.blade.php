@@ -3,7 +3,7 @@
         <!-- Contenedor principal con opacidad y sombra -->
         <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-8">
             <h1 class="text-display-sm text-primary font-bold text-center mb-6">Registrar Trabajador</h1>
-            <form method="POST" action="{{ route('admin.workers.store') }}">
+            <form method="POST" action="{{ route('admin.trabajadores.store') }}">
                 @csrf
                 <!-- Campo de Nombre -->
                 <div class="mb-4">
@@ -48,7 +48,7 @@
 
                 <!-- Botones -->
                 <div class="flex flex-col sm:flex-row justify-center gap-3">
-                    <a href="{{ route('admin.workers.index') }}"
+                    <a href="{{ route('admin.trabajadores.index') }}"
                         class="inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-gray-500 text-white text-body-md font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">
                         Cancelar
                     </a>

@@ -55,10 +55,8 @@ class CartController extends Controller
     }
 
     // Agregar productos al carrito
-    public function add(Request $request, $id)
+    public function add(Request $request, Product $producto)
     {
-        $product = Product::findOrFail($id);
-
         $validated = $request->validate([
             'quantity' => ['required', 'integer', 'min:1', 'max:100'],
         ], [
@@ -71,30 +69,30 @@ class CartController extends Controller
         $quantity = $validated['quantity'];  // Obtener la cantidad seleccionada
 
         // Check stock availability before adding to cart
-        $availableStock = $this->stockService->getAvailableStock($id);
+        $availableStock = $this->stockService->getAvailableStock($producto->id);
 
         $cart = session()->get('cart', []);
-        $currentCartQuantity = isset($cart[$id]) ? $cart[$id]['quantity'] : 0;
+        $currentCartQuantity = isset($cart[$producto->id]) ? $cart[$producto->id]['quantity'] : 0;
         $totalRequestedQuantity = $currentCartQuantity + $quantity;
 
         if ($totalRequestedQuantity > $availableStock) {
-            return redirect()->route('usuario.products.index')
-                ->with('error', "Stock insuficiente para {$product->name}. Disponible: {$availableStock}, Solicitado: {$totalRequestedQuantity}");
+            return redirect()->route('usuario.productos.indice')
+                ->with('error', "Stock insuficiente para {$producto->name}. Disponible: {$availableStock}, Solicitado: {$totalRequestedQuantity}");
         }
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity'] += $quantity;  // Incrementar la cantidad si ya está en el carrito
+        if (isset($cart[$producto->id])) {
+            $cart[$producto->id]['quantity'] += $quantity;  // Incrementar la cantidad si ya está en el carrito
         } else {
-            $cart[$id] = [
-                'name' => $product->name,
-                'price' => $product->price,
+            $cart[$producto->id] = [
+                'name' => $producto->name,
+                'price' => $producto->price,
                 'quantity' => $quantity,
             ];
         }
 
         session()->put('cart', $cart);
 
-        return redirect()->route('usuario.products.index')->with('success', 'Producto agregado al carrito.');
+        return redirect()->route('usuario.productos.indice')->with('success', 'Producto agregado al carrito.');
     }
 
     // Eliminar productos del carrito
@@ -107,7 +105,7 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return redirect()->route('usuario.cart.index')->with('success', 'Producto eliminado del carrito.');
+        return redirect()->route('usuario.carrito.indice')->with('success', 'Producto eliminado del carrito.');
     }
 
     /**
@@ -193,13 +191,13 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {
-            return redirect()->route('usuario.cart.index')->with('error', 'No tienes productos en el carrito.');
+            return redirect()->route('usuario.carrito.indice')->with('error', 'No tienes productos en el carrito.');
         }
 
         // Validate stock before proceeding to checkout
         $stockValidation = $this->validateCartStock($cart);
         if (! $stockValidation['valid']) {
-            return redirect()->route('usuario.cart.index')
+            return redirect()->route('usuario.carrito.indice')
                 ->with('error', 'Algunos productos en tu carrito no tienen stock suficiente.');
         }
 
@@ -207,7 +205,7 @@ class CartController extends Controller
         $addresses = Auth::user()->addresses()->orderBy('is_default', 'desc')->get();
 
         if ($addresses->isEmpty()) {
-            return redirect()->route('usuario.addresses.create')
+            return redirect()->route('usuario.direcciones.crear')
                 ->with('error', 'Debes agregar una dirección de envío antes de realizar un pedido.');
         }
 

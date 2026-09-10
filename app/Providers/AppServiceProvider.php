@@ -5,7 +5,11 @@ namespace App\Providers;
 use App\Contracts\OrderProcessingInterface;
 use App\Contracts\PaymentServiceInterface;
 use App\Contracts\StockManagementInterface;
+use App\Models\Address;
+use App\Models\Category;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 use App\Services\OrderProcessingService;
 use App\Services\StockManagementService;
 use App\Services\StripePaymentService;
@@ -45,6 +49,21 @@ class AppServiceProvider extends ServiceProvider
     {
         // El parámetro {pedido} de /admin/pedidos resuelve al modelo Order.
         Route::model('pedido', Order::class);
+
+        // Los IDs de binding son numéricos: evita 500 ante /productos/buscar-viejo.
+        Route::pattern('pedido', '[0-9]+');
+        Route::pattern('producto', '[0-9]+');
+        Route::pattern('categoria', '[0-9]+');
+        Route::pattern('direccion', '[0-9]+');
+        Route::pattern('trabajador', '[0-9]+');
+
+        // Parámetros en español del resto del sistema.
+        Route::model('producto', Product::class);
+        Route::model('categoria', Category::class);
+        Route::model('direccion', Address::class);
+
+        // {trabajador} solo resuelve usuarios con ese rol (404 en otro caso).
+        Route::bind('trabajador', fn (string $value) => User::role('trabajador')->findOrFail($value));
 
         // Environment validation temporarily disabled during development
         // Will be re-enabled after completing Stripe integration

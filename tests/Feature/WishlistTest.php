@@ -32,7 +32,7 @@ class WishlistTest extends TestCase
             ->withSession([
                 'wishlist' => [$product->id => ['name' => 'Viejo', 'price' => 1500.00, 'image' => null]],
             ])
-            ->get(route('usuario.wishlist.index'))
+            ->get(route('usuario.deseos.indice'))
             ->assertOk()
             ->assertSee('$800.00', false)
             ->assertSee('Bajó $700.00', false);
@@ -44,7 +44,7 @@ class WishlistTest extends TestCase
             ->withSession([
                 'wishlist' => [999999 => ['name' => 'Fantasma', 'price' => 10.00, 'image' => null]],
             ])
-            ->get(route('usuario.wishlist.index'))
+            ->get(route('usuario.deseos.indice'))
             ->assertOk()
             ->assertDontSee('Fantasma');
     }
@@ -58,9 +58,9 @@ class WishlistTest extends TestCase
                 'wishlist' => [$product->id => ['name' => $product->name, 'price' => 500.00, 'image' => null]],
                 'cart' => [],
             ])
-            ->post(route('usuario.wishlist.move', $product->id));
+            ->post(route('usuario.deseos.mover', $product->id));
 
-        $response->assertRedirect(route('usuario.cart.index'));
+        $response->assertRedirect(route('usuario.carrito.indice'));
         $this->assertEquals(
             [$product->id => ['name' => $product->name, 'price' => 500.00, 'quantity' => 1]],
             session('cart')
@@ -76,9 +76,9 @@ class WishlistTest extends TestCase
             ->withSession([
                 'wishlist' => [$product->id => ['name' => $product->name, 'price' => 500.00, 'image' => null]],
             ])
-            ->post(route('usuario.wishlist.move', $product->id));
+            ->post(route('usuario.deseos.mover', $product->id));
 
-        $response->assertRedirect(route('usuario.wishlist.index'));
+        $response->assertRedirect(route('usuario.deseos.indice'));
         $response->assertSessionHas('error');
         $this->assertArrayHasKey($product->id, session('wishlist'));
     }
@@ -90,7 +90,7 @@ class WishlistTest extends TestCase
             'stripe_price_id' => 'price_secret',
         ]);
 
-        $response = $this->actingAs($this->user)->getJson(route('usuario.products.ficha', $product->id));
+        $response = $this->actingAs($this->user)->getJson(route('usuario.productos.ficha', $product->id));
 
         $response->assertOk();
         $response->assertJsonStructure([
@@ -105,6 +105,6 @@ class WishlistTest extends TestCase
     {
         $product = Product::factory()->withStock(2)->create();
 
-        $this->getJson(route('usuario.products.ficha', $product->id))->assertUnauthorized();
+        $this->getJson(route('usuario.productos.ficha', $product->id))->assertUnauthorized();
     }
 }

@@ -40,7 +40,7 @@ class WorkerKanbanTest extends TestCase
         $this->paidOrder();
 
         $this->actingAs($this->worker)
-            ->get(route('trabajador.orders.index'))
+            ->get(route('trabajador.pedidos.indice'))
             ->assertOk()
             ->assertSee('Por aceptar', false)
             ->assertSee('Aceptados hoy', false);
@@ -51,7 +51,7 @@ class WorkerKanbanTest extends TestCase
         $order = $this->paidOrder();
 
         $response = $this->actingAs($this->worker)
-            ->patchJson(route('trabajador.orders.accept', $order->id));
+            ->patchJson(route('trabajador.pedidos.aceptar', $order->id));
 
         $response->assertOk()->assertJson(['order_id' => $order->id, 'status' => 'confirmed']);
         $this->assertSame('confirmed', $order->fresh()->status);
@@ -62,8 +62,8 @@ class WorkerKanbanTest extends TestCase
         $order = $this->paidOrder();
 
         $this->actingAs($this->worker)
-            ->patch(route('trabajador.orders.accept', $order->id))
-            ->assertRedirect(route('trabajador.orders.index'));
+            ->patch(route('trabajador.pedidos.aceptar', $order->id))
+            ->assertRedirect(route('trabajador.pedidos.indice'));
     }
 
     public function test_reject_order_validates_reason_via_json(): void
@@ -71,13 +71,13 @@ class WorkerKanbanTest extends TestCase
         $order = $this->paidOrder();
 
         $this->actingAs($this->worker)
-            ->patchJson(route('trabajador.orders.reject', $order->id), [
+            ->patchJson(route('trabajador.pedidos.rechazar', $order->id), [
                 'rejection_reason' => 'corto',
             ])
             ->assertStatus(422);
 
         $this->actingAs($this->worker)
-            ->patchJson(route('trabajador.orders.reject', $order->id), [
+            ->patchJson(route('trabajador.pedidos.rechazar', $order->id), [
                 'rejection_reason' => 'Producto sin existencias en almacén central.',
             ])
             ->assertOk()->assertJson(['order_id' => $order->id, 'status' => 'rejected']);
@@ -92,13 +92,13 @@ class WorkerKanbanTest extends TestCase
         $order = $this->paidOrder();
 
         $byId = $this->actingAs($this->worker)
-            ->getJson(route('trabajador.orders.search', ['q' => (string) $order->id]));
+            ->getJson(route('trabajador.pedidos.buscar', ['q' => (string) $order->id]));
 
         $byId->assertOk()->assertJsonPath('data.0.id', $order->id);
         $byId->assertJsonMissingPath('data.0.stripe');
 
         $byClient = $this->actingAs($this->worker)
-            ->getJson(route('trabajador.orders.search', ['q' => substr($this->client->name, 0, 4)]));
+            ->getJson(route('trabajador.pedidos.buscar', ['q' => substr($this->client->name, 0, 4)]));
 
         $byClient->assertOk()->assertJsonPath('data.0.id', $order->id);
     }
@@ -107,8 +107,8 @@ class WorkerKanbanTest extends TestCase
     {
         $order = $this->paidOrder();
 
-        $this->actingAs($this->client)->get(route('trabajador.orders.index'))->assertForbidden();
-        $this->actingAs($this->client)->patchJson(route('trabajador.orders.accept', $order->id))->assertForbidden();
-        $this->actingAs($this->client)->getJson(route('trabajador.orders.search'))->assertForbidden();
+        $this->actingAs($this->client)->get(route('trabajador.pedidos.indice'))->assertForbidden();
+        $this->actingAs($this->client)->patchJson(route('trabajador.pedidos.aceptar', $order->id))->assertForbidden();
+        $this->actingAs($this->client)->getJson(route('trabajador.pedidos.buscar'))->assertForbidden();
     }
 }

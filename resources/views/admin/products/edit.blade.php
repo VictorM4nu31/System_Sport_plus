@@ -3,7 +3,7 @@
         <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-4 sm:p-8">
             <h1 class="text-display-sm text-center font-bold text-primary mb-8">Editar Producto Deportivo</h1>
 
-            <form method="POST" action="{{ route('admin.products.update', $product->id) }}" enctype="multipart/form-data" id="productForm">
+            <form method="POST" action="{{ route('admin.productos.update', $product->id) }}" enctype="multipart/form-data" id="productForm">
                 @csrf
                 @method('PATCH')
 
@@ -271,7 +271,7 @@
 
                 <!-- Botones -->
                 <div class="flex justify-center space-x-4">
-                    <a href="{{ route('admin.products.index') }}"
+                    <a href="{{ route('admin.productos.index') }}"
                         class="px-6 py-3 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md">
                         Cancelar
                     </a>

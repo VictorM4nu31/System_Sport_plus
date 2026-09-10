@@ -437,7 +437,7 @@ class MonitoringService
         }
 
         $message .= "\nPlease check the system immediately.\n";
-        $message .= 'Dashboard: '.config('app.url')."/admin/monitoring\n";
+        $message .= 'Dashboard: '.config('app.url')."/admin/monitoreo/panel\n";
 
         return $message;
     }

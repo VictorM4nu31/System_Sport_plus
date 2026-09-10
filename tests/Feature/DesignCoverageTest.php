@@ -44,14 +44,14 @@ class DesignCoverageTest extends TestCase
 
     public function test_admin_pages_render_with_design_system(): void
     {
-        foreach (['admin.dashboard', 'admin.categories.index', 'admin.pedidos.index', 'admin.reports.sales', 'admin.products.index'] as $route) {
+        foreach (['admin.panel', 'admin.categorias.index', 'admin.pedidos.index', 'admin.reportes.ventas', 'admin.productos.index'] as $route) {
             $this->actingAs($this->admin)->get(route($route))->assertOk();
         }
     }
 
     public function test_worker_pages_render_with_design_system(): void
     {
-        $this->actingAs($this->worker)->get(route('trabajador.orders.index'))
+        $this->actingAs($this->worker)->get(route('trabajador.pedidos.indice'))
             ->assertOk()
             ->assertSee('Por aceptar', false)
             ->assertSee('Aceptados hoy', false);
@@ -59,18 +59,18 @@ class DesignCoverageTest extends TestCase
 
     public function test_worker_dashboard_and_reports_render(): void
     {
-        $this->actingAs($this->worker)->get(route('trabajador.dashboard'))
+        $this->actingAs($this->worker)->get(route('trabajador.panel'))
             ->assertOk()
             ->assertSee('Panel de trabajador', false);
 
-        $this->actingAs($this->worker)->get(route('trabajador.reports.sales'))
+        $this->actingAs($this->worker)->get(route('trabajador.reportes.ventas'))
             ->assertOk()
             ->assertSee('Reporte de Ventas', false);
     }
 
     public function test_monitoring_dashboard_renders(): void
     {
-        $this->actingAs($this->admin)->get(route('admin.monitoring.dashboard'))
+        $this->actingAs($this->admin)->get(route('admin.monitoreo.panel'))
             ->assertOk()
             ->assertSee('Monitoreo del sistema', false);
     }
@@ -78,18 +78,18 @@ class DesignCoverageTest extends TestCase
     public function test_dashboard_redirect_sends_each_role_home(): void
     {
         $this->actingAs($this->admin)->get(route('dashboard'))
-            ->assertRedirect(route('admin.dashboard'));
+            ->assertRedirect(route('admin.panel'));
 
         $this->actingAs($this->worker)->get(route('dashboard'))
-            ->assertRedirect(route('trabajador.dashboard'));
+            ->assertRedirect(route('trabajador.panel'));
 
         $this->actingAs($this->client)->get(route('dashboard'))
-            ->assertRedirect(route('usuario.dashboard'));
+            ->assertRedirect(route('usuario.panel'));
     }
 
     public function test_client_pages_render_with_design_system(): void
     {
-        foreach (['usuario.products.index', 'usuario.orders.index', 'usuario.orders.history', 'usuario.wishlist.index', 'usuario.addresses.index', 'usuario.cart.index'] as $route) {
+        foreach (['usuario.productos.indice', 'usuario.pedidos.indice', 'usuario.pedidos.historial', 'usuario.deseos.indice', 'usuario.direcciones.indice', 'usuario.carrito.indice'] as $route) {
             $this->actingAs($this->client)->get(route($route))->assertOk();
         }
     }

@@ -7,7 +7,7 @@
                 <p class="cs-eyebrow text-volt">Tu próxima sesión</p>
                 <h1 class="cs-display mt-4 text-5xl text-white sm:text-6xl">Hola, {{ auth()->user()->name }}.</h1>
                 <p class="mt-5 max-w-md text-sm leading-6 text-white/65">Explora equipamiento, retoma tus favoritos y mantén tus pedidos bajo control.</p>
-                <a href="{{ route('usuario.products.index') }}" class="cs-button-signal cs-focus mt-8 no-underline">Explorar equipamiento <span aria-hidden="true">→</span></a>
+                <a href="{{ route('usuario.productos.indice') }}" class="cs-button-signal cs-focus mt-8 no-underline">Explorar equipamiento <span aria-hidden="true">→</span></a>
             </div>
         </section>
 
@@ -15,10 +15,10 @@
             <div class="flex items-end justify-between gap-4"><div><p class="cs-eyebrow">Atajos</p><h2 class="cs-display mt-2 text-3xl">Tu centro de movimiento.</h2></div></div>
             <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach([
-                    ['label' => 'Explorar catálogo', 'hint' => 'Encuentra tu próximo equipo', 'icon' => 'explore', 'url' => route('usuario.products.index'), 'signal' => true],
-                    ['label' => 'Mis pedidos', 'hint' => 'Sigue lo que ya compraste', 'icon' => 'receipt_long', 'url' => route('usuario.orders.history'), 'signal' => false],
-                    ['label' => 'Lista de deseos', 'hint' => 'Lo que quieres probar', 'icon' => 'favorite', 'url' => route('usuario.wishlist.index'), 'signal' => false],
-                    ['label' => 'Direcciones', 'hint' => 'Entrega sin fricción', 'icon' => 'location_on', 'url' => route('usuario.addresses.index'), 'signal' => false],
+                    ['label' => 'Explorar catálogo', 'hint' => 'Encuentra tu próximo equipo', 'icon' => 'explore', 'url' => route('usuario.productos.indice'), 'signal' => true],
+                    ['label' => 'Mis pedidos', 'hint' => 'Sigue lo que ya compraste', 'icon' => 'receipt_long', 'url' => route('usuario.pedidos.historial'), 'signal' => false],
+                    ['label' => 'Lista de deseos', 'hint' => 'Lo que quieres probar', 'icon' => 'favorite', 'url' => route('usuario.deseos.indice'), 'signal' => false],
+                    ['label' => 'Direcciones', 'hint' => 'Entrega sin fricción', 'icon' => 'location_on', 'url' => route('usuario.direcciones.indice'), 'signal' => false],
                 ] as $item)
                     <a href="{{ $item['url'] }}" @class(['cs-focus group rounded-[14px] border p-5 no-underline transition', 'border-ink bg-volt text-ink' => $item['signal'], 'cs-surface hover:border-ink' => ! $item['signal']])>
                         <span class="material-icons text-2xl" aria-hidden="true">{{ $item['icon'] }}</span>

@@ -7,7 +7,7 @@
                 <!-- Encabezado: título a la izquierda, acción a la derecha -->
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                     <h1 class="text-display-sm font-bold text-primary">Gestión de Productos Deportivos</h1>
-                    <a href="{{ route('admin.products.create') }}"
+                    <a href="{{ route('admin.productos.create') }}"
                        class="inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-primary text-white rounded-md font-semibold hover:bg-primary-700 transition duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary text-body-md w-full sm:w-auto">
                         + Agregar Producto
                     </a>
@@ -16,7 +16,7 @@
                 <!-- Filtros de búsqueda -->
                 <div class="bg-gray-50 p-4 sm:p-6 rounded-lg mb-6">
                     <h2 class="text-heading-lg font-semibold text-primary mb-4">Filtros de Búsqueda</h2>
-                    <form method="GET" action="{{ route('admin.products.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <form method="GET" action="{{ route('admin.productos.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <!-- Búsqueda por nombre -->
                         <div>
                             <label for="admin-products-search" class="block text-primary font-medium mb-1 text-body-md">Nombre</label>
@@ -52,7 +52,7 @@
                             <button type="submit" class="px-4 py-2 min-h-[44px] bg-primary text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary text-body-md font-medium">
                                 Filtrar
                             </button>
-                            <a href="{{ route('admin.products.index') }}" class="px-4 py-2 min-h-[44px] bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md font-medium">
+                            <a href="{{ route('admin.productos.index') }}" class="px-4 py-2 min-h-[44px] bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md font-medium">
                                 Limpiar
                             </a>
                         </div>
@@ -61,7 +61,7 @@
 
                 <!-- Botones de gestión -->
                 <div class="flex flex-wrap gap-3 mb-6">
-                    <a href="{{ route('admin.categories.index') }}"
+                    <a href="{{ route('admin.categorias.index') }}"
                        class="px-5 py-2 bg-primary text-white rounded-md font-semibold hover:bg-primary-700 transition duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary text-body-md">
                         Gestionar Categorías
                     </a>
@@ -204,7 +204,7 @@
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="flex items-center gap-1">
                                             <!-- Ver -->
-                                            <a href="{{ route('admin.products.show', $product->id) }}"
+                                            <a href="{{ route('admin.productos.show', $product->id) }}"
                                                class="text-primary-lighter hover:text-info p-2 min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded" title="Ver detalles" aria-label="Ver {{ $product->name }}">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -213,7 +213,7 @@
                                             </a>
 
                                             <!-- Editar -->
-                                            <a href="{{ route('admin.products.edit', $product->id) }}"
+                                            <a href="{{ route('admin.productos.edit', $product->id) }}"
                                                class="text-[#801336] hover:text-[#9b1a3e] p-2 min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded" title="Editar" aria-label="Editar {{ $product->name }}">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -222,7 +222,7 @@
 
                                             <!-- Sincronizar con Stripe -->
                                             @if(!$product->isSyncedWithStripe())
-                                            <form action="{{ route('admin.products.sync-stripe', $product->id) }}" method="POST" class="inline">
+                                            <form action="{{ route('admin.productos.sincronizar-stripe', $product->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit"
                                                         class="text-primary-lighter hover:text-info p-2 min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded"
@@ -235,7 +235,7 @@
                                             @endif
 
                                             <!-- Eliminar -->
-                                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="inline">
+                                            <form action="{{ route('admin.productos.destroy', $product->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"

@@ -17,6 +17,7 @@ class AddressController extends Controller
     {
         // Middleware is handled by routes in Laravel 11
     }
+
     /**
      * Mostrar todas las direcciones del usuario
      */
@@ -25,6 +26,7 @@ class AddressController extends Controller
         Gate::authorize('viewAny', Address::class);
 
         $addresses = Auth::user()->addresses()->orderBy('is_default', 'desc')->get();
+
         return view('usuario.addresses.index', compact('addresses'));
     }
 
@@ -72,66 +74,66 @@ class AddressController extends Controller
             'timestamp' => now(),
         ]);
 
-        return redirect()->route('usuario.addresses.index')
+        return redirect()->route('usuario.direcciones.indice')
             ->with('success', 'Dirección agregada exitosamente.');
     }
 
     /**
      * Mostrar el formulario para editar una dirección
      */
-    public function edit(Address $address)
+    public function edit(Address $direccion)
     {
-        Gate::authorize('update', $address);
+        Gate::authorize('update', $direccion);
 
-        return view('usuario.addresses.edit', compact('address'));
+        return view('usuario.addresses.edit', ['address' => $direccion]);
     }
 
     /**
      * Actualizar una dirección existente
      */
-    public function update(Request $request, Address $address)
+    public function update(Request $request, Address $direccion)
     {
-        Gate::authorize('update', $address);
+        Gate::authorize('update', $direccion);
 
-        $oldData = $address->toArray();
-        $validated = $this->validateAddress($request, $address->id);
+        $oldData = $direccion->toArray();
+        $validated = $this->validateAddress($request, $direccion->id);
 
         // Si se marca como default, desmarcar las otras direcciones
         if ($request->has('is_default') && $request->is_default) {
-            Auth::user()->addresses()->where('id', '!=', $address->id)
+            Auth::user()->addresses()->where('id', '!=', $direccion->id)
                 ->update(['is_default' => false]);
             $validated['is_default'] = true;
         }
 
-        $address->update($validated);
+        $direccion->update($validated);
 
         Log::channel('audit')->info('Address updated', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'address_id' => $address->id,
+            'address_id' => $direccion->id,
             'old_data' => $oldData,
-            'new_data' => $address->fresh()->toArray(),
+            'new_data' => $direccion->fresh()->toArray(),
             'action' => 'addresses.update',
             'timestamp' => now(),
         ]);
 
-        return redirect()->route('usuario.addresses.index')
+        return redirect()->route('usuario.direcciones.indice')
             ->with('success', 'Dirección actualizada exitosamente.');
     }
 
     /**
      * Eliminar una dirección
      */
-    public function destroy(Address $address)
+    public function destroy(Address $direccion)
     {
-        Gate::authorize('delete', $address);
+        Gate::authorize('delete', $direccion);
 
-        $addressData = $address->toArray();
+        $addressData = $direccion->toArray();
 
         // Si es la dirección por defecto, establecer otra como default
-        if ($address->is_default) {
+        if ($direccion->is_default) {
             $nextAddress = Auth::user()->addresses()
-                ->where('id', '!=', $address->id)
+                ->where('id', '!=', $direccion->id)
                 ->first();
 
             if ($nextAddress) {
@@ -139,39 +141,39 @@ class AddressController extends Controller
             }
         }
 
-        $address->delete();
+        $direccion->delete();
 
         Log::channel('audit')->info('Address deleted', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'address_id' => $address->id,
+            'address_id' => $direccion->id,
             'address_data' => $addressData,
             'action' => 'addresses.destroy',
             'timestamp' => now(),
         ]);
 
-        return redirect()->route('usuario.addresses.index')
+        return redirect()->route('usuario.direcciones.indice')
             ->with('success', 'Dirección eliminada exitosamente.');
     }
 
     /**
      * Establecer una dirección como la por defecto
      */
-    public function setDefault(Address $address)
+    public function setDefault(Address $direccion)
     {
-        Gate::authorize('update', $address);
+        Gate::authorize('update', $direccion);
 
-        $address->setAsDefault();
+        $direccion->setAsDefault();
 
         Log::channel('audit')->info('Default address changed', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'address_id' => $address->id,
+            'address_id' => $direccion->id,
             'action' => 'addresses.setDefault',
             'timestamp' => now(),
         ]);
 
-        return redirect()->route('usuario.addresses.index')
+        return redirect()->route('usuario.direcciones.indice')
             ->with('success', 'Dirección establecida como predeterminada.');
     }
 
@@ -181,6 +183,7 @@ class AddressController extends Controller
     public function getUserAddresses()
     {
         $addresses = Auth::user()->addresses()->orderBy('is_default', 'desc')->get();
+
         return response()->json($addresses);
     }
 

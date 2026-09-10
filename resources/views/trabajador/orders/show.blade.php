@@ -120,7 +120,7 @@
 
                 <!-- Acciones -->
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 pt-6 border-t border-gray-200">
-                    <a href="{{ route('trabajador.orders.index') }}"
+                    <a href="{{ route('trabajador.pedidos.indice') }}"
                        class="inline-flex items-center justify-center gap-2 text-primary hover:text-primary-700 text-body-md font-medium px-4 py-2 min-h-[44px] rounded-md border border-line sm:border-0 transition duration-150 w-full sm:w-auto">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                             <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
@@ -137,7 +137,7 @@
                             <span>Rechazar Pedido</span>
                         </button>
 
-                        <form action="{{ route('trabajador.orders.accept', $order->id) }}" method="POST" class="inline">
+                        <form action="{{ route('trabajador.pedidos.aceptar', $order->id) }}" method="POST" class="inline">
                             @csrf
                             @method('PATCH')
                             <button type="submit"
@@ -168,7 +168,7 @@
                     </button>
                 </div>
 
-                <form id="rejectForm" method="POST" action="{{ route('trabajador.orders.reject', $order->id) }}">
+                <form id="rejectForm" method="POST" action="{{ route('trabajador.pedidos.rechazar', $order->id) }}">
                     @csrf
                     @method('PATCH')
 

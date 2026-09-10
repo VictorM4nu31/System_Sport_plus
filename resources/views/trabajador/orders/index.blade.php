@@ -49,14 +49,14 @@
                                     </div>
                                     <p class="price-mono mt-2 font-bold text-carbon">${{ number_format($order->total_price, 2) }}</p>
                                     <div class="mt-3 flex flex-wrap gap-2">
-                                        <a href="{{ route('trabajador.orders.show', $order->id) }}"
+                                        <a href="{{ route('trabajador.pedidos.ver', $order->id) }}"
                                            class="focus-volt rounded-md border border-line px-4 py-2.5 min-h-[44px] inline-flex items-center text-sm font-medium text-carbon hover:border-carbon no-underline">Ver</a>
-                                        <form action="{{ route('trabajador.orders.accept', $order->id) }}" method="POST" class="inline" data-aceptar="{{ $order->id }}">
+                                        <form action="{{ route('trabajador.pedidos.aceptar', $order->id) }}" method="POST" class="inline" data-aceptar="{{ $order->id }}">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="btn-carbon focus-volt px-4 py-2.5 min-h-[44px] text-sm">Aceptar</button>
                                         </form>
-                                        <a href="{{ route('trabajador.orders.show', $order->id) }}#rechazar"
+                                        <a href="{{ route('trabajador.pedidos.ver', $order->id) }}#rechazar"
                                            data-rechazar="{{ $order->id }}"
                                            class="focus-volt rounded-md border border-line px-4 py-2.5 min-h-[44px] inline-flex items-center text-sm font-semibold text-error hover:border-error no-underline">Rechazar</a>
                                     </div>
@@ -82,7 +82,7 @@
                                 <p class="font-bold text-carbon price-mono">#{{ $order->id }}</p>
                                 <p class="text-sm font-medium text-carbon">{{ $order->user->name }}</p>
                                 <p class="price-mono mt-1 text-sm font-bold text-carbon">${{ number_format($order->total_price, 2) }}</p>
-                                <a href="{{ route('trabajador.orders.show', $order->id) }}" class="mt-2 inline-block text-sm font-medium text-carbon underline">Ver</a>
+                                <a href="{{ route('trabajador.pedidos.ver', $order->id) }}" class="mt-2 inline-block text-sm font-medium text-carbon underline">Ver</a>
                             </article>
                         @empty
                             <p class="text-muted italic" data-aceptados-vacio>Aún no aceptas pedidos hoy.</p>

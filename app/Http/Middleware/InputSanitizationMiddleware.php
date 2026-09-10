@@ -4,15 +4,12 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use App\Services\ErrorHandlingService;
 
 class InputSanitizationMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -31,13 +28,17 @@ class InputSanitizationMiddleware
     private function shouldSanitize(Request $request): bool
     {
         $criticalRoutes = [
-            'usuario.cart.add',
-            'usuario.cart.processOrder',
-            'usuario.orders.store',
-            'usuario.addresses.store',
-            'usuario.addresses.update',
-            'admin.products.store',
-            'admin.products.update',
+            'usuario.carrito.agregar',
+            'usuario.resenas.guardar',
+            'usuario.direcciones.guardar',
+            'usuario.direcciones.actualizar',
+            'trabajador.pedidos.rechazar',
+            'admin.productos.store',
+            'admin.productos.update',
+            'admin.categorias.store',
+            'admin.categorias.update',
+            'admin.trabajadores.store',
+            'admin.trabajadores.update',
         ];
 
         return in_array($request->route()?->getName(), $criticalRoutes);

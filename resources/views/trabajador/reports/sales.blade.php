@@ -33,7 +33,7 @@
                 <div class="py-12 text-center">
                     <p class="text-body-lg text-carbon font-semibold">Sin pedidos completados</p>
                     <p class="text-body-md text-muted mt-1">Cuando completes pedidos aparecerán aquí.</p>
-                    <a href="{{ route('trabajador.orders.index') }}" class="inline-flex items-center justify-center mt-4 px-4 py-2 min-h-[44px] rounded-md bg-carbon text-white text-body-md">Ir a la cola</a>
+                    <a href="{{ route('trabajador.pedidos.indice') }}" class="inline-flex items-center justify-center mt-4 px-4 py-2 min-h-[44px] rounded-md bg-carbon text-white text-body-md">Ir a la cola</a>
                 </div>
             @endif
         </div>

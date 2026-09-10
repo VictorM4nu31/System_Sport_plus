@@ -109,55 +109,52 @@ class OrderController extends Controller
     }
 
     // Mostrar los detalles de un pedido específico
-    public function show($id)
+    public function show(Order $pedido)
     {
-        $order = Order::findOrFail($id);
-        Gate::authorize('view', $order);
+        Gate::authorize('view', $pedido);
 
         Log::channel('audit')->info('Order viewed', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'order_id' => $order->id,
+            'order_id' => $pedido->id,
             'action' => 'orders.show',
             'timestamp' => now(),
         ]);
 
-        return view('usuario.orders.show', compact('order'));
+        return view('usuario.orders.show', ['order' => $pedido]);
     }
 
     /**
      * Cancel an order and restore stock atomically
      */
-    public function cancel(Request $request, $id)
+    public function cancel(Request $request, Order $pedido)
     {
         try {
-            $order = Order::findOrFail($id);
-
             // Verify that the order belongs to the user
-            if ($order->user_id !== Auth::id()) {
+            if ($pedido->user_id !== Auth::id()) {
                 return response()->json(['error' => 'No tienes acceso a este pedido.'], 403);
             }
 
             // Only allow cancellation of pending (unpaid) orders
-            if ($order->status !== OrderStatus::PENDING->value) {
+            if ($pedido->status !== OrderStatus::PENDING->value) {
                 return response()->json(['error' => 'Solo se pueden cancelar pedidos pendientes.'], 400);
             }
 
             // Use atomic transaction to cancel order and restore stock
-            DB::transaction(function () use ($order) {
+            DB::transaction(function () use ($pedido) {
                 // Restore stock
-                $this->orderProcessingService->releaseStock($order);
+                $this->orderProcessingService->releaseStock($pedido);
 
                 // Update order status
-                $order->status = OrderStatus::CANCELLED->value;
-                $order->save();
+                $pedido->status = OrderStatus::CANCELLED->value;
+                $pedido->save();
             });
 
             Log::channel('audit')->info('Order cancelled', [
                 'user_id' => Auth::id(),
                 'user_email' => Auth::user()->email,
-                'order_id' => $order->id,
-                'total_price' => $order->total_price,
+                'order_id' => $pedido->id,
+                'total_price' => $pedido->total_price,
                 'action' => 'orders.cancel',
                 'timestamp' => now(),
             ]);
@@ -167,7 +164,7 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             $errorResponse = ErrorHandlingService::handleOrderError(
                 $e,
-                ['order_id' => $id, 'action' => 'cancel'],
+                ['order_id' => $pedido->id, 'action' => 'cancel'],
                 'Error al cancelar el pedido.'
             );
 

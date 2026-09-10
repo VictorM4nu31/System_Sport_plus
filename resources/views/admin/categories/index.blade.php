@@ -7,7 +7,7 @@
                 <!-- Título de la sección con ícono y color de fondo -->
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                     <h1 class="text-display-sm text-carbon font-bold">Gestión de Categorías</h1>
-                    <a href="{{ route('admin.categories.create') }}"
+                    <a href="{{ route('admin.categorias.create') }}"
                        class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] sm:px-5 bg-primary text-white rounded-md font-semibold hover:bg-primary-700 transition duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary btn-accessible w-full sm:w-auto">
                         Agregar Categoría
                     </a>
@@ -35,7 +35,7 @@
                                     <td class="px-4 sm:px-6 py-3 border-b border-line">
                                         <div class="flex items-center gap-2">
                                             <!-- Botón de Editar con ícono -->
-                                            <a href="{{ route('admin.categories.edit', $category->id) }}"
+                                            <a href="{{ route('admin.categorias.edit', $category->id) }}"
                                                class="inline-flex items-center gap-1 p-2 min-h-[44px] text-info hover:text-info font-semibold">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                                                     <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712Z"/>
@@ -45,7 +45,7 @@
                                             </a>
 
                                             <!-- Botón de Eliminar con ícono -->
-                                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="flex items-center">
+                                            <form action="{{ route('admin.categorias.destroy', $category->id) }}" method="POST" class="flex items-center">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" onclick="return confirm('¿Eliminar esta categoría?')" class="inline-flex items-center gap-1 p-2 min-h-[44px] text-error hover:text-red-700 font-semibold">

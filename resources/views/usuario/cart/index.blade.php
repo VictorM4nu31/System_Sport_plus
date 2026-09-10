@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-7xl py-6" data-checkout>
         <div class="flex flex-col justify-between gap-5 border-b border-line pb-8 sm:flex-row sm:items-end">
             <div><p class="cs-eyebrow">Tu selección</p><h1 class="cs-display mt-3 text-5xl">Listo para avanzar.</h1><p class="mt-3 text-sm text-muted">Revisa tu equipo, confirma el envío y asegura tu stock.</p></div>
-            <a href="{{ route('usuario.products.index') }}" class="cs-button-secondary cs-focus no-underline">Seguir explorando <span aria-hidden="true">→</span></a>
+            <a href="{{ route('usuario.productos.indice') }}" class="cs-button-secondary cs-focus no-underline">Seguir explorando <span aria-hidden="true">→</span></a>
         </div>
 
         @if (session('cart') && count(session('cart')) > 0)
@@ -40,7 +40,7 @@
                             <td class="px-6 py-4 border-b text-gray-600">${{ number_format($details['price'], 2) }}</td>
                             <td class="px-6 py-4 border-b text-gray-600">{{ $details['quantity'] }}</td>
                             <td class="px-6 py-4 border-b">
-                                <form action="{{ route('usuario.cart.remove', $id) }}" method="POST">
+                                <form action="{{ route('usuario.carrito.eliminar', $id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="flex items-center text-error hover:text-error-dark font-semibold transition-colors duration-200">
                                         <!-- Ícono de eliminar (basura) -->
@@ -139,7 +139,7 @@
                 </fieldset>
                 @else
                 <div class="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-                    <p class="text-sm">No tienes direcciones guardadas. <a href="{{ route('usuario.addresses.create') }}" class="underline">Agregar dirección</a></p>
+                    <p class="text-sm">No tienes direcciones guardadas. <a href="{{ route('usuario.direcciones.crear') }}" class="underline">Agregar dirección</a></p>
                 </div>
                 @endif
 
@@ -216,7 +216,7 @@
                         <span><strong class="block text-sm text-gray-900">Listo</strong><span class="text-sm text-gray-500">Te avisaremos cuando esté en camino</span></span>
                     </li>
                 </ol>
-                <a href="{{ route('usuario.orders.history') }}" class="btn-carbon focus-volt mt-4 inline-block no-underline" data-ver-pedido>Ver mis pedidos ahora</a>
+                <a href="{{ route('usuario.pedidos.historial') }}" class="btn-carbon focus-volt mt-4 inline-block no-underline" data-ver-pedido>Ver mis pedidos ahora</a>
                 <p class="mt-2 text-sm text-gray-500">Redirigiendo en <span data-redirect-cuenta class="price-mono">6</span>s…</p>
             </div>
         </div>
@@ -229,7 +229,7 @@
             <div class="cs-surface py-16 text-center">
                 <p class="text-body-lg text-carbon font-semibold">Tu carrito está vacío</p>
                 <p class="text-body-md text-muted mt-1">Explora el catálogo y agrega tus productos favoritos.</p>
-                <a href="{{ route('usuario.products.index') }}" class="cs-button-signal cs-focus mt-4 no-underline">Ver catálogo</a>
+                <a href="{{ route('usuario.productos.indice') }}" class="cs-button-signal cs-focus mt-4 no-underline">Ver catálogo</a>
             </div>
         @endif
     </div>
@@ -298,7 +298,7 @@
                     }
 
                     // Create payment intent
-                    const response = await fetch('{{ route('usuario.cart.create-payment-intent') }}', {
+                    const response = await fetch('{{ route('usuario.carrito.crear-intencion-pago') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -340,7 +340,7 @@
 
                     if (paymentIntent.status === 'succeeded') {
                         // Confirm order on server
-                        const confirmResponse = await fetch('{{ route('usuario.cart.confirm-order') }}', {
+                        const confirmResponse = await fetch('{{ route('usuario.carrito.confirmar-pedido') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -354,7 +354,7 @@
 
                         if (confirmResponse.ok) {
                             // Paso 3: mostrar confirmación con timeline antes de redirigir.
-                            mostrarExito('{{ route('usuario.orders.history') }}');
+                            mostrarExito('{{ route('usuario.pedidos.historial') }}');
                         } else {
                             throw new Error('Error al confirmar la orden');
                         }
@@ -421,7 +421,7 @@
                 // Re-sincronizar con el servidor cada 15s (el webhook puede confirmar/liberar).
                 reservaPoller = window.setInterval(async () => {
                     try {
-                        const estado = await fetch('{{ route('usuario.cart.reserva-estado') }}', {
+                        const estado = await fetch('{{ route('usuario.carrito.estado-reserva') }}', {
                             headers: { 'X-Requested-With': 'XMLHttpRequest' },
                         });
                         if (!estado.ok) {

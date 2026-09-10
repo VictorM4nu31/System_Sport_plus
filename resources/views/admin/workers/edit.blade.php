@@ -6,7 +6,7 @@
             <h1 class="text-display-sm text-primary font-bold text-center mb-6">Editar Trabajador</h1>
 
             <!-- Formulario de edición -->
-            <form method="POST" action="{{ route('admin.workers.update', $worker->id) }}">
+            <form method="POST" action="{{ route('admin.trabajadores.update', $worker->id) }}">
                 @csrf
                 @method('PATCH')
 
@@ -32,7 +32,7 @@
 
                 <!-- Botones -->
                 <div class="flex justify-center space-x-4">
-                    <a href="{{ route('admin.workers.index') }}"
+                    <a href="{{ route('admin.trabajadores.index') }}"
                         class="px-6 py-3 bg-gray-500 text-white text-body-md font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">
                         Cancelar
                     </a>

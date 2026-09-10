@@ -49,42 +49,36 @@ class WorkerController extends Controller
         $worker->assignRole('trabajador');
 
         // Redirigir de vuelta al índice de trabajadores con un mensaje de éxito
-        return redirect()->route('admin.workers.index')->with('success', 'Trabajador creado con éxito.');
+        return redirect()->route('admin.trabajadores.index')->with('success', 'Trabajador creado con éxito.');
     }
 
-    public function edit($id)
+    public function edit(User $trabajador)
     {
         Gate::authorize('manage-workers');
 
-        // Solo trabajadores: nunca editar administradores u otros roles.
-        $worker = User::role('trabajador')->findOrFail($id);
-
-        return view('admin.workers.edit', compact('worker'));
+        return view('admin.workers.edit', ['worker' => $trabajador]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, User $trabajador)
     {
         Gate::authorize('manage-workers');
-
-        $worker = User::role('trabajador')->findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$worker->id,
+            'email' => 'required|email|unique:users,email,'.$trabajador->id,
         ]);
 
-        $worker->update($request->only('name', 'email'));
+        $trabajador->update($request->only('name', 'email'));
 
-        return redirect()->route('admin.workers.index')->with('success', 'Trabajador actualizado con éxito.');
+        return redirect()->route('admin.trabajadores.index')->with('success', 'Trabajador actualizado con éxito.');
     }
 
-    public function destroy($id)
+    public function destroy(User $trabajador)
     {
         Gate::authorize('manage-workers');
 
-        $worker = User::role('trabajador')->findOrFail($id);
-        $worker->delete();
+        $trabajador->delete();
 
-        return redirect()->route('admin.workers.index')->with('success', 'Trabajador eliminado.');
+        return redirect()->route('admin.trabajadores.index')->with('success', 'Trabajador eliminado.');
     }
 }

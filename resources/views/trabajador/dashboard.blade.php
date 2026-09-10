@@ -11,11 +11,11 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <a href="{{ route('trabajador.orders.index') }}" class="bg-white border border-line rounded-lg shadow p-6 hover:bg-paper transition">
+                <a href="{{ route('trabajador.pedidos.indice') }}" class="bg-white border border-line rounded-lg shadow p-6 hover:bg-paper transition">
                     <p class="text-body-md font-semibold text-carbon">Cola de pedidos</p>
                     <p class="text-body-sm text-muted mt-1">Ver, aceptar o rechazar pedidos.</p>
                 </a>
-                <a href="{{ route('trabajador.reports.sales') }}" class="bg-white border border-line rounded-lg shadow p-6 hover:bg-paper transition">
+                <a href="{{ route('trabajador.reportes.ventas') }}" class="bg-white border border-line rounded-lg shadow p-6 hover:bg-paper transition">
                     <p class="text-body-md font-semibold text-carbon">Reporte de ventas</p>
                     <p class="text-body-sm text-muted mt-1">Revisar pedidos completados.</p>
                 </a>

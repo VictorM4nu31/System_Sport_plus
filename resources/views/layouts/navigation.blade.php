@@ -5,33 +5,33 @@
     $isAdmin = $user->hasRole('administrador');
     $links = $isAdmin
         ? [
-            ['label' => 'Resumen', 'icon' => 'dashboard', 'url' => route('admin.dashboard'), 'active' => request()->routeIs('admin.dashboard')],
+            ['label' => 'Resumen', 'icon' => 'dashboard', 'url' => route('admin.panel'), 'active' => request()->routeIs('admin.panel')],
             ['label' => 'Pedidos', 'icon' => 'shopping_cart', 'url' => route('admin.pedidos.index'), 'active' => request()->routeIs('admin.pedidos.*')],
-            ['label' => 'Productos', 'icon' => 'inventory_2', 'url' => route('admin.products.index'), 'active' => request()->routeIs('admin.products.*')],
-            ['label' => 'Categorías', 'icon' => 'category', 'url' => route('admin.categories.index'), 'active' => request()->routeIs('admin.categories.*')],
-            ['label' => 'Trabajadores', 'icon' => 'group', 'url' => route('admin.workers.index'), 'active' => request()->routeIs('admin.workers.*')],
-            ['label' => 'Reportes', 'icon' => 'monitoring', 'url' => route('admin.reports.sales'), 'active' => request()->routeIs('admin.reports.*')],
-            ['label' => 'Monitoreo', 'icon' => 'monitor_heart', 'url' => route('admin.monitoring.dashboard'), 'active' => request()->routeIs('admin.monitoring.*')],
+            ['label' => 'Productos', 'icon' => 'inventory_2', 'url' => route('admin.productos.index'), 'active' => request()->routeIs('admin.productos.*')],
+            ['label' => 'Categorías', 'icon' => 'category', 'url' => route('admin.categorias.index'), 'active' => request()->routeIs('admin.categorias.*')],
+            ['label' => 'Trabajadores', 'icon' => 'group', 'url' => route('admin.trabajadores.index'), 'active' => request()->routeIs('admin.trabajadores.*')],
+            ['label' => 'Reportes', 'icon' => 'monitoring', 'url' => route('admin.reportes.ventas'), 'active' => request()->routeIs('admin.reportes.*')],
+            ['label' => 'Monitoreo', 'icon' => 'monitor_heart', 'url' => route('admin.monitoreo.panel'), 'active' => request()->routeIs('admin.monitoreo.*')],
         ]
         : ($isWorker
             ? [
-                ['label' => 'Resumen', 'icon' => 'dashboard', 'url' => route('trabajador.dashboard'), 'active' => request()->routeIs('trabajador.dashboard')],
-                ['label' => 'Cola de pedidos', 'icon' => 'orders', 'url' => route('trabajador.orders.index'), 'active' => request()->routeIs('trabajador.orders.*')],
-                ['label' => 'Reportes', 'icon' => 'bar_chart', 'url' => route('trabajador.reports.sales'), 'active' => request()->routeIs('trabajador.reports.*')],
+                ['label' => 'Resumen', 'icon' => 'dashboard', 'url' => route('trabajador.panel'), 'active' => request()->routeIs('trabajador.panel')],
+                ['label' => 'Cola de pedidos', 'icon' => 'orders', 'url' => route('trabajador.pedidos.indice'), 'active' => request()->routeIs('trabajador.pedidos.*')],
+                ['label' => 'Reportes', 'icon' => 'bar_chart', 'url' => route('trabajador.reportes.ventas'), 'active' => request()->routeIs('trabajador.reportes.*')],
             ]
             : [
-                ['label' => 'Inicio', 'icon' => 'home', 'url' => route('usuario.dashboard'), 'active' => request()->routeIs('usuario.dashboard')],
-                ['label' => 'Explorar', 'icon' => 'explore', 'url' => route('usuario.products.index'), 'active' => request()->routeIs('usuario.products.*')],
-                ['label' => 'Carrito', 'icon' => 'shopping_cart', 'url' => route('usuario.cart.index'), 'active' => request()->routeIs('usuario.cart.*')],
-                ['label' => 'Pedidos', 'icon' => 'receipt_long', 'url' => route('usuario.orders.history'), 'active' => request()->routeIs('usuario.orders.*')],
-                ['label' => 'Wishlist', 'icon' => 'favorite', 'url' => route('usuario.wishlist.index'), 'active' => request()->routeIs('usuario.wishlist.*')],
-                ['label' => 'Direcciones', 'icon' => 'location_on', 'url' => route('usuario.addresses.index'), 'active' => request()->routeIs('usuario.addresses.*')],
+                ['label' => 'Inicio', 'icon' => 'home', 'url' => route('usuario.panel'), 'active' => request()->routeIs('usuario.panel')],
+                ['label' => 'Explorar', 'icon' => 'explore', 'url' => route('usuario.productos.indice'), 'active' => request()->routeIs('usuario.productos.*')],
+                ['label' => 'Carrito', 'icon' => 'shopping_cart', 'url' => route('usuario.carrito.indice'), 'active' => request()->routeIs('usuario.carrito.*')],
+                ['label' => 'Pedidos', 'icon' => 'receipt_long', 'url' => route('usuario.pedidos.historial'), 'active' => request()->routeIs('usuario.pedidos.*')],
+                ['label' => 'Wishlist', 'icon' => 'favorite', 'url' => route('usuario.deseos.indice'), 'active' => request()->routeIs('usuario.deseos.*')],
+                ['label' => 'Direcciones', 'icon' => 'location_on', 'url' => route('usuario.direcciones.indice'), 'active' => request()->routeIs('usuario.direcciones.*')],
             ]);
 @endphp
 
 <nav x-data="{ open: false }" aria-label="Navegación principal">
     <aside class="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/10 bg-ink p-6 text-white md:flex">
-        <a href="{{ $isCustomer ? route('usuario.dashboard') : ($isWorker ? route('trabajador.dashboard') : route('admin.dashboard')) }}" class="flex items-center gap-3 text-white no-underline">
+        <a href="{{ $isCustomer ? route('usuario.panel') : ($isWorker ? route('trabajador.panel') : route('admin.panel')) }}" class="flex items-center gap-3 text-white no-underline">
             <span class="flex h-10 w-10 items-center justify-center rounded-md bg-volt font-black text-ink">CS</span>
             <span class="font-display text-lg font-extrabold tracking-tight">Campos Sport</span>
         </a>
@@ -53,7 +53,7 @@
     </aside>
 
     <div class="flex items-center justify-between border-b border-line bg-ink px-4 py-3 text-white md:hidden">
-        <a href="{{ $isCustomer ? route('usuario.dashboard') : ($isWorker ? route('trabajador.dashboard') : route('admin.dashboard')) }}" class="flex items-center gap-2 font-display font-extrabold text-white no-underline"><span class="flex h-8 w-8 items-center justify-center rounded bg-volt text-xs font-black text-ink">CS</span> Campos Sport</a>
+        <a href="{{ $isCustomer ? route('usuario.panel') : ($isWorker ? route('trabajador.panel') : route('admin.panel')) }}" class="flex items-center gap-2 font-display font-extrabold text-white no-underline"><span class="flex h-8 w-8 items-center justify-center rounded bg-volt text-xs font-black text-ink">CS</span> Campos Sport</a>
         <button type="button" @click="open = !open" class="cs-focus flex h-11 w-11 items-center justify-center rounded-md text-white" aria-label="Abrir navegación" :aria-expanded="open">
             <span class="material-icons" x-text="open ? 'close' : 'menu'" aria-hidden="true"></span>
         </button>

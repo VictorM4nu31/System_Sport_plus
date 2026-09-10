@@ -28,7 +28,7 @@
                         El sistema de analíticas se está configurando. Los datos aparecerán una vez que haya actividad en la tienda.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-3 mt-6">
-                        <a href="{{ route('admin.products.index') }}"
+                        <a href="{{ route('admin.productos.index') }}"
                            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-700 font-semibold text-body-md">
                             Gestionar Productos
                         </a>
@@ -205,7 +205,7 @@
                     <p class="message-warning">
                         Tienes {{ $stats['products']['low_stock_products'] }} productos con stock bajo (≤10 unidades).
                     </p>
-                    <a href="{{ route('admin.products.index') }}" class="message-warning">
+                    <a href="{{ route('admin.productos.index') }}" class="message-warning">
                         Ver productos →
                     </a>
                 </div>
@@ -276,7 +276,7 @@
 
         // Función para cargar gráfica con manejo de errores
         function loadChart(type, chartId, chartConfig) {
-            fetch(`/admin/dashboard/chart-data?type=${type}`)
+            fetch(`/admin/panel/datos-grafica?type=${type}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error en la respuesta del servidor');

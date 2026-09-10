@@ -23,7 +23,7 @@
                         <h2 class="text-display-sm text-primary mb-2">Mis Direcciones</h2>
                         <p class="text-body-md text-primary-light">Administra tus direcciones de envío y facturación</p>
                     </div>
-                    <a href="{{ route('usuario.addresses.create') }}"
+                    <a href="{{ route('usuario.direcciones.crear') }}"
                        class="px-6 py-3 min-h-[44px] bg-primary hover:bg-primary-700 text-white rounded-lg inline-flex items-center justify-center gap-2 transition duration-200 shadow-md w-full sm:w-auto">
                         <span class="material-icons">add</span>
                         <span class="text-body-md font-medium">Nueva Dirección</span>
@@ -93,7 +93,7 @@
                             <!-- Acciones -->
                             <div class="flex flex-wrap gap-2">
                                 @if(!$address->is_default)
-                                    <form method="POST" action="{{ route('usuario.addresses.setDefault', $address) }}" class="inline">
+                                    <form method="POST" action="{{ route('usuario.direcciones.predeterminada', $address) }}" class="inline">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit"
@@ -103,13 +103,13 @@
                                     </form>
                                 @endif
 
-                                <a href="{{ route('usuario.addresses.edit', $address) }}"
+                                <a href="{{ route('usuario.direcciones.editar', $address) }}"
                                    class="inline-flex items-center px-3 py-2 min-h-[36px] bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-body-sm font-medium transition duration-200">
                                     Editar
                                 </a>
 
                                 @if($addresses->count() > 1)
-                                    <form method="POST" action="{{ route('usuario.addresses.destroy', $address) }}"
+                                    <form method="POST" action="{{ route('usuario.direcciones.eliminar', $address) }}"
                                           class="inline" onsubmit="return confirm('¿Estás seguro de eliminar esta dirección?')">
                                         @csrf
                                         @method('DELETE')
@@ -131,7 +131,7 @@
                     </div>
                     <h3 class="text-heading-md text-primary mb-2">No tienes direcciones guardadas</h3>
                     <p class="text-body-md text-primary-light mb-6">Agrega tu primera dirección para poder realizar pedidos</p>
-                    <a href="{{ route('usuario.addresses.create') }}"
+                    <a href="{{ route('usuario.direcciones.crear') }}"
                        class="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-700 text-white rounded-lg transition duration-200 shadow-md">
                         <span class="material-icons mr-2">add</span>
                         <span class="text-body-md font-medium">Agregar Dirección</span>

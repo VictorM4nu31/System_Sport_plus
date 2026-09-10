@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="mx-auto max-w-7xl py-6" data-catalogo
-         data-catalogo-endpoint="{{ route('usuario.products.search') }}"
+         data-catalogo-endpoint="{{ route('usuario.productos.buscar') }}"
          data-catalogo-cart-base="{{ url('/carrito') }}">
         <!-- Entrada orientada a misión -->
         <div class="flex flex-col justify-between gap-6 border-b border-line pb-8 md:flex-row md:items-end">
@@ -9,7 +9,7 @@
                 <h1 class="cs-display mt-3 text-5xl sm:text-6xl">Encuentra tu siguiente movimiento.</h1>
                 <p class="mt-4 max-w-xl text-body-lg text-muted">Busca por deporte, intención o presupuesto. El catálogo responde al instante.</p>
             </div>
-            <a href="{{ route('usuario.cart.index') }}" class="cs-button-signal cs-focus shrink-0 no-underline">
+            <a href="{{ route('usuario.carrito.indice') }}" class="cs-button-signal cs-focus shrink-0 no-underline">
                 <span class="material-icons text-[19px]" aria-hidden="true">shopping_bag</span>
                 Carrito ({{ array_sum(array_column(session('cart', []), 'quantity')) }})
             </a>
@@ -25,7 +25,7 @@
                 <span class="text-xs text-muted">Búsqueda instantánea activada</span>
             </div>
             <p class="sr-only" aria-live="polite" data-catalogo-live></p>
-            <form method="GET" action="{{ route('usuario.products.index') }}" data-catalogo-form>
+            <form method="GET" action="{{ route('usuario.productos.indice') }}" data-catalogo-form>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                     <!-- Búsqueda por nombre -->
                     <div>
@@ -105,7 +105,7 @@
                     <button type="submit" class="cs-button-primary cs-focus">
                         Aplicar Filtros
                     </button>
-                    <a href="{{ route('usuario.products.index') }}" data-catalogo-clear class="cs-button-secondary cs-focus no-underline">
+                    <a href="{{ route('usuario.productos.indice') }}" data-catalogo-clear class="cs-button-secondary cs-focus no-underline">
                         Limpiar Filtros
                     </a>
                 </div>
@@ -119,7 +119,7 @@
                 <p class="text-heading-sm" data-catalogo-count>{{ $products->total() }} productos encontrados</p>
             </div>
             <span class="hidden text-xs text-muted sm:inline">Ordenado por destacados y relevancia</span>
-            <a href="{{ route('usuario.cart.index') }}"
+            <a href="{{ route('usuario.carrito.indice') }}"
                class="cs-button-secondary cs-focus no-underline sm:hidden">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h8m-8 0a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>

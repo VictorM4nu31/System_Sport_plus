@@ -4,7 +4,7 @@
         <div class="bg-white bg-opacity-95 shadow-lg rounded-lg p-4 sm:p-8">
             <h1 class="text-display-sm text-center font-bold text-primary mb-8">Agregar Producto Deportivo</h1>
 
-            <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" id="productForm">
+            <form method="POST" action="{{ route('admin.productos.store') }}" enctype="multipart/form-data" id="productForm">
                 @csrf
 
                 <!-- Información Básica -->
@@ -271,7 +271,7 @@
 
                 <!-- Botones -->
                 <div class="flex flex-col sm:flex-row justify-center gap-3">
-                    <a href="{{ route('admin.products.index') }}"
+                    <a href="{{ route('admin.productos.index') }}"
                         class="inline-flex items-center justify-center px-6 py-3 min-h-[44px] bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 text-body-md w-full sm:w-auto">
                         Cancelar
                     </a>

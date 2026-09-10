@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="mx-auto max-w-7xl py-6 sm:py-10">
         <nav class="mb-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted" aria-label="Migas de pan">
-            <a href="{{ route('usuario.products.index') }}" class="cs-focus rounded text-ink hover:underline">Explorar</a>
+            <a href="{{ route('usuario.productos.indice') }}" class="cs-focus rounded text-ink hover:underline">Explorar</a>
             <span aria-hidden="true">/</span>
             <span>{{ $product->category->name }}</span>
             <span aria-hidden="true">/</span>
@@ -70,7 +70,7 @@
                 @endif
 
                 @if ($product->stock > 0)
-                    <form action="{{ route('usuario.cart.add', $product->id) }}" method="POST" class="mt-auto flex flex-col gap-3 sm:flex-row">
+                    <form action="{{ route('usuario.carrito.agregar', $product->id) }}" method="POST" class="mt-auto flex flex-col gap-3 sm:flex-row">
                         @csrf
                         <div class="flex h-12 items-center rounded-md border border-line">
                             <button type="button" class="cs-focus h-12 w-11 text-lg text-muted hover:text-ink" onclick="updateQuantity(-1)" aria-label="Reducir cantidad">−</button>
@@ -92,7 +92,7 @@
                 <p class="mt-4 text-sm leading-6 text-muted">Tu experiencia puede ayudar a otra persona a elegir mejor.</p>
             </div>
             <div>
-                <form action="{{ route('usuario.reviews.store', $product->id) }}" method="POST" class="cs-surface p-5 sm:p-6">
+                <form action="{{ route('usuario.resenas.guardar', $product->id) }}" method="POST" class="cs-surface p-5 sm:p-6">
                     @csrf
                     <div class="grid gap-4 sm:grid-cols-[.35fr_1fr]">
                         <div><label for="rating" class="cs-eyebrow mb-2 block text-ink">Tu calificación</label><select name="rating" id="rating" class="cs-input cs-focus"><option value="5">5 · Excelente</option><option value="4">4 · Muy bueno</option><option value="3">3 · Bueno</option><option value="2">2 · Regular</option><option value="1">1 · Malo</option></select></div>

@@ -27,14 +27,14 @@ class WorkerManagementTest extends TestCase
 
     public function test_admin_can_create_worker_and_role_is_assigned(): void
     {
-        $response = $this->actingAs($this->admin)->post(route('admin.workers.store'), [
+        $response = $this->actingAs($this->admin)->post(route('admin.trabajadores.store'), [
             'name' => 'Lucia Operaciones',
             'email' => 'lucia.worker@example.com',
             'password' => 'CamposWorker2026!',
             'password_confirmation' => 'CamposWorker2026!',
         ]);
 
-        $response->assertRedirect(route('admin.workers.index'));
+        $response->assertRedirect(route('admin.trabajadores.index'));
 
         $worker = User::where('email', 'lucia.worker@example.com')->firstOrFail();
 
@@ -45,14 +45,14 @@ class WorkerManagementTest extends TestCase
     {
         Role::where('name', 'trabajador')->delete();
 
-        $response = $this->actingAs($this->admin)->post(route('admin.workers.store'), [
+        $response = $this->actingAs($this->admin)->post(route('admin.trabajadores.store'), [
             'name' => 'Lucia Operaciones',
             'email' => 'lucia.worker@example.com',
             'password' => 'CamposWorker2026!',
             'password_confirmation' => 'CamposWorker2026!',
         ]);
 
-        $response->assertRedirect(route('admin.workers.index'));
+        $response->assertRedirect(route('admin.trabajadores.index'));
 
         $worker = User::where('email', 'lucia.worker@example.com')->firstOrFail();
 
@@ -64,8 +64,8 @@ class WorkerManagementTest extends TestCase
         $worker = User::factory()->create();
         $worker->assignRole('trabajador');
 
-        $this->actingAs($worker)->get(route('admin.workers.index'))->assertForbidden();
-        $this->actingAs($worker)->get(route('admin.workers.create'))->assertForbidden();
+        $this->actingAs($worker)->get(route('admin.trabajadores.index'))->assertForbidden();
+        $this->actingAs($worker)->get(route('admin.trabajadores.create'))->assertForbidden();
     }
 
     public function test_usuario_is_forbidden_from_worker_management(): void
@@ -73,11 +73,11 @@ class WorkerManagementTest extends TestCase
         $customer = User::factory()->create();
         $customer->assignRole('usuario');
 
-        $this->actingAs($customer)->get(route('admin.workers.index'))->assertForbidden();
+        $this->actingAs($customer)->get(route('admin.trabajadores.index'))->assertForbidden();
     }
 
     public function test_guest_is_redirected_to_login_from_worker_management(): void
     {
-        $this->get(route('admin.workers.index'))->assertRedirect(route('login'));
+        $this->get(route('admin.trabajadores.index'))->assertRedirect(route('login'));
     }
 }

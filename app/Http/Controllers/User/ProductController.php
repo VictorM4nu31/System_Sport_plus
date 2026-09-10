@@ -114,7 +114,7 @@ class ProductController extends Controller
                 'average_rating' => round((float) ($product->average_rating ?? 0), 1),
                 'image_url' => $product->image ? asset('storage/products/'.$product->image) : asset('img/logo.png'),
                 'category' => $product->category?->name,
-                'url' => route('usuario.products.show', $product->id),
+                'url' => route('usuario.productos.ver', $product->id),
             ])->values(),
             'meta' => [
                 'total' => $paginator->total(),
@@ -130,50 +130,49 @@ class ProductController extends Controller
      * Ficha pública del producto para vista rápida y comparador (JSON).
      * Solo campos públicos: nunca expone stripe_product_id / stripe_price_id.
      */
-    public function ficha($id): JsonResponse
+    public function ficha(Product $producto): JsonResponse
     {
-        $product = Product::with(['category', 'reviews'])->findOrFail($id);
-        Gate::authorize('view', $product);
+        $producto->load(['category', 'reviews']);
+        Gate::authorize('view', $producto);
 
         return response()->json([
-            'id' => $product->id,
-            'name' => $product->name,
-            'brand' => $product->brand,
-            'model' => $product->model,
-            'sport_type' => $product->sport_type,
-            'gender' => $product->gender,
-            'material' => $product->material,
-            'weight' => $product->weight ? (float) $product->weight : null,
-            'sizes' => $product->sizes ?? [],
-            'colors' => $product->colors ?? [],
-            'specifications' => $product->specifications ?? [],
-            'description' => $product->description,
-            'price' => (float) $product->price,
-            'formatted_price' => '$'.number_format((float) $product->price, 2),
-            'stock' => $product->stock,
-            'is_featured' => (bool) $product->is_featured,
-            'average_rating' => round((float) ($product->average_rating ?? 0), 1),
-            'reviews_count' => $product->reviews->count(),
-            'image_url' => $product->image ? asset('storage/products/'.$product->image) : asset('img/logo.png'),
-            'category' => $product->category?->name,
-            'url' => route('usuario.products.show', $product->id),
+            'id' => $producto->id,
+            'name' => $producto->name,
+            'brand' => $producto->brand,
+            'model' => $producto->model,
+            'sport_type' => $producto->sport_type,
+            'gender' => $producto->gender,
+            'material' => $producto->material,
+            'weight' => $producto->weight ? (float) $producto->weight : null,
+            'sizes' => $producto->sizes ?? [],
+            'colors' => $producto->colors ?? [],
+            'specifications' => $producto->specifications ?? [],
+            'description' => $producto->description,
+            'price' => (float) $producto->price,
+            'formatted_price' => '$'.number_format((float) $producto->price, 2),
+            'stock' => $producto->stock,
+            'is_featured' => (bool) $producto->is_featured,
+            'average_rating' => round((float) ($producto->average_rating ?? 0), 1),
+            'reviews_count' => $producto->reviews->count(),
+            'image_url' => $producto->image ? asset('storage/products/'.$producto->image) : asset('img/logo.png'),
+            'category' => $producto->category?->name,
+            'url' => route('usuario.productos.ver', $producto->id),
         ]);
     }
 
-    public function show($id, Request $request)
+    public function show(Product $producto, Request $request)
     {
-        $product = Product::findOrFail($id);
-        Gate::authorize('view', $product);
+        Gate::authorize('view', $producto);
 
         // Rastrear vista del producto
         $analyticsService = app(AnalyticsService::class);
         $userId = auth()->check() ? auth()->id() : null;
-        $analyticsService->trackProductView($id, $request, $userId);
+        $analyticsService->trackProductView($producto->id, $request, $userId);
 
         // Pasar los datos a la vista
         return view('usuario.products.show', [
-            'product' => $product,
-            'reviews' => $product->reviews ?? collect(), // Obtener las reseñas del producto
+            'product' => $producto,
+            'reviews' => $producto->reviews ?? collect(), // Obtener las reseñas del producto
         ]);
     }
 }

@@ -12,11 +12,11 @@
                         @endif
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <a href="{{ route('admin.products.edit', $product->id) }}"
+                        <a href="{{ route('admin.productos.edit', $product->id) }}"
                            class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] bg-white text-carbon rounded-md hover:bg-gray-100 font-semibold w-full sm:w-auto">
                             Editar Producto
                         </a>
-                        <a href="{{ route('admin.products.index') }}"
+                        <a href="{{ route('admin.productos.index') }}"
                            class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] bg-gray-600 text-white rounded-md hover:bg-gray-700 font-semibold w-full sm:w-auto">
                             Volver al Listado
                         </a>
@@ -225,7 +225,7 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-heading-md font-semibold text-carbon">Integración con Stripe</h2>
                         @if(!$product->isSyncedWithStripe())
-                            <form action="{{ route('admin.products.sync-stripe', $product->id) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.productos.sincronizar-stripe', $product->id) }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit"
                                         class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-700 font-semibold btn-accessible">
@@ -305,7 +305,7 @@
                 container.classList.remove('hidden');
 
                 // Cargar información de Stripe
-                fetch(`/admin/products/${productId}/stripe-info`)
+                fetch(`/admin/productos/${productId}/info-stripe`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {

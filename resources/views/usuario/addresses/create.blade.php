@@ -6,7 +6,7 @@
             <!-- Header -->
             <div class="bg-white bg-opacity-90 overflow-hidden shadow-lg sm:rounded-lg p-6 mb-6">
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('usuario.addresses.index') }}"
+                    <a href="{{ route('usuario.direcciones.indice') }}"
                        class="text-gray-600 hover:text-gray-800 transition duration-200">
                         <span class="material-icons">arrow_back</span>
                     </a>
@@ -29,7 +29,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('usuario.addresses.store') }}">
+                <form method="POST" action="{{ route('usuario.direcciones.guardar') }}">
                     @csrf
 
                     <!-- Nombre completo -->
@@ -225,7 +225,7 @@
                                 class="flex-1 bg-primary hover:bg-primary-700 text-white py-3 px-6 rounded-md transition duration-200 shadow-md text-body-md font-medium btn-accessible">
                             Guardar Dirección
                         </button>
-                        <a href="{{ route('usuario.addresses.index') }}"
+                        <a href="{{ route('usuario.direcciones.indice') }}"
                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-md text-center transition duration-200 text-body-md font-medium">
                             Cancelar
                         </a>

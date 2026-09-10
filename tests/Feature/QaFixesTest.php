@@ -46,7 +46,7 @@ class QaFixesTest extends TestCase
         $product = Product::factory()->withStock(30)->create();
 
         $this->actingAs($this->client)
-            ->post(route('usuario.cart.add', $product->id), ['quantity' => 'abc'])
+            ->post(route('usuario.carrito.agregar', $product->id), ['quantity' => 'abc'])
             ->assertRedirect()
             ->assertSessionHasErrors('quantity');
 
@@ -58,7 +58,7 @@ class QaFixesTest extends TestCase
         $product = Product::factory()->withStock(30)->create();
 
         $this->actingAs($this->client)
-            ->post(route('usuario.cart.add', $product->id), ['quantity' => -5])
+            ->post(route('usuario.carrito.agregar', $product->id), ['quantity' => -5])
             ->assertRedirect()
             ->assertSessionHasErrors('quantity');
     }
@@ -68,7 +68,7 @@ class QaFixesTest extends TestCase
         $product = Product::factory()->withStock(500)->create();
 
         $this->actingAs($this->client)
-            ->post(route('usuario.cart.add', $product->id), ['quantity' => 99999])
+            ->post(route('usuario.carrito.agregar', $product->id), ['quantity' => 99999])
             ->assertRedirect()
             ->assertSessionHasErrors('quantity');
     }
@@ -78,15 +78,15 @@ class QaFixesTest extends TestCase
         $product = Product::factory()->withStock(30)->create();
 
         $this->actingAs($this->client)
-            ->post(route('usuario.cart.add', $product->id), ['quantity' => 3])
-            ->assertRedirect(route('usuario.products.index'))
+            ->post(route('usuario.carrito.agregar', $product->id), ['quantity' => 3])
+            ->assertRedirect(route('usuario.productos.indice'))
             ->assertSessionHas('success');
     }
 
     public function test_review_to_missing_product_returns_404(): void
     {
         $this->actingAs($this->client)
-            ->post(route('usuario.reviews.store', 99999), [
+            ->post(route('usuario.resenas.guardar', 99999), [
                 'rating' => 5,
                 'review' => 'Producto inexistente',
             ])
@@ -100,11 +100,11 @@ class QaFixesTest extends TestCase
         $product = Product::factory()->create();
 
         $this->actingAs($this->client)
-            ->post(route('usuario.reviews.store', $product->id), [
+            ->post(route('usuario.resenas.guardar', $product->id), [
                 'rating' => 5,
                 'review' => 'Sin compra verificada',
             ])
-            ->assertRedirect(route('usuario.products.show', $product->id))
+            ->assertRedirect(route('usuario.productos.ver', $product->id))
             ->assertSessionHas('error');
 
         $this->assertSame(0, Review::count());
@@ -126,11 +126,11 @@ class QaFixesTest extends TestCase
         ]);
 
         $this->actingAs($this->client)
-            ->post(route('usuario.reviews.store', $product->id), [
+            ->post(route('usuario.resenas.guardar', $product->id), [
                 'rating' => 4,
                 'review' => 'Segunda reseña del mismo producto',
             ])
-            ->assertRedirect(route('usuario.products.show', $product->id))
+            ->assertRedirect(route('usuario.productos.ver', $product->id))
             ->assertSessionHas('error');
 
         $this->assertSame(1, Review::count());
@@ -146,11 +146,11 @@ class QaFixesTest extends TestCase
         ]);
 
         $this->actingAs($this->client)
-            ->post(route('usuario.reviews.store', $product->id), [
+            ->post(route('usuario.resenas.guardar', $product->id), [
                 'rating' => 5,
                 'review' => 'Compra verificada, excelente producto',
             ])
-            ->assertRedirect(route('usuario.products.show', $product->id))
+            ->assertRedirect(route('usuario.productos.ver', $product->id))
             ->assertSessionHas('success');
 
         $this->assertSame(1, Review::count());
@@ -162,7 +162,7 @@ class QaFixesTest extends TestCase
         $unverified->assignRole('usuario');
 
         $this->actingAs($unverified)
-            ->get(route('usuario.products.index'))
+            ->get(route('usuario.productos.indice'))
             ->assertRedirect(route('verification.notice'));
     }
 
@@ -199,7 +199,7 @@ class QaFixesTest extends TestCase
         $order = Order::factory()->create(['user_id' => $this->client->id]);
 
         $this->actingAs($this->client)
-            ->postJson(route('usuario.orders.cancel', $order->id))
+            ->postJson(route('usuario.pedidos.cancelar', $order->id))
             ->assertOk()
             ->assertJsonPath('success', 'Pedido cancelado con éxito.');
 
@@ -211,7 +211,7 @@ class QaFixesTest extends TestCase
         $order = Order::factory()->create();
 
         $this->actingAs($this->client)
-            ->postJson(route('usuario.orders.cancel', $order->id))
+            ->postJson(route('usuario.pedidos.cancelar', $order->id))
             ->assertForbidden();
     }
 
@@ -220,7 +220,7 @@ class QaFixesTest extends TestCase
         $order = Order::factory()->paid()->create(['user_id' => $this->client->id]);
 
         $this->actingAs($this->client)
-            ->postJson(route('usuario.orders.cancel', $order->id))
+            ->postJson(route('usuario.pedidos.cancelar', $order->id))
             ->assertStatus(400);
     }
 
@@ -230,8 +230,8 @@ class QaFixesTest extends TestCase
         Product::factory()->create(['category_id' => $category->id]);
 
         $this->actingAs($this->admin)
-            ->delete(route('admin.categories.destroy', $category->id))
-            ->assertRedirect(route('admin.categories.index'))
+            ->delete(route('admin.categorias.destroy', $category->id))
+            ->assertRedirect(route('admin.categorias.index'))
             ->assertSessionHas('error');
 
         $this->assertTrue($category->fresh()->exists);
@@ -243,8 +243,8 @@ class QaFixesTest extends TestCase
         OrderItem::factory()->create(['product_id' => $product->id]);
 
         $this->actingAs($this->admin)
-            ->delete(route('admin.products.destroy', $product->id))
-            ->assertRedirect(route('admin.products.index'))
+            ->delete(route('admin.productos.destroy', $product->id))
+            ->assertRedirect(route('admin.productos.index'))
             ->assertSessionHas('error');
 
         $this->assertTrue($product->fresh()->exists);
@@ -253,18 +253,18 @@ class QaFixesTest extends TestCase
     public function test_admin_cannot_edit_user_without_worker_role(): void
     {
         $this->actingAs($this->admin)
-            ->get(route('admin.workers.edit', $this->admin->id))
+            ->get(route('admin.trabajadores.edit', $this->admin->id))
             ->assertNotFound();
     }
 
     public function test_monitoring_logs_rejects_invalid_input(): void
     {
         $this->actingAs($this->admin)
-            ->getJson(route('admin.monitoring.logs', ['lines' => 999999]))
+            ->getJson(route('admin.monitoreo.registros', ['lines' => 999999]))
             ->assertStatus(422);
 
         $this->actingAs($this->admin)
-            ->getJson(route('admin.monitoring.logs', ['type' => 'invalido']))
+            ->getJson(route('admin.monitoreo.registros', ['type' => 'invalido']))
             ->assertStatus(422);
     }
 
@@ -281,11 +281,18 @@ class QaFixesTest extends TestCase
             ->assertJsonPath('message', 'El código postal debe tener 5 dígitos.');
     }
 
+    public function test_non_numeric_binding_value_returns_404(): void
+    {
+        // La URL vieja /productos/search ya no existe y no debe romper el binding.
+        $this->actingAs($this->client)->get('/productos/search')->assertNotFound();
+        $this->actingAs($this->client)->get('/productos/abc')->assertNotFound();
+    }
+
     public function test_monitoring_health_check_has_no_false_database_alerts(): void
     {
         $types = collect(
             $this->actingAs($this->admin)
-                ->getJson(route('admin.monitoring.health-status'))
+                ->getJson(route('admin.monitoreo.estado-salud'))
                 ->assertOk()
                 ->json('alerts')
         )->map(fn (array $alert): string => "{$alert['category']}.{$alert['type']}");
@@ -304,7 +311,7 @@ class QaFixesTest extends TestCase
         ]);
 
         $this->actingAs($this->admin)
-            ->getJson(route('admin.monitoring.metrics'))
+            ->getJson(route('admin.monitoreo.metricas'))
             ->assertOk()
             ->assertJsonPath('data.revenue_today', 999);
     }

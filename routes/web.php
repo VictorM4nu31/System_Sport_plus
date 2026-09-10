@@ -47,9 +47,9 @@ Route::get('/dashboard', [DashboardRedirectController::class, 'index'])
 // Profile routes
 Route::middleware('auth')->group(function () {
     Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'edit')->name('profile.edit');
-        Route::patch('/profile', 'update')->name('profile.update');
-        Route::delete('/profile', 'destroy')->name('profile.destroy');
+        Route::get('/perfil', 'edit')->name('perfil.editar');
+        Route::patch('/perfil', 'update')->name('perfil.actualizar');
+        Route::delete('/perfil', 'destroy')->name('perfil.eliminar');
     });
 });
 
@@ -61,48 +61,48 @@ Route::middleware('guest')->controller(RegisteredUserController::class)->group(f
 
 // User routes
 Route::middleware(['auth', 'verified', 'role:usuario'])->group(function () {
-    Route::get('/productos', [UserProductController::class, 'index'])->name('usuario.products.index');
-    Route::get('/productos/search', [UserProductController::class, 'search'])->name('usuario.products.search');
-    Route::get('/productos/{id}/ficha', [UserProductController::class, 'ficha'])->name('usuario.products.ficha');
-    Route::get('/productos/{id}', [UserProductController::class, 'show'])->name('usuario.products.show');
+    Route::get('/productos', [UserProductController::class, 'index'])->name('usuario.productos.indice');
+    Route::get('/productos/buscar', [UserProductController::class, 'search'])->name('usuario.productos.buscar');
+    Route::get('/productos/{producto}/ficha', [UserProductController::class, 'ficha'])->name('usuario.productos.ficha');
+    Route::get('/productos/{producto}', [UserProductController::class, 'show'])->name('usuario.productos.ver');
 
     // Cart routes
     Route::controller(CartController::class)->group(function () {
-        Route::get('/carrito', 'index')->name('usuario.cart.index');
-        Route::post('/carrito/{id}/agregar', 'add')->name('usuario.cart.add');
-        Route::post('/carrito/{id}/eliminar', 'remove')->name('usuario.cart.remove');
+        Route::get('/carrito', 'index')->name('usuario.carrito.indice');
+        Route::post('/carrito/{producto}/agregar', 'add')->name('usuario.carrito.agregar');
+        Route::post('/carrito/{id}/eliminar', 'remove')->name('usuario.carrito.eliminar');
 
         // Stripe payment routes
-        Route::post('/carrito/create-payment-intent', 'createPaymentIntent')->name('usuario.cart.create-payment-intent');
-        Route::post('/carrito/confirm-order', 'confirmOrder')->name('usuario.cart.confirm-order');
-        Route::get('/carrito/reserva-estado', 'reservaEstado')->name('usuario.cart.reserva-estado');
+        Route::post('/carrito/crear-intencion-pago', 'createPaymentIntent')->name('usuario.carrito.crear-intencion-pago');
+        Route::post('/carrito/confirmar-pedido', 'confirmOrder')->name('usuario.carrito.confirmar-pedido');
+        Route::get('/carrito/estado-reserva', 'reservaEstado')->name('usuario.carrito.estado-reserva');
     });
 
     // Order routes
     Route::controller(UserOrderController::class)->group(function () {
-        Route::get('/pedidos', 'index')->name('usuario.orders.index');
-        Route::get('/pedidos/{id}', 'show')->name('usuario.orders.show');
-        Route::post('/pedidos/{id}/cancelar', 'cancel')->name('usuario.orders.cancel');
+        Route::get('/pedidos', 'index')->name('usuario.pedidos.indice');
+        Route::get('/pedidos/{pedido}', 'show')->name('usuario.pedidos.ver');
+        Route::post('/pedidos/{pedido}/cancelar', 'cancel')->name('usuario.pedidos.cancelar');
     });
 
     // Order history routes
     Route::controller(UserOrderHistoryController::class)->prefix('historial-pedidos')->group(function () {
-        Route::get('/', 'history')->name('usuario.orders.history');
-        Route::get('/{id}', 'show')->name('usuario.orders.history.show');
+        Route::get('/', 'history')->name('usuario.pedidos.historial');
+        Route::get('/{pedido}', 'show')->name('usuario.pedidos.historial.ver');
     });
 
     // Wishlist routes
     Route::controller(WishlistController::class)->prefix('lista-deseos')->group(function () {
-        Route::get('/', 'index')->name('usuario.wishlist.index');
-        Route::post('/{id}/agregar', 'add')->name('usuario.wishlist.add');
-        Route::post('/{id}/eliminar', 'remove')->name('usuario.wishlist.remove');
-        Route::post('/{id}/mover', 'moveToCart')->name('usuario.wishlist.move');
+        Route::get('/', 'index')->name('usuario.deseos.indice');
+        Route::post('/{producto}/agregar', 'add')->name('usuario.deseos.agregar');
+        Route::post('/{id}/eliminar', 'remove')->name('usuario.deseos.eliminar');
+        Route::post('/{producto}/mover', 'moveToCart')->name('usuario.deseos.mover');
     });
 
     // Review routes
     Route::controller(ReviewController::class)->prefix('productos')->group(function () {
-        Route::post('/{id}/reseñas', 'store')->name('usuario.reviews.store'); // Ruta para guardar reseñas
-        Route::get('/{id}/reseñas', 'index')->name('usuario.reviews.index'); // Ruta para mostrar reseñas de un producto
+        Route::post('/{producto}/reseñas', 'store')->name('usuario.resenas.guardar'); // Ruta para guardar reseñas
+        Route::get('/{producto}/reseñas', 'index')->name('usuario.resenas.indice'); // Ruta para mostrar reseñas de un producto
     });
 });
 
@@ -111,30 +111,38 @@ Route::middleware(['auth', 'verified', 'role:administrador'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
-        Route::resource('workers', WorkerController::class)->except(['show']);
-        Route::resource('products', ProductController::class);
-        Route::post('/products/{id}/sync-stripe', [ProductController::class, 'syncWithStripe'])->name('products.sync-stripe');
-        Route::get('/products/{id}/stripe-info', [ProductController::class, 'stripeInfo'])->name('products.stripe-info');
-        Route::resource('categories', CategoryController::class)->except(['show']);
+        Route::get('/panel', [DashboardController::class, 'index'])->name('panel');
+        Route::get('/panel/datos-grafica', [DashboardController::class, 'chartData'])->name('panel.datos-grafica');
+        Route::resource('trabajadores', WorkerController::class)
+            ->parameters(['trabajadores' => 'trabajador'])
+            ->names('trabajadores')
+            ->except(['show']);
+        Route::resource('productos', ProductController::class)
+            ->parameters(['productos' => 'producto'])
+            ->names('productos');
+        Route::post('/productos/{producto}/sincronizar-stripe', [ProductController::class, 'syncWithStripe'])->name('productos.sincronizar-stripe');
+        Route::get('/productos/{producto}/info-stripe', [ProductController::class, 'stripeInfo'])->name('productos.info-stripe');
+        Route::resource('categorias', CategoryController::class)
+            ->parameters(['categorias' => 'categoria'])
+            ->names('categorias')
+            ->except(['show']);
         Route::resource('pedidos', OrderController::class)
             ->parameters(['pedidos' => 'pedido'])
             ->names('pedidos')
             ->only(['index', 'show', 'destroy']);
-        Route::patch('/pedidos/{pedido}/status', [OrderController::class, 'updateStatus'])->name('pedidos.updateStatus');
-        Route::get('reports/sales', [ReportController::class, 'salesReport'])->name('reports.sales');
+        Route::patch('/pedidos/{pedido}/estado', [OrderController::class, 'updateStatus'])->name('pedidos.actualizar-estado');
+        Route::get('reportes/ventas', [ReportController::class, 'salesReport'])->name('reportes.ventas');
 
         // Monitoring routes
-        Route::controller(MonitoringController::class)->prefix('monitoring')->middleware('can:access-monitoring')->group(function () {
-            Route::get('/dashboard', 'dashboard')->name('monitoring.dashboard');
-            Route::get('/health-status', 'healthStatus')->name('monitoring.health-status');
-            Route::get('/metrics', 'metrics')->name('monitoring.metrics');
-            Route::get('/alerts', 'alerts')->name('monitoring.alerts');
-            Route::post('/clear-alerts', 'clearAlerts')->name('monitoring.clear-alerts');
-            Route::post('/run-health-check', 'runHealthCheck')->name('monitoring.run-health-check');
-            Route::get('/logs', 'logs')->name('monitoring.logs');
-            Route::get('/performance-history', 'performanceHistory')->name('monitoring.performance-history');
+        Route::controller(MonitoringController::class)->prefix('monitoreo')->middleware('can:access-monitoring')->group(function () {
+            Route::get('/panel', 'dashboard')->name('monitoreo.panel');
+            Route::get('/estado-salud', 'healthStatus')->name('monitoreo.estado-salud');
+            Route::get('/metricas', 'metrics')->name('monitoreo.metricas');
+            Route::get('/alertas', 'alerts')->name('monitoreo.alertas');
+            Route::post('/limpiar-alertas', 'clearAlerts')->name('monitoreo.limpiar-alertas');
+            Route::post('/ejecutar-revision', 'runHealthCheck')->name('monitoreo.ejecutar-revision');
+            Route::get('/registros', 'logs')->name('monitoreo.registros');
+            Route::get('/historial-rendimiento', 'performanceHistory')->name('monitoreo.historial-rendimiento');
         });
     });
 
@@ -143,33 +151,33 @@ Route::middleware(['auth', 'verified', 'role:trabajador'])
     ->prefix('trabajador')
     ->name('trabajador.')
     ->group(function () {
-        Route::get('/dashboard', function () {
+        Route::get('/panel', function () {
             return view('trabajador.dashboard');
-        })->name('dashboard');
+        })->name('panel');
         Route::controller(OrderController::class)->prefix('pedidos')->group(function () {
-            Route::get('/', 'workerIndex')->name('orders.index');
-            Route::get('/buscar', 'buscarPedidos')->name('orders.search');
-            Route::get('/{id}', 'workerShow')->name('orders.show');
-            Route::patch('/{id}/aceptar', 'acceptOrder')->name('orders.accept');
-            Route::patch('/{id}/rechazar', 'rejectOrder')->name('orders.reject');
+            Route::get('/', 'workerIndex')->name('pedidos.indice');
+            Route::get('/buscar', 'buscarPedidos')->name('pedidos.buscar');
+            Route::get('/{pedido}', 'workerShow')->name('pedidos.ver');
+            Route::patch('/{pedido}/aceptar', 'acceptOrder')->name('pedidos.aceptar');
+            Route::patch('/{pedido}/rechazar', 'rejectOrder')->name('pedidos.rechazar');
         });
-        Route::get('/reportes', [ReportController::class, 'workerSalesReport'])->name('reports.sales');
+        Route::get('/reportes', [ReportController::class, 'workerSalesReport'])->name('reportes.ventas');
     });
 
 // Address management routes (moved inside user middleware group)
 Route::middleware(['auth', 'verified', 'role:usuario'])->group(function () {
     Route::controller(AddressController::class)->prefix('direcciones')->group(function () {
-        Route::get('/', 'index')->name('usuario.addresses.index');
-        Route::get('/crear', 'create')->name('usuario.addresses.create');
-        Route::post('/', 'store')->name('usuario.addresses.store');
-        Route::get('/{address}/editar', 'edit')->name('usuario.addresses.edit');
-        Route::put('/{address}', 'update')->name('usuario.addresses.update');
-        Route::delete('/{address}', 'destroy')->name('usuario.addresses.destroy');
-        Route::patch('/{address}/default', 'setDefault')->name('usuario.addresses.setDefault');
+        Route::get('/', 'index')->name('usuario.direcciones.indice');
+        Route::get('/crear', 'create')->name('usuario.direcciones.crear');
+        Route::post('/', 'store')->name('usuario.direcciones.guardar');
+        Route::get('/{direccion}/editar', 'edit')->name('usuario.direcciones.editar');
+        Route::put('/{direccion}', 'update')->name('usuario.direcciones.actualizar');
+        Route::delete('/{direccion}', 'destroy')->name('usuario.direcciones.eliminar');
+        Route::patch('/{direccion}/predeterminada', 'setDefault')->name('usuario.direcciones.predeterminada');
     });
 
     // Dashboard del usuario
-    Route::get('/usuario/dashboard', [UserOrderController::class, 'dashboard'])->name('usuario.dashboard');
+    Route::get('/usuario/panel', [UserOrderController::class, 'dashboard'])->name('usuario.panel');
 });
 
 Route::get('/api/address/{postalCode}', [ProfileController::class, 'getAddressByPostalCode'])

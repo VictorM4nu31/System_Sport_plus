@@ -217,12 +217,12 @@
         }
 
         function refreshData() {
-            fetch('/admin/monitoring/health-status', { headers: { Accept: 'application/json' } })
+            fetch('/admin/monitoreo/estado-salud', { headers: { Accept: 'application/json' } })
                 .then((response) => response.json())
                 .then((data) => pintarBadge(data.status))
                 .catch((error) => console.error('Error refreshing data:', error));
 
-            fetch('/admin/monitoring/metrics', { headers: { Accept: 'application/json' } })
+            fetch('/admin/monitoreo/metricas', { headers: { Accept: 'application/json' } })
                 .then((response) => response.json())
                 .then((data) => pintarMetricas(data.data))
                 .catch((error) => console.error('Error refreshing metrics:', error));
@@ -233,7 +233,7 @@
         document.getElementById('health-check-btn')?.addEventListener('click', function () {
             const btn = this;
             btn.disabled = true;
-            fetch('/admin/monitoring/run-health-check', {
+            fetch('/admin/monitoreo/ejecutar-revision', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrf,
@@ -248,7 +248,7 @@
 
         document.addEventListener('click', function (event) {
             if (event.target && event.target.id === 'clear-alerts-btn') {
-                fetch('/admin/monitoring/clear-alerts', {
+                fetch('/admin/monitoreo/limpiar-alertas', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrf,

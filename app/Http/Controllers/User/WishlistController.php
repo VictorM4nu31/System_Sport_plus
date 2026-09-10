@@ -53,13 +53,12 @@ class WishlistController extends Controller
     }
 
     // Agregar producto a la lista de deseos
-    public function add(Request $request, $id)
+    public function add(Request $request, Product $product)
     {
-        $product = Product::findOrFail($id);
         $wishlist = session()->get('wishlist', []);
 
-        if (! isset($wishlist[$id])) {
-            $wishlist[$id] = [
+        if (! isset($wishlist[$product->id])) {
+            $wishlist[$product->id] = [
                 'name' => $product->name,
                 'price' => $product->price,
                 'image' => $product->image,
@@ -67,27 +66,26 @@ class WishlistController extends Controller
 
             session()->put('wishlist', $wishlist);
 
-            return redirect()->route('usuario.wishlist.index')->with('success', 'Producto agregado a la lista de deseos.');
+            return redirect()->route('usuario.deseos.indice')->with('success', 'Producto agregado a la lista de deseos.');
         }
 
-        return redirect()->route('usuario.wishlist.index')->with('info', 'Este producto ya está en tu lista de deseos.');
+        return redirect()->route('usuario.deseos.indice')->with('info', 'Este producto ya está en tu lista de deseos.');
     }
 
     // Mover producto de la lista de deseos al carrito (valida stock disponible)
-    public function moveToCart($id)
+    public function moveToCart(Product $product)
     {
-        $product = Product::findOrFail($id);
-        $availableStock = $this->stockService->getAvailableStock($id);
+        $availableStock = $this->stockService->getAvailableStock($product->id);
 
         $cart = session()->get('cart', []);
-        $currentQuantity = $cart[$id]['quantity'] ?? 0;
+        $currentQuantity = $cart[$product->id]['quantity'] ?? 0;
 
         if ($currentQuantity + 1 > $availableStock) {
-            return redirect()->route('usuario.wishlist.index')
+            return redirect()->route('usuario.deseos.indice')
                 ->with('error', "Stock insuficiente para {$product->name}. Disponible: {$availableStock}");
         }
 
-        $cart[$id] = [
+        $cart[$product->id] = [
             'name' => $product->name,
             'price' => $product->price,
             'quantity' => $currentQuantity + 1,
@@ -95,10 +93,10 @@ class WishlistController extends Controller
         session()->put('cart', $cart);
 
         $wishlist = session()->get('wishlist', []);
-        unset($wishlist[$id]);
+        unset($wishlist[$product->id]);
         session()->put('wishlist', $wishlist);
 
-        return redirect()->route('usuario.cart.index')
+        return redirect()->route('usuario.carrito.indice')
             ->with('success', "{$product->name} movido al carrito.");
     }
 
@@ -112,6 +110,6 @@ class WishlistController extends Controller
             session()->put('wishlist', $wishlist);
         }
 
-        return redirect()->route('usuario.wishlist.index')->with('success', 'Producto eliminado de la lista de deseos.');
+        return redirect()->route('usuario.deseos.indice')->with('success', 'Producto eliminado de la lista de deseos.');
     }
 }

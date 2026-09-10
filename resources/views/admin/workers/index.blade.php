@@ -7,7 +7,7 @@
                 <!-- Contenedor para el logo y título alineado -->
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                     <h1 class="text-display-sm text-primary font-bold">Gestión de Trabajadores</h1>
-                    <a href="{{ route('admin.workers.create') }}"
+                    <a href="{{ route('admin.trabajadores.create') }}"
                        class="inline-flex items-center justify-center px-5 py-2 min-h-[44px] bg-primary text-white text-body-md font-semibold rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary btn-accessible w-full sm:w-auto">
                         Agregar Trabajador
                     </a>
@@ -31,7 +31,7 @@
                                 <td class="px-4 sm:px-6 py-3 border-b border-line">
                                     <div class="flex items-center gap-2">
                                         <!-- Botón de editar con ícono -->
-                                        <a href="{{ route('admin.workers.edit', $worker->id) }}" class="inline-flex items-center gap-1 p-2 min-h-[44px] text-primary-lighter hover:text-primary text-body-md font-medium transition duration-150">
+                                        <a href="{{ route('admin.trabajadores.edit', $worker->id) }}" class="inline-flex items-center gap-1 p-2 min-h-[44px] text-primary-lighter hover:text-primary text-body-md font-medium transition duration-150">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                                                 <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712Z"/>
                                                 <path d="M19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z"/>
@@ -40,7 +40,7 @@
                                         </a>
 
                                         <!-- Botón de eliminar con ícono -->
-                                        <form action="{{ route('admin.workers.destroy', $worker->id) }}" method="POST" class="flex items-center">
+                                        <form action="{{ route('admin.trabajadores.destroy', $worker->id) }}" method="POST" class="flex items-center">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" onclick="return confirm('¿Eliminar este trabajador?')" class="inline-flex items-center gap-1 p-2 min-h-[44px] text-error hover:text-error-dark text-body-md font-medium transition duration-150">

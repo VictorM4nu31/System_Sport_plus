@@ -15,8 +15,8 @@
         @endif
 
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Agrega un domicilio</h1>
-        <p class="text-body-sm text-muted text-center mb-6">También puedes <a href="{{ route('usuario.addresses.create') }}" class="underline">usar el formulario de direcciones</a>.</p>
-        <form method="POST" action="{{ route('usuario.addresses.store') }}">
+        <p class="text-body-sm text-muted text-center mb-6">También puedes <a href="{{ route('usuario.direcciones.crear') }}" class="underline">usar el formulario de direcciones</a>.</p>
+        <form method="POST" action="{{ route('usuario.direcciones.guardar') }}">
             @csrf
             <x-validation-errors class="mb-4" />
 
@@ -107,7 +107,7 @@
 
             <!-- Botón de Guardar -->
             <div class="flex flex-col sm:flex-row gap-3">
-                <a href="{{ route('usuario.addresses.index') }}" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-paper transition w-full sm:w-auto">Cancelar</a>
+                <a href="{{ route('usuario.direcciones.indice') }}" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-paper transition w-full sm:w-auto">Cancelar</a>
                 <button type="submit"
                     class="bg-primary text-white font-semibold px-4 py-2 min-h-[44px] rounded-md w-full sm:w-auto hover:bg-primary-700 transition duration-300 btn-accessible">Guardar</button>
             </div>

@@ -34,7 +34,7 @@ class CatalogSearchTest extends TestCase
     {
         $this->product(['name' => 'Tenis Veloz', 'stripe_product_id' => 'prod_secret', 'stripe_price_id' => 'price_secret']);
 
-        $response = $this->actingAs($this->user)->getJson('/productos/search?search=Veloz');
+        $response = $this->actingAs($this->user)->getJson('/productos/buscar?search=Veloz');
 
         $response->assertOk();
         $response->assertJsonPath('meta.total', 1);
@@ -52,7 +52,7 @@ class CatalogSearchTest extends TestCase
         $this->product(['name' => 'Tenis B', 'brand' => 'Nike', 'price' => 5000]);
         $this->product(['name' => 'Tenis C', 'brand' => 'Puma', 'price' => 500]);
 
-        $response = $this->actingAs($this->user)->getJson('/productos/search?brand=Nike&max_price=1000');
+        $response = $this->actingAs($this->user)->getJson('/productos/buscar?brand=Nike&max_price=1000');
 
         $response->assertOk();
         $response->assertJsonPath('meta.total', 1);
@@ -63,7 +63,7 @@ class CatalogSearchTest extends TestCase
     {
         $this->product(['name' => 'Agotado X', 'stock' => 0]);
 
-        $response = $this->actingAs($this->user)->getJson('/productos/search?search=Agotado');
+        $response = $this->actingAs($this->user)->getJson('/productos/buscar?search=Agotado');
 
         $response->assertOk();
         $response->assertJsonPath('meta.total', 0);
@@ -73,15 +73,15 @@ class CatalogSearchTest extends TestCase
     {
         $this->product(['name' => 'Tenis Z']);
 
-        $this->getJson('/productos/search')->assertUnauthorized();
+        $this->getJson('/productos/buscar')->assertUnauthorized();
 
         $other = User::factory()->create();
-        $this->actingAs($other)->getJson('/productos/search')->assertForbidden();
+        $this->actingAs($other)->getJson('/productos/buscar')->assertForbidden();
     }
 
     public function test_search_validates_filters(): void
     {
-        $response = $this->actingAs($this->user)->getJson('/productos/search?max_price=-5&gender=invalido');
+        $response = $this->actingAs($this->user)->getJson('/productos/buscar?max_price=-5&gender=invalido');
 
         $response->assertStatus(422);
     }

@@ -55,7 +55,7 @@
 
                         <x-slot name="content">
                             <!-- Opción de Perfil -->
-                            <x-dropdown-link :href="route('profile.edit')">
+                            <x-dropdown-link :href="route('perfil.editar')">
                                 <span class="flex items-center space-x-2">
                                     <span class="material-icons">person</span>
                                         <span>Perfil</span>
@@ -91,26 +91,26 @@
             $user = auth()->user();
             if ($user->hasRole('usuario')) {
                 $paletteActions = [
-                    ['titulo' => 'Ir al catálogo', 'url' => route('usuario.products.index')],
-                    ['titulo' => 'Ir al carrito', 'url' => route('usuario.cart.index')],
-                    ['titulo' => 'Mis pedidos', 'url' => route('usuario.orders.index')],
-                    ['titulo' => 'Historial de pedidos', 'url' => route('usuario.orders.history')],
-                    ['titulo' => 'Lista de deseos', 'url' => route('usuario.wishlist.index')],
-                    ['titulo' => 'Mis direcciones', 'url' => route('usuario.addresses.index')],
+                    ['titulo' => 'Ir al catálogo', 'url' => route('usuario.productos.indice')],
+                    ['titulo' => 'Ir al carrito', 'url' => route('usuario.carrito.indice')],
+                    ['titulo' => 'Mis pedidos', 'url' => route('usuario.pedidos.indice')],
+                    ['titulo' => 'Historial de pedidos', 'url' => route('usuario.pedidos.historial')],
+                    ['titulo' => 'Lista de deseos', 'url' => route('usuario.deseos.indice')],
+                    ['titulo' => 'Mis direcciones', 'url' => route('usuario.direcciones.indice')],
                 ];
             } elseif ($user->hasRole('trabajador')) {
                 $paletteActions = [
-                    ['titulo' => 'Cola de pedidos', 'url' => route('trabajador.orders.index')],
-                    ['titulo' => 'Reporte de ventas', 'url' => route('trabajador.reports.sales')],
+                    ['titulo' => 'Cola de pedidos', 'url' => route('trabajador.pedidos.indice')],
+                    ['titulo' => 'Reporte de ventas', 'url' => route('trabajador.reportes.ventas')],
                 ];
             } elseif ($user->hasRole('administrador')) {
                 $paletteActions = [
                     ['titulo' => 'Panel admin', 'url' => route('dashboard')],
-                    ['titulo' => 'Productos', 'url' => route('admin.products.index')],
-                    ['titulo' => 'Categorías', 'url' => route('admin.categories.index')],
+                    ['titulo' => 'Productos', 'url' => route('admin.productos.index')],
+                    ['titulo' => 'Categorías', 'url' => route('admin.categorias.index')],
                     ['titulo' => 'Pedidos', 'url' => route('admin.pedidos.index')],
-                    ['titulo' => 'Reportes', 'url' => route('admin.reports.sales')],
-                    ['titulo' => 'Monitoreo', 'url' => route('admin.monitoring.dashboard')],
+                    ['titulo' => 'Reportes', 'url' => route('admin.reportes.ventas')],
+                    ['titulo' => 'Monitoreo', 'url' => route('admin.monitoreo.panel')],
                 ];
             }
         }
@@ -118,7 +118,7 @@
     <dialog data-palette class="w-[min(92vw,32rem)] rounded-lg p-0 shadow-lg" aria-label="Búsqueda rápida">
         <div class="p-4" data-palette-root
              data-actions='@json($paletteActions)'
-             data-search-url="{{ auth()->check() && auth()->user()->hasRole('trabajador') ? route('trabajador.orders.search') : '' }}">
+              data-search-url="{{ auth()->check() && auth()->user()->hasRole('trabajador') ? route('trabajador.pedidos.buscar') : '' }}">
             <input type="search" data-palette-input placeholder="Buscar pedidos, páginas, acciones… (Esc para cerrar)"
                    class="w-full rounded-md border border-line px-3 py-2 focus:outline-none focus:ring-2 focus:ring-carbon"
                    aria-label="Buscar" autocomplete="off">

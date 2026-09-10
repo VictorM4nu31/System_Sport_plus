@@ -66,7 +66,7 @@ class CheckoutTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 1.00, 'quantity' => 2]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'cart' => [$product->id => ['price' => 1.00, 'quantity' => 2]],
                 'total' => 1.00,
                 'shipping_address_id' => $address->id,
@@ -115,7 +115,7 @@ class CheckoutTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 100.00, 'quantity' => 1]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'total' => 0.01,
                 'shipping_address_id' => $address->id,
             ]);
@@ -138,7 +138,7 @@ class CheckoutTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'total' => 500.00,
             ]);
 
@@ -154,7 +154,7 @@ class CheckoutTest extends TestCase
 
         $response = $this
             ->actingAs($this->user)
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'total' => 0.01,
                 'shipping_address_id' => $address->id,
             ]);

@@ -25,7 +25,7 @@
                                 <span class="badge-stock-ok">En stock</span>
                             @endif
                         </div>
-                        <a href="{{ route('usuario.products.show', $id) }}">
+                        <a href="{{ route('usuario.productos.ver', $id) }}">
                             @if ($details['image'])
                                 <img src="{{ asset('storage/products/' . $details['image']) }}"
                                      alt="{{ $details['name'] }}" loading="lazy"
@@ -41,7 +41,7 @@
                                 <p class="text-xs text-gray-500">{{ $details['brand'] }}</p>
                             @endif
                             <h3 class="text-heading-sm text-gray-900 truncate">
-                                <a href="{{ route('usuario.products.show', $id) }}" class="hover:underline">{{ $details['name'] }}</a>
+                                <a href="{{ route('usuario.productos.ver', $id) }}" class="hover:underline">{{ $details['name'] }}</a>
                             </h3>
                             <p class="mt-1 flex items-baseline gap-2">
                                 <span class="price-mono text-lg font-bold text-gray-900">${{ number_format($details['price'], 2) }}</span>
@@ -51,7 +51,7 @@
                             </p>
                             <div class="mt-3 space-y-2">
                                 @if ($details['stock'] > 0)
-                                    <form action="{{ route('usuario.wishlist.move', $id) }}" method="POST">
+                                    <form action="{{ route('usuario.deseos.mover', $id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="btn-carbon focus-volt w-full text-sm">
                                             Mover al carrito
@@ -63,10 +63,10 @@
                                     </button>
                                 @endif
                                 <div class="flex gap-2">
-                                    <a href="{{ route('usuario.products.show', $id) }}" class="btn-ghost focus-volt flex-1 text-center text-sm no-underline">
+                                    <a href="{{ route('usuario.productos.ver', $id) }}" class="btn-ghost focus-volt flex-1 text-center text-sm no-underline">
                                         Ver
                                     </a>
-                                    <form action="{{ route('usuario.wishlist.remove', $id) }}" method="POST" class="flex-1">
+                                    <form action="{{ route('usuario.deseos.eliminar', $id) }}" method="POST" class="flex-1">
                                         @csrf
                                         <button type="submit" class="w-full rounded-md border border-line py-2 px-4 text-sm font-semibold text-error hover:border-error transition-colors">
                                             Eliminar
@@ -82,7 +82,7 @@
             <div class="text-center py-12 bg-white rounded-lg shadow">
                 <h3 class="text-heading-md text-gray-600 mb-2">No tienes productos en la lista de deseos.</h3>
                 <p class="text-body-md text-gray-500 mb-4">Explora el catálogo y guarda tus favoritos.</p>
-                <a href="{{ route('usuario.products.index') }}" class="btn-carbon focus-volt inline-block no-underline">Ver catálogo</a>
+                <a href="{{ route('usuario.productos.indice') }}" class="btn-carbon focus-volt inline-block no-underline">Ver catálogo</a>
             </div>
         @endif
     </div>

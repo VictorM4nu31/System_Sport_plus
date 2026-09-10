@@ -19,12 +19,14 @@ class UserOrderHistoryController extends Controller
     }
 
     // Mostrar los detalles de un pedido específico
-    public function show($id)
+    public function show(Order $pedido)
     {
-        // Asegurarse de que el pedido pertenece al usuario autenticado
-        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+        // Asegurarse de que el pedido pertenece al usuario autenticado (404 para no revelar existencia)
+        if ($pedido->user_id !== Auth::id()) {
+            abort(404);
+        }
 
         // Pasar el pedido a la vista
-        return view('usuario.orders.show', compact('order'));
+        return view('usuario.orders.show', ['order' => $pedido]);
     }
 }

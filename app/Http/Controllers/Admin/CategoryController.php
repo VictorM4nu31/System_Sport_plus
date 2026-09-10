@@ -40,49 +40,46 @@ class CategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Categoría creada con éxito.');
+        return redirect()->route('admin.categorias.index')->with('success', 'Categoría creada con éxito.');
     }
 
     // Mostrar formulario para editar una categoría
-    public function edit($id)
+    public function edit(Category $categoria)
     {
-        $category = Category::findOrFail($id);
-        Gate::authorize('update', $category);
+        Gate::authorize('update', $categoria);
 
-        return view('admin.categories.edit', compact('category'));
+        return view('admin.categories.edit', ['category' => $categoria]);
     }
 
     // Actualizar una categoría
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $categoria)
     {
-        $category = Category::findOrFail($id);
-        Gate::authorize('update', $category);
+        Gate::authorize('update', $categoria);
 
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,'.$category->id,
+            'name' => 'required|string|max:255|unique:categories,name,'.$categoria->id,
         ]);
 
-        $category->update([
+        $categoria->update([
             'name' => $request->name,
         ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Categoría actualizada con éxito.');
+        return redirect()->route('admin.categorias.index')->with('success', 'Categoría actualizada con éxito.');
     }
 
     // Eliminar una categoría
-    public function destroy($id)
+    public function destroy(Category $categoria)
     {
-        $category = Category::findOrFail($id);
-        Gate::authorize('delete', $category);
+        Gate::authorize('delete', $categoria);
 
         // No arrastrar el catálogo: la FK es en cascada, bloquear a nivel app.
-        if ($category->products()->exists()) {
-            return redirect()->route('admin.categories.index')
-                ->with('error', "No se puede eliminar «{$category->name}» porque tiene productos asociados. Reasígnalos primero.");
+        if ($categoria->products()->exists()) {
+            return redirect()->route('admin.categorias.index')
+                ->with('error', "No se puede eliminar «{$categoria->name}» porque tiene productos asociados. Reasígnalos primero.");
         }
 
-        $category->delete();
+        $categoria->delete();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Categoría eliminada con éxito.');
+        return redirect()->route('admin.categorias.index')->with('success', 'Categoría eliminada con éxito.');
     }
 }

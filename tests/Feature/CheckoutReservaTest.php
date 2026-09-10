@@ -66,7 +66,7 @@ class CheckoutReservaTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'shipping_address_id' => $address->id,
             ]);
 
@@ -89,7 +89,7 @@ class CheckoutReservaTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'shipping_address_id' => $address->id,
             ]);
 
@@ -105,7 +105,7 @@ class CheckoutReservaTest extends TestCase
             ->andReturn($succeeded);
 
         // Primera confirmación: marca pagada y descuenta stock (10 -> 9).
-        $this->actingAs($this->user)->postJson(route('usuario.cart.confirm-order'), [
+        $this->actingAs($this->user)->postJson(route('usuario.carrito.confirmar-pedido'), [
             'order_id' => $orderId,
             'payment_intent_id' => 'pi_test_idem',
         ])->assertOk();
@@ -115,7 +115,7 @@ class CheckoutReservaTest extends TestCase
         // Reintento (doble clic): éxito sin volver a Stripe ni tocar stock.
         $this->mock(PaymentServiceInterface::class)->shouldNotReceive('retrievePaymentIntent');
 
-        $this->actingAs($this->user)->postJson(route('usuario.cart.confirm-order'), [
+        $this->actingAs($this->user)->postJson(route('usuario.carrito.confirmar-pedido'), [
             'order_id' => $orderId,
             'payment_intent_id' => 'pi_test_idem',
         ])->assertOk()->assertJson(['order_id' => $orderId]);
@@ -136,11 +136,11 @@ class CheckoutReservaTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'shipping_address_id' => $address->id,
             ])->assertOk();
 
-        $response = $this->actingAs($this->user)->getJson(route('usuario.cart.reserva-estado'));
+        $response = $this->actingAs($this->user)->getJson(route('usuario.carrito.estado-reserva'));
 
         $response->assertOk()->assertJson(['tiene_reserva' => true]);
         $this->assertGreaterThan(0, $response->json('segundos'));
@@ -148,7 +148,7 @@ class CheckoutReservaTest extends TestCase
 
     public function test_reserva_estado_without_reservation(): void
     {
-        $response = $this->actingAs($this->user)->getJson(route('usuario.cart.reserva-estado'));
+        $response = $this->actingAs($this->user)->getJson(route('usuario.carrito.estado-reserva'));
 
         $response->assertOk()->assertJson([
             'tiene_reserva' => false,
@@ -167,7 +167,7 @@ class CheckoutReservaTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'shipping_address_id' => $address->id,
             ]);
 
@@ -182,7 +182,7 @@ class CheckoutReservaTest extends TestCase
             ->with('pi_test_fail')
             ->andReturn($failed);
 
-        $this->actingAs($this->user)->postJson(route('usuario.cart.confirm-order'), [
+        $this->actingAs($this->user)->postJson(route('usuario.carrito.confirmar-pedido'), [
             'order_id' => $orderId,
             'payment_intent_id' => 'pi_test_fail',
         ])->assertStatus(400);
@@ -206,7 +206,7 @@ class CheckoutReservaTest extends TestCase
             ->withSession([
                 'cart' => [$product->id => ['name' => 'Producto', 'price' => 500.00, 'quantity' => 1]],
             ])
-            ->postJson(route('usuario.cart.create-payment-intent'), [
+            ->postJson(route('usuario.carrito.crear-intencion-pago'), [
                 'shipping_address_id' => $address->id,
             ]);
 
@@ -217,7 +217,7 @@ class CheckoutReservaTest extends TestCase
 
         $this->mock(PaymentServiceInterface::class)->shouldNotReceive('retrievePaymentIntent');
 
-        $this->actingAs($other)->postJson(route('usuario.cart.confirm-order'), [
+        $this->actingAs($other)->postJson(route('usuario.carrito.confirmar-pedido'), [
             'order_id' => $orderId,
             'payment_intent_id' => 'pi_test_cross',
         ])->assertNotFound();

@@ -56,7 +56,7 @@
                 </div>
 
                 <!-- Formulario para actualizar el estado del pedido -->
-                <form method="POST" action="{{ route('admin.pedidos.updateStatus', $order->id) }}" class="mt-6">
+                <form method="POST" action="{{ route('admin.pedidos.actualizar-estado', $order->id) }}" class="mt-6">
                     @csrf
                     @method('PATCH')
                     <div class="mb-4">

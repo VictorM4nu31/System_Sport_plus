@@ -5,7 +5,7 @@
             <h1 class="text-display-sm text-carbon font-bold mb-6">Reporte de Ventas</h1>
 
             <!-- Formulario para filtrar por rango de fechas -->
-            <form method="GET" action="{{ route('admin.reports.sales') }}" class="mb-8 bg-paper border border-line p-4 rounded-lg shadow-inner">
+            <form method="GET" action="{{ route('admin.reportes.ventas') }}" class="mb-8 bg-paper border border-line p-4 rounded-lg shadow-inner">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
                         <label for="start_date" class="block text-carbon font-semibold">Fecha de Inicio</label>
@@ -19,7 +19,7 @@
                         <button type="submit" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md bg-carbon text-white hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-carbon w-full sm:w-auto">
                             Filtrar
                         </button>
-                        <a href="{{ route('admin.reports.sales') }}" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-white transition w-full sm:w-auto">Limpiar</a>
+                        <a href="{{ route('admin.reportes.ventas') }}" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-white transition w-full sm:w-auto">Limpiar</a>
                     </div>
                 </div>
             </form>
