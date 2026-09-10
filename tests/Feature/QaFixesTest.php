@@ -288,6 +288,27 @@ class QaFixesTest extends TestCase
         $this->actingAs($this->client)->get('/productos/abc')->assertNotFound();
     }
 
+    public function test_catalog_search_is_case_insensitive(): void
+    {
+        Product::factory()->create(['name' => 'Tenis Veloz Pro']);
+
+        $this->actingAs($this->client)
+            ->getJson('/productos/buscar?search=tenis')
+            ->assertOk()
+            ->assertJsonPath('meta.total', 1);
+    }
+
+    public function test_admin_updates_order_status_with_unified_values(): void
+    {
+        $order = Order::factory()->create(['user_id' => $this->client->id]);
+
+        $this->actingAs($this->admin)
+            ->patch(route('admin.pedidos.actualizar-estado', $order), ['status' => 'confirmed'])
+            ->assertRedirect(route('admin.pedidos.index'));
+
+        $this->assertSame('confirmed', $order->fresh()->status);
+    }
+
     public function test_monitoring_health_check_has_no_false_database_alerts(): void
     {
         $types = collect(

@@ -134,7 +134,7 @@ class OrderController extends Controller
                 if (ctype_digit($query)) {
                     $q->where('id', (int) $query);
                 } else {
-                    $q->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$query}%"));
+                    $q->whereHas('user', fn ($u) => $u->whereRaw('LOWER(name) LIKE ?', ['%'.mb_strtolower($query).'%']));
                 }
             })
             ->orderBy('created_at', 'desc')

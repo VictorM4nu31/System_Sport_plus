@@ -26,9 +26,9 @@ class ProductController extends Controller
     {
         $query = Product::with(['category', 'reviews'])->where('stock', '>', 0);
 
-        // Filtro por búsqueda de nombre
+        // Filtro por búsqueda de nombre (insensible a mayúsculas en cualquier motor)
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+            $query->whereRaw('LOWER(name) LIKE ?', ['%'.mb_strtolower($request->search).'%']);
         }
 
         // Filtro por categoría
