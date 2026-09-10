@@ -2,18 +2,20 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Mail;
-use App\Models\Product;
 use App\Models\Order;
+use App\Models\Product;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class MonitoringService
 {
     protected array $alerts = [];
+
     protected array $metrics = [];
 
     /**
@@ -34,7 +36,7 @@ class MonitoringService
             'status' => empty($this->alerts) ? 'healthy' : 'unhealthy',
             'alerts' => $this->alerts,
             'metrics' => $this->metrics,
-            'timestamp' => now()->toISOString()
+            'timestamp' => now()->toISOString(),
         ];
     }
 
@@ -53,28 +55,56 @@ class MonitoringService
             if ($responseTime > 1000) { // 1 second
                 $this->addAlert('database', 'slow_response', [
                     'response_time' => $responseTime,
-                    'threshold' => 1000
+                    'threshold' => 1000,
                 ]);
             }
 
-            // Check for long-running queries
-            $longQueries = DB::select("
-                SELECT COUNT(*) as count
-                FROM information_schema.processlist
-                WHERE command != 'Sleep' AND time > 30
-            ");
+            // Check for long-running queries (sintaxis según el motor).
+            $longQueries = $this->countLongRunningQueries();
 
-            if ($longQueries[0]->count > 0) {
+            if ($longQueries > 0) {
                 $this->addAlert('database', 'long_running_queries', [
-                    'count' => $longQueries[0]->count
+                    'count' => $longQueries,
                 ]);
             }
 
         } catch (Exception $e) {
             $this->addAlert('database', 'connection_failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Contar consultas de larga duración según el motor de BD.
+     */
+    protected function countLongRunningQueries(): int
+    {
+        $driver = DB::getDriverName();
+
+        if ($driver === 'pgsql') {
+            $result = DB::select("
+                SELECT COUNT(*) as count
+                FROM pg_stat_activity
+                WHERE state <> 'idle'
+                AND pid <> pg_backend_pid()
+                AND now() - query_start > interval '30 seconds'
+            ");
+
+            return (int) ($result[0]->count ?? 0);
+        }
+
+        if ($driver === 'mysql') {
+            $result = DB::select("
+                SELECT COUNT(*) as count
+                FROM information_schema.processlist
+                WHERE command != 'Sleep' AND time > 30
+            ");
+
+            return (int) ($result[0]->count ?? 0);
+        }
+
+        return 0;
     }
 
     /**
@@ -94,30 +124,54 @@ class MonitoringService
             if ($recentFailures > 5) {
                 $this->addAlert('payments', 'high_failure_rate', [
                     'failures' => $recentFailures,
-                    'threshold' => 5
+                    'threshold' => 5,
                 ]);
             }
 
-            // Check payment processing time
-            $avgProcessingTime = DB::table('orders')
-                ->where('payment_status', 'completed')
-                ->where('created_at', '>=', now()->subDay())
-                ->avg(DB::raw('TIMESTAMPDIFF(SECOND, created_at, updated_at)'));
+            // Check payment processing time (sintaxis según el motor).
+            $avgProcessingTime = $this->averageProcessingSeconds();
 
-            $this->metrics['avg_payment_processing_time'] = round($avgProcessingTime, 2);
+            $this->metrics['avg_payment_processing_time'] = round($avgProcessingTime ?? 0, 2);
 
             if ($avgProcessingTime > 30) { // 30 seconds
                 $this->addAlert('payments', 'slow_processing', [
                     'avg_time' => $avgProcessingTime,
-                    'threshold' => 30
+                    'threshold' => 30,
                 ]);
             }
 
         } catch (Exception $e) {
             $this->addAlert('payments', 'monitoring_failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Promedio en segundos entre creación y actualización del pedido,
+     * según el motor de BD. Null si no hay pedidos completados.
+     */
+    protected function averageProcessingSeconds(): ?float
+    {
+        $query = DB::table('orders')
+            ->whereIn('payment_status', ['paid', 'completed'])
+            ->where('created_at', '>=', now()->subDay());
+
+        $driver = DB::getDriverName();
+
+        if ($driver === 'pgsql') {
+            $value = $query->avg(DB::raw('EXTRACT(EPOCH FROM (updated_at - created_at))'));
+
+            return $value === null ? null : (float) $value;
+        }
+
+        if ($driver === 'mysql') {
+            $value = $query->avg(DB::raw('TIMESTAMPDIFF(SECOND, created_at, updated_at)'));
+
+            return $value === null ? null : (float) $value;
+        }
+
+        return null;
     }
 
     /**
@@ -138,20 +192,20 @@ class MonitoringService
             if ($lowStockProducts->count() > 0) {
                 $this->addAlert('inventory', 'low_stock', [
                     'products' => $lowStockProducts->pluck('name', 'id')->toArray(),
-                    'count' => $lowStockProducts->count()
+                    'count' => $lowStockProducts->count(),
                 ]);
             }
 
             if ($outOfStockProducts > 10) {
                 $this->addAlert('inventory', 'high_out_of_stock', [
                     'count' => $outOfStockProducts,
-                    'threshold' => 10
+                    'threshold' => 10,
                 ]);
             }
 
         } catch (Exception $e) {
             $this->addAlert('inventory', 'monitoring_failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -172,7 +226,7 @@ class MonitoringService
             if ($failedJobs > 10) {
                 $this->addAlert('queue', 'high_failure_rate', [
                     'failed_jobs' => $failedJobs,
-                    'threshold' => 10
+                    'threshold' => 10,
                 ]);
             }
 
@@ -183,13 +237,13 @@ class MonitoringService
             if ($queueSize > 1000) {
                 $this->addAlert('queue', 'high_queue_size', [
                     'size' => $queueSize,
-                    'threshold' => 1000
+                    'threshold' => 1000,
                 ]);
             }
 
         } catch (Exception $e) {
             $this->addAlert('queue', 'monitoring_failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -212,13 +266,13 @@ class MonitoringService
                 $this->addAlert('storage', 'high_usage', [
                     'used_percent' => $usedPercent,
                     'free_gb' => round($freeBytes / (1024 ** 3), 2),
-                    'threshold' => 85
+                    'threshold' => 85,
                 ]);
             }
 
         } catch (Exception $e) {
             $this->addAlert('storage', 'monitoring_failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -239,11 +293,13 @@ class MonitoringService
                 $cutoffTime = now()->subHour();
 
                 foreach (array_reverse($lines) as $line) {
-                    if (empty($line)) continue;
+                    if (empty($line)) {
+                        continue;
+                    }
 
                     // Parse log timestamp
                     if (preg_match('/\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]/', $line, $matches)) {
-                        $logTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $matches[1]);
+                        $logTime = Carbon::createFromFormat('Y-m-d H:i:s', $matches[1]);
 
                         if ($logTime < $cutoffTime) {
                             break; // Stop checking older logs
@@ -260,14 +316,14 @@ class MonitoringService
                 if ($recentErrors > 50) {
                     $this->addAlert('application', 'high_error_rate', [
                         'errors' => $recentErrors,
-                        'threshold' => 50
+                        'threshold' => 50,
                     ]);
                 }
             }
 
         } catch (Exception $e) {
             $this->addAlert('application', 'log_monitoring_failed', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -282,7 +338,7 @@ class MonitoringService
             'type' => $type,
             'data' => $data,
             'timestamp' => now()->toISOString(),
-            'severity' => $this->getAlertSeverity($category, $type)
+            'severity' => $this->getAlertSeverity($category, $type),
         ];
     }
 
@@ -294,14 +350,14 @@ class MonitoringService
         $criticalAlerts = [
             'database.connection_failed',
             'payments.high_failure_rate',
-            'storage.high_usage'
+            'storage.high_usage',
         ];
 
         $warningAlerts = [
             'database.slow_response',
             'payments.slow_processing',
             'inventory.low_stock',
-            'queue.high_failure_rate'
+            'queue.high_failure_rate',
         ];
 
         $alertKey = "{$category}.{$type}";
@@ -334,7 +390,7 @@ class MonitoringService
             return $alert['severity'] === 'critical';
         });
 
-        if (!empty($criticalAlerts)) {
+        if (! empty($criticalAlerts)) {
             $this->sendCriticalAlertEmail($criticalAlerts);
         }
 
@@ -353,13 +409,13 @@ class MonitoringService
             if ($adminEmail && $adminEmail !== 'admin@example.com') {
                 Mail::raw($this->formatAlertEmail($alerts), function ($message) use ($adminEmail) {
                     $message->to($adminEmail)
-                           ->subject('Critical System Alert - ' . config('app.name'));
+                        ->subject('Critical System Alert - '.config('app.name'));
                 });
             }
         } catch (Exception $e) {
             Log::error('Failed to send alert email', [
                 'error' => $e->getMessage(),
-                'alerts' => $alerts
+                'alerts' => $alerts,
             ]);
         }
     }
@@ -376,12 +432,12 @@ class MonitoringService
             $message .= "Type: {$alert['type']}\n";
             $message .= "Severity: {$alert['severity']}\n";
             $message .= "Time: {$alert['timestamp']}\n";
-            $message .= "Details: " . json_encode($alert['data'], JSON_PRETTY_PRINT) . "\n";
-            $message .= str_repeat('-', 50) . "\n";
+            $message .= 'Details: '.json_encode($alert['data'], JSON_PRETTY_PRINT)."\n";
+            $message .= str_repeat('-', 50)."\n";
         }
 
         $message .= "\nPlease check the system immediately.\n";
-        $message .= "Dashboard: " . config('app.url') . "/admin/monitoring\n";
+        $message .= 'Dashboard: '.config('app.url')."/admin/monitoring\n";
 
         return $message;
     }
@@ -396,17 +452,18 @@ class MonitoringService
                 'orders_today' => Order::whereDate('created_at', today())->count(),
                 'orders_this_week' => Order::whereBetween('created_at', [
                     now()->startOfWeek(),
-                    now()->endOfWeek()
+                    now()->endOfWeek(),
                 ])->count(),
                 'revenue_today' => Order::whereDate('created_at', today())
-                    ->where('payment_status', 'completed')
+                    ->whereIn('payment_status', ['paid', 'completed'])
                     ->sum('total_price'),
                 'revenue_this_week' => Order::whereBetween('created_at', [
                     now()->startOfWeek(),
-                    now()->endOfWeek()
-                ])->where('payment_status', 'completed')->sum('total_price'),
+                    now()->endOfWeek(),
+                ])->whereIn('payment_status', ['paid', 'completed'])->sum('total_price'),
                 'active_users_today' => DB::table('sessions')
                     ->where('last_activity', '>=', now()->subDay()->timestamp)
+                    ->whereNotNull('user_id')
                     ->distinct('user_id')
                     ->count(),
                 'low_stock_count' => Product::where('stock', '<=', 5)->count(),
@@ -423,7 +480,7 @@ class MonitoringService
         Log::channel('payments')->info("Payment event: {$event}", array_merge($data, [
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
-            'timestamp' => now()->toISOString()
+            'timestamp' => now()->toISOString(),
         ]));
 
         // Track payment metrics
@@ -435,13 +492,13 @@ class MonitoringService
      */
     protected function trackPaymentMetrics(string $event, array $data): void
     {
-        $key = "payment_metrics:" . now()->format('Y-m-d-H');
+        $key = 'payment_metrics:'.now()->format('Y-m-d-H');
 
         $metrics = Cache::get($key, [
             'attempts' => 0,
             'successes' => 0,
             'failures' => 0,
-            'total_amount' => 0
+            'total_amount' => 0,
         ]);
 
         switch ($event) {
@@ -468,7 +525,7 @@ class MonitoringService
         Log::channel('audit')->info("Stock event: {$event}", array_merge($data, [
             'user_id' => Auth::id(),
             'ip_address' => request()->ip(),
-            'timestamp' => now()->toISOString()
+            'timestamp' => now()->toISOString(),
         ]));
     }
 
@@ -480,7 +537,7 @@ class MonitoringService
         Log::channel('security')->warning("Security event: {$event}", array_merge($data, [
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
-            'timestamp' => now()->toISOString()
+            'timestamp' => now()->toISOString(),
         ]));
 
         // Track security metrics
@@ -492,7 +549,7 @@ class MonitoringService
      */
     protected function trackSecurityMetrics(string $event): void
     {
-        $key = "security_metrics:" . now()->format('Y-m-d');
+        $key = 'security_metrics:'.now()->format('Y-m-d');
 
         $metrics = Cache::get($key, []);
         $metrics[$event] = ($metrics[$event] ?? 0) + 1;

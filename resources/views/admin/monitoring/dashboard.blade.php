@@ -71,19 +71,19 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
                     <p class="text-body-md font-medium text-carbon">Pedidos hoy</p>
-                    <p class="text-display-sm text-carbon mt-1">{{ $systemMetrics['orders_today'] ?? 0 }}</p>
+                    <p class="text-display-sm text-carbon mt-1" id="metric-pedidos">{{ $systemMetrics['orders_today'] ?? 0 }}</p>
                 </div>
                 <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
                     <p class="text-body-md font-medium text-carbon">Ingresos hoy</p>
-                    <p class="text-display-sm text-carbon mt-1">${{ number_format(($systemMetrics['revenue_today'] ?? 0) / 100, 2) }}</p>
+                    <p class="text-display-sm text-carbon mt-1" id="metric-ingresos">${{ number_format($systemMetrics['revenue_today'] ?? 0, 2) }}</p>
                 </div>
                 <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
                     <p class="text-body-md font-medium text-carbon">Stock bajo</p>
-                    <p class="text-display-sm text-carbon mt-1">{{ $systemMetrics['low_stock_count'] ?? 0 }}</p>
+                    <p class="text-display-sm text-carbon mt-1" id="metric-stock">{{ $systemMetrics['low_stock_count'] ?? 0 }}</p>
                 </div>
                 <div class="bg-white border border-line rounded-lg shadow p-6 text-center">
                     <p class="text-body-md font-medium text-carbon">Usuarios activos</p>
-                    <p class="text-display-sm text-carbon mt-1">{{ $systemMetrics['active_users_today'] ?? 0 }}</p>
+                    <p class="text-display-sm text-carbon mt-1" id="metric-usuarios">{{ $systemMetrics['active_users_today'] ?? 0 }}</p>
                 </div>
             </div>
 
@@ -193,20 +193,38 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+        const dinero = (v) => '$' + Number(v ?? 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        function pintarBadge(estado) {
+            const badge = document.getElementById('health-status-badge');
+            if (!badge) {
+                return;
+            }
+            const sano = estado === 'healthy';
+            badge.innerHTML = `<span class="${sano ? 'badge-success' : 'badge-error'}">${sano ? 'Saludable' : 'Con problemas'}</span>`;
+        }
+
+        function pintarMetricas(m) {
+            if (!m) {
+                return;
+            }
+            const set = (id, valor) => { const el = document.getElementById(id); if (el) { el.textContent = valor; } };
+            set('metric-pedidos', m.orders_today ?? 0);
+            set('metric-ingresos', dinero(m.revenue_today));
+            set('metric-stock', m.low_stock_count ?? 0);
+            set('metric-usuarios', m.active_users_today ?? 0);
+        }
+
         function refreshData() {
             fetch('/admin/monitoring/health-status', { headers: { Accept: 'application/json' } })
                 .then((response) => response.json())
-                .then((data) => {
-                    const badge = document.getElementById('health-status-badge');
-                    if (badge) {
-                        badge.textContent = data.status === 'healthy' ? 'Saludable' : 'Con problemas';
-                    }
-                })
+                .then((data) => pintarBadge(data.status))
                 .catch((error) => console.error('Error refreshing data:', error));
 
             fetch('/admin/monitoring/metrics', { headers: { Accept: 'application/json' } })
                 .then((response) => response.json())
-                .then(() => {})
+                .then((data) => pintarMetricas(data.data))
                 .catch((error) => console.error('Error refreshing metrics:', error));
         }
 
@@ -218,12 +236,12 @@
             fetch('/admin/monitoring/run-health-check', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-CSRF-TOKEN': csrf,
                     'Content-Type': 'application/json',
                 },
             })
                 .then((response) => response.json())
-                .then(() => refreshData())
+                .then(() => window.location.reload())
                 .catch((error) => console.error('Error running health check:', error))
                 .finally(() => { btn.disabled = false; });
         });
@@ -233,12 +251,12 @@
                 fetch('/admin/monitoring/clear-alerts', {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-CSRF-TOKEN': csrf,
                         'Content-Type': 'application/json',
                     },
                 })
                     .then((response) => response.json())
-                    .then(() => refreshData())
+                    .then(() => window.location.reload())
                     .catch((error) => console.error('Error clearing alerts:', error));
             }
         });

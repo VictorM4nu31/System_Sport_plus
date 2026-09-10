@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -168,8 +169,29 @@ class QaFixesTest extends TestCase
     public function test_admin_orders_update_route_does_not_exist(): void
     {
         $this->actingAs($this->admin)
-            ->put('/admin/orders/1', ['status' => 'completado'])
+            ->put('/admin/pedidos/1', ['status' => 'completado'])
             ->assertStatus(405);
+    }
+
+    public function test_admin_pedidos_urls_are_in_spanish_with_binding(): void
+    {
+        $order = Order::factory()->paid()->create(['user_id' => $this->client->id]);
+
+        $this->assertSame('/admin/pedidos', route('admin.pedidos.index', absolute: false));
+        $this->assertSame(
+            "/admin/pedidos/{$order->id}",
+            route('admin.pedidos.show', $order, absolute: false)
+        );
+
+        // El binding {pedido} resuelve el modelo: HTML con el detalle, no 404.
+        $this->actingAs($this->admin)
+            ->get(route('admin.pedidos.show', $order))
+            ->assertOk()
+            ->assertSee((string) $order->id);
+
+        $this->actingAs($this->admin)
+            ->get('/admin/pedidos/99999')
+            ->assertNotFound();
     }
 
     public function test_user_cancels_own_pending_order(): void
@@ -257,5 +279,33 @@ class QaFixesTest extends TestCase
             ->getJson('/api/address/123')
             ->assertStatus(422)
             ->assertJsonPath('message', 'El código postal debe tener 5 dígitos.');
+    }
+
+    public function test_monitoring_health_check_has_no_false_database_alerts(): void
+    {
+        $types = collect(
+            $this->actingAs($this->admin)
+                ->getJson(route('admin.monitoring.health-status'))
+                ->assertOk()
+                ->json('alerts')
+        )->map(fn (array $alert): string => "{$alert['category']}.{$alert['type']}");
+
+        $this->assertNotContains('database.connection_failed', $types);
+        $this->assertNotContains('payments.monitoring_failed', $types);
+    }
+
+    public function test_monitoring_revenue_counts_paid_orders(): void
+    {
+        Cache::flush();
+
+        Order::factory()->paid()->create([
+            'user_id' => $this->client->id,
+            'total_price' => 999.00,
+        ]);
+
+        $this->actingAs($this->admin)
+            ->getJson(route('admin.monitoring.metrics'))
+            ->assertOk()
+            ->assertJsonPath('data.revenue_today', 999);
     }
 }

@@ -118,8 +118,11 @@ Route::middleware(['auth', 'verified', 'role:administrador'])
         Route::post('/products/{id}/sync-stripe', [ProductController::class, 'syncWithStripe'])->name('products.sync-stripe');
         Route::get('/products/{id}/stripe-info', [ProductController::class, 'stripeInfo'])->name('products.stripe-info');
         Route::resource('categories', CategoryController::class)->except(['show']);
-        Route::resource('orders', OrderController::class)->only(['index', 'show', 'destroy']);
-        Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::resource('pedidos', OrderController::class)
+            ->parameters(['pedidos' => 'pedido'])
+            ->names('pedidos')
+            ->only(['index', 'show', 'destroy']);
+        Route::patch('/pedidos/{pedido}/status', [OrderController::class, 'updateStatus'])->name('pedidos.updateStatus');
         Route::get('reports/sales', [ReportController::class, 'salesReport'])->name('reports.sales');
 
         // Monitoring routes

@@ -385,28 +385,46 @@ class MonitoringController extends Controller
     }
 
     /**
-     * Get active database connections
+     * Get active database connections (según el motor de BD).
      */
     protected function getActiveConnections(): int
     {
         try {
+            if (DB::getDriverName() === 'pgsql') {
+                $result = DB::select('SELECT COUNT(*) as count FROM pg_stat_activity');
+
+                return (int) ($result[0]->count ?? 0);
+            }
+
             $result = DB::select("SHOW STATUS LIKE 'Threads_connected'");
 
-            return $result[0]->Value ?? 0;
+            return (int) ($result[0]->Value ?? 0);
         } catch (\Exception $e) {
             return 0;
         }
     }
 
     /**
-     * Get slow query count
+     * Get slow query count (según el motor de BD).
      */
     protected function getSlowQueryCount(): int
     {
         try {
+            if (DB::getDriverName() === 'pgsql') {
+                $result = DB::select("
+                    SELECT COUNT(*) as count
+                    FROM pg_stat_activity
+                    WHERE state <> 'idle'
+                    AND pid <> pg_backend_pid()
+                    AND now() - query_start > interval '10 seconds'
+                ");
+
+                return (int) ($result[0]->count ?? 0);
+            }
+
             $result = DB::select("SHOW STATUS LIKE 'Slow_queries'");
 
-            return $result[0]->Value ?? 0;
+            return (int) ($result[0]->Value ?? 0);
         } catch (\Exception $e) {
             return 0;
         }

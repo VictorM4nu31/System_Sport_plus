@@ -2,6 +2,14 @@
 
 namespace App\Providers;
 
+use App\Contracts\OrderProcessingInterface;
+use App\Contracts\PaymentServiceInterface;
+use App\Contracts\StockManagementInterface;
+use App\Models\Order;
+use App\Services\OrderProcessingService;
+use App\Services\StockManagementService;
+use App\Services\StripePaymentService;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,20 +21,20 @@ class AppServiceProvider extends ServiceProvider
     {
         // Bind the payment service interface to the Stripe implementation
         $this->app->bind(
-            \App\Contracts\PaymentServiceInterface::class,
-            \App\Services\StripePaymentService::class
+            PaymentServiceInterface::class,
+            StripePaymentService::class
         );
 
         // Bind the order processing service interface
         $this->app->bind(
-            \App\Contracts\OrderProcessingInterface::class,
-            \App\Services\OrderProcessingService::class
+            OrderProcessingInterface::class,
+            OrderProcessingService::class
         );
 
         // Bind the stock management service interface
         $this->app->bind(
-            \App\Contracts\StockManagementInterface::class,
-            \App\Services\StockManagementService::class
+            StockManagementInterface::class,
+            StockManagementService::class
         );
     }
 
@@ -35,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // El parámetro {pedido} de /admin/pedidos resuelve al modelo Order.
+        Route::model('pedido', Order::class);
+
         // Environment validation temporarily disabled during development
         // Will be re-enabled after completing Stripe integration
         // $this->validateRequiredEnvironmentVariables();
@@ -69,9 +80,9 @@ class AppServiceProvider extends ServiceProvider
             }
         }
 
-        if (!empty($missingVars)) {
+        if (! empty($missingVars)) {
             throw new \RuntimeException(
-                'Missing required environment variables: ' . implode(', ', $missingVars) .
+                'Missing required environment variables: '.implode(', ', $missingVars).
                 '. Please check your .env file and ensure all required variables are set.'
             );
         }

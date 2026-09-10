@@ -50,7 +50,7 @@
                                     <td class="px-4 py-3 border-b border-line">
                                         <div class="flex items-center gap-2">
                                             <!-- Botón de Ver con ícono -->
-                                            <a href="{{ route('admin.orders.show', $order->id) }}" class="inline-flex items-center gap-1 p-2 min-h-[44px] text-info hover:text-info font-semibold" aria-label="Ver pedido #{{ $order->id }}">
+                                            <a href="{{ route('admin.pedidos.show', $order->id) }}" class="inline-flex items-center gap-1 p-2 min-h-[44px] text-info hover:text-info font-semibold" aria-label="Ver pedido #{{ $order->id }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                                                     <path d="M12 4.5a7.5 7.5 0 1 1-7.5 7.5A7.5 7.5 0 0 1 12 4.5m0-1.5a9 9 0 1 0 9 9 9 9 0 0 0-9-9z"/>
                                                     <path d="M12 9a3 3 0 1 1-3 3 3 3 0 0 1 3-3m0-1.5a4.5 4.5 0 1 0 4.5 4.5 4.5 4.5 0 0 0-4.5-4.5z"/>
@@ -59,7 +59,7 @@
                                             </a>
 
                                             <!-- Botón de Eliminar con ícono -->
-                                            <form action="{{ route('admin.orders.destroy', $order->id) }}" method="POST" class="flex items-center">
+                                            <form action="{{ route('admin.pedidos.destroy', $order->id) }}" method="POST" class="flex items-center">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" onclick="return confirm('¿Eliminar este pedido?')" class="inline-flex items-center gap-1 p-2 min-h-[44px] text-error hover:text-red-700 font-semibold" aria-label="Eliminar pedido #{{ $order->id }}">

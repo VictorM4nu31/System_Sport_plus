@@ -28,7 +28,7 @@ class OrderController extends Controller
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
             'orders_count' => $orders->total(),
-            'action' => 'admin.orders.index',
+            'action' => 'admin.pedidos.index',
             'timestamp' => now(),
         ]);
 
@@ -36,67 +36,65 @@ class OrderController extends Controller
     }
 
     // Mostrar detalles de un pedido
-    public function show($id)
+    public function show(Order $pedido)
     {
-        $order = Order::findOrFail($id);
-        Gate::authorize('view', $order);
+        Gate::authorize('view', $pedido);
 
         Log::channel('audit')->info('Admin viewed order details', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'order_id' => $order->id,
-            'order_user_id' => $order->user_id,
-            'action' => 'admin.orders.show',
+            'order_id' => $pedido->id,
+            'order_user_id' => $pedido->user_id,
+            'action' => 'admin.pedidos.show',
             'timestamp' => now(),
         ]);
 
-        return view('admin.orders.show', compact('order'));
+        return view('admin.orders.show', ['order' => $pedido]);
     }
 
     // Actualizar el estado de un pedido
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, Order $pedido)
     {
-        $order = Order::findOrFail($id);
-        Gate::authorize('updateStatus', $order);
+        Gate::authorize('updateStatus', $pedido);
 
         ValidationService::validateRequest($request, ValidationService::orderStatusRules());
 
-        $oldStatus = $order->status;
-        $order->update(['status' => $request->status]);
+        $oldStatus = $pedido->status;
+        $pedido->update(['status' => $request->status]);
 
         Log::channel('audit')->info('Order status updated by admin', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'order_id' => $order->id,
-            'order_user_id' => $order->user_id,
+            'order_id' => $pedido->id,
+            'order_user_id' => $pedido->user_id,
             'old_status' => $oldStatus,
             'new_status' => $request->status,
-            'action' => 'admin.orders.updateStatus',
+            'action' => 'admin.pedidos.updateStatus',
             'timestamp' => now(),
         ]);
 
-        return redirect()->route('admin.orders.index')->with('success', 'Estado del pedido actualizado.');
+        return redirect()->route('admin.pedidos.index')->with('success', 'Estado del pedido actualizado.');
     }
 
     // Eliminar un pedido
-    public function destroy($id)
+    public function destroy(Order $pedido)
     {
-        $order = Order::findOrFail($id);
-        Gate::authorize('delete', $order);
+        Gate::authorize('delete', $pedido);
 
-        $orderData = $order->toArray();
-        $order->delete();
+        $orderData = $pedido->toArray();
+        $orderId = $pedido->id;
+        $pedido->delete();
 
         Log::channel('audit')->info('Order deleted by admin', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'order_id' => $id,
+            'order_id' => $orderId,
             'order_data' => $orderData,
-            'action' => 'admin.orders.destroy',
+            'action' => 'admin.pedidos.destroy',
             'timestamp' => now(),
         ]);
 
-        return redirect()->route('admin.orders.index')->with('success', 'Pedido eliminado.');
+        return redirect()->route('admin.pedidos.index')->with('success', 'Pedido eliminado.');
     }
 
     public function workerIndex()

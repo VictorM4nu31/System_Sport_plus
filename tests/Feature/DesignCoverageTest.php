@@ -44,7 +44,7 @@ class DesignCoverageTest extends TestCase
 
     public function test_admin_pages_render_with_design_system(): void
     {
-        foreach (['admin.dashboard', 'admin.categories.index', 'admin.orders.index', 'admin.reports.sales', 'admin.products.index'] as $route) {
+        foreach (['admin.dashboard', 'admin.categories.index', 'admin.pedidos.index', 'admin.reports.sales', 'admin.products.index'] as $route) {
             $this->actingAs($this->admin)->get(route($route))->assertOk();
         }
     }

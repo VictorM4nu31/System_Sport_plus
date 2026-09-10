@@ -32,7 +32,7 @@
                            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-700 font-semibold text-body-md">
                             Gestionar Productos
                         </a>
-                        <a href="{{ route('admin.orders.index') }}"
+                        <a href="{{ route('admin.pedidos.index') }}"
                            class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-semibold text-body-md">
                             Ver pedidos
                         </a>

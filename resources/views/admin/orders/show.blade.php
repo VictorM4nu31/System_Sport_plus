@@ -56,7 +56,7 @@
                 </div>
 
                 <!-- Formulario para actualizar el estado del pedido -->
-                <form method="POST" action="{{ route('admin.orders.updateStatus', $order->id) }}" class="mt-6">
+                <form method="POST" action="{{ route('admin.pedidos.updateStatus', $order->id) }}" class="mt-6">
                     @csrf
                     @method('PATCH')
                     <div class="mb-4">
@@ -70,7 +70,7 @@
                         </select>
                     </div>
                     <div class="flex flex-col-reverse sm:flex-row gap-3">
-                        <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-paper transition w-full sm:w-auto">Volver</a>
+                        <a href="{{ route('admin.pedidos.index') }}" class="inline-flex items-center justify-center px-4 py-2 min-h-[44px] rounded-md border border-line text-carbon hover:bg-paper transition w-full sm:w-auto">Volver</a>
                         <button type="submit" class="px-4 py-2 min-h-[44px] bg-primary text-white rounded hover:bg-primary-700 transition duration-200 btn-accessible w-full sm:w-auto">
                             Actualizar Estado
                         </button>

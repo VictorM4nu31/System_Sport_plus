@@ -6,7 +6,7 @@
     $links = $isAdmin
         ? [
             ['label' => 'Resumen', 'icon' => 'dashboard', 'url' => route('admin.dashboard'), 'active' => request()->routeIs('admin.dashboard')],
-            ['label' => 'Pedidos', 'icon' => 'shopping_cart', 'url' => route('admin.orders.index'), 'active' => request()->routeIs('admin.orders.*')],
+            ['label' => 'Pedidos', 'icon' => 'shopping_cart', 'url' => route('admin.pedidos.index'), 'active' => request()->routeIs('admin.pedidos.*')],
             ['label' => 'Productos', 'icon' => 'inventory_2', 'url' => route('admin.products.index'), 'active' => request()->routeIs('admin.products.*')],
             ['label' => 'Categorías', 'icon' => 'category', 'url' => route('admin.categories.index'), 'active' => request()->routeIs('admin.categories.*')],
             ['label' => 'Trabajadores', 'icon' => 'group', 'url' => route('admin.workers.index'), 'active' => request()->routeIs('admin.workers.*')],

@@ -65,9 +65,9 @@
                        class="px-5 py-2 bg-primary text-white rounded-md font-semibold hover:bg-primary-700 transition duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary text-body-md">
                         Gestionar Categorías
                     </a>
-                    <a href="{{ route('admin.orders.index') }}"
+                    <a href="{{ route('admin.pedidos.index') }}"
                        class="px-5 py-2 bg-primary text-white rounded-md font-semibold hover:bg-primary-700 transition duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary text-body-md">
-                        Gestionar Órdenes
+                        Gestionar pedidos
                     </a>
                 </div>
 

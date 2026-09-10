@@ -108,7 +108,7 @@
                     ['titulo' => 'Panel admin', 'url' => route('dashboard')],
                     ['titulo' => 'Productos', 'url' => route('admin.products.index')],
                     ['titulo' => 'Categorías', 'url' => route('admin.categories.index')],
-                    ['titulo' => 'Pedidos', 'url' => route('admin.orders.index')],
+                    ['titulo' => 'Pedidos', 'url' => route('admin.pedidos.index')],
                     ['titulo' => 'Reportes', 'url' => route('admin.reports.sales')],
                     ['titulo' => 'Monitoreo', 'url' => route('admin.monitoring.dashboard')],
                 ];
