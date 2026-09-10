@@ -58,7 +58,17 @@ class CartController extends Controller
     public function add(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $quantity = $request->input('quantity', 1);  // Obtener la cantidad seleccionada
+
+        $validated = $request->validate([
+            'quantity' => ['required', 'integer', 'min:1', 'max:100'],
+        ], [
+            'quantity.required' => 'Indica la cantidad a agregar.',
+            'quantity.integer' => 'La cantidad debe ser un número entero.',
+            'quantity.min' => 'La cantidad mínima es 1.',
+            'quantity.max' => 'La cantidad máxima por operación es 100.',
+        ]);
+
+        $quantity = $validated['quantity'];  // Obtener la cantidad seleccionada
 
         // Check stock availability before adding to cart
         $availableStock = $this->stockService->getAvailableStock($id);

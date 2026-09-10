@@ -8,14 +8,26 @@
     @vite(['resources/css/app.css'])
 </head>
 <body class="bg-paper font-sans antialiased">
-    <main class="mx-auto flex min-h-screen w-[min(92vw,32rem)] flex-col items-center justify-center text-center">
-        <p class="font-display text-display-lg text-carbon price-mono">@yield('codigo')</p>
-        <h1 class="mt-2 text-heading-lg font-bold text-carbon">@yield('titulo')</h1>
-        <p class="mt-2 text-body-md text-muted">@yield('mensaje')</p>
-        <div class="mt-6 flex flex-wrap justify-center gap-3">
-            <a href="{{ url('/') }}" class="btn-carbon focus-volt no-underline">Ir a la tienda</a>
-            <a href="{{ url('/productos') }}" class="btn-ghost focus-volt no-underline">Ver catálogo</a>
+    <div class="cs-noise min-h-screen px-4 py-6 sm:px-6">
+        <div class="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-3xl items-center justify-center">
+            <main class="w-full overflow-hidden rounded-[20px] border border-line bg-white text-center shadow-[0_18px_70px_rgba(17,19,21,.12)]">
+                <div class="flex items-center justify-center gap-2 bg-ink px-6 py-4">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-md bg-volt text-xs font-black text-ink" aria-hidden="true">CS</span>
+                    <span class="font-display text-lg font-extrabold tracking-tight text-white">Campos Sport</span>
+                </div>
+                <div class="px-6 py-10 sm:px-12">
+                    <p class="cs-eyebrow">Algo no salió como esperabas</p>
+                    <p class="font-display mt-3 text-6xl font-black tracking-tight text-ink sm:text-7xl" role="text" aria-label="Error @yield('codigo')">@yield('codigo')</p>
+                    <h1 class="cs-display mt-3 text-3xl sm:text-4xl">@yield('titulo')</h1>
+                    <p class="mx-auto mt-4 max-w-md text-sm leading-6 text-muted">@yield('mensaje')</p>
+                    <div class="mt-8 flex flex-wrap justify-center gap-3">
+                        <button type="button" onclick="history.back()" class="btn-ghost focus-volt min-h-[44px]">Volver atrás</button>
+                        <a href="{{ url('/') }}" class="btn-carbon focus-volt inline-flex min-h-[44px] items-center no-underline">Ir a la tienda</a>
+                        <a href="{{ url('/productos') }}" class="cs-button-signal focus-volt inline-flex min-h-[44px] items-center no-underline">Ver catálogo</a>
+                    </div>
+                </div>
+            </main>
         </div>
-    </main>
+    </div>
 </body>
 </html>

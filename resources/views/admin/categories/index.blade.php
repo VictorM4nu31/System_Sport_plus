@@ -13,6 +13,12 @@
                     </a>
                 </div>
 
+                @if(session('error'))
+                    <x-alert type="error" dismissible="true" class="mb-6">
+                        {{ session('error') }}
+                    </x-alert>
+                @endif
+
                 <!-- Tabla de categorías con estilo consistente -->
                 <div class="overflow-x-auto">
                     <table class="w-full bg-white bg-opacity-95 rounded-lg shadow-lg mt-4">
@@ -62,6 +68,10 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <div class="mt-6">
+                    {{ $categories->links() }}
                 </div>
             </div>
         </div>

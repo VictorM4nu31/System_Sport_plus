@@ -56,6 +56,12 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    // Relación con los items de pedido (para preservar el historial)
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function getAverageRatingAttribute()
     {
         return round($this->reviews()->avg('rating'), 1) ?: 0; // Retorna 0 si no hay reseñas

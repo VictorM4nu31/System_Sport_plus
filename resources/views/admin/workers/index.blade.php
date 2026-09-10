@@ -64,6 +64,9 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-6">
+                    {{ $workers->links() }}
+                </div>
             </div>
         </div>
     </div>

@@ -8,6 +8,17 @@
             <span class="truncate">{{ $product->name }}</span>
         </nav>
 
+        @if(session('success'))
+            <x-alert type="success" dismissible="true" class="mb-6">
+                {{ session('success') }}
+            </x-alert>
+        @endif
+        @if(session('error'))
+            <x-alert type="error" dismissible="true" class="mb-6">
+                {{ session('error') }}
+            </x-alert>
+        @endif
+
         <section class="grid overflow-hidden rounded-[14px] border border-line bg-white lg:grid-cols-[1.1fr_.9fr]">
             <div class="relative bg-elevated">
                 @if ($product->image)

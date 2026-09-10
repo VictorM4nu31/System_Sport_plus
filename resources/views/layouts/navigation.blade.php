@@ -8,6 +8,8 @@
             ['label' => 'Resumen', 'icon' => 'dashboard', 'url' => route('admin.dashboard'), 'active' => request()->routeIs('admin.dashboard')],
             ['label' => 'Pedidos', 'icon' => 'shopping_cart', 'url' => route('admin.orders.index'), 'active' => request()->routeIs('admin.orders.*')],
             ['label' => 'Productos', 'icon' => 'inventory_2', 'url' => route('admin.products.index'), 'active' => request()->routeIs('admin.products.*')],
+            ['label' => 'Categorías', 'icon' => 'category', 'url' => route('admin.categories.index'), 'active' => request()->routeIs('admin.categories.*')],
+            ['label' => 'Trabajadores', 'icon' => 'group', 'url' => route('admin.workers.index'), 'active' => request()->routeIs('admin.workers.*')],
             ['label' => 'Reportes', 'icon' => 'monitoring', 'url' => route('admin.reports.sales'), 'active' => request()->routeIs('admin.reports.*')],
             ['label' => 'Monitoreo', 'icon' => 'monitor_heart', 'url' => route('admin.monitoring.dashboard'), 'active' => request()->routeIs('admin.monitoring.*')],
         ]
@@ -20,8 +22,10 @@
             : [
                 ['label' => 'Inicio', 'icon' => 'home', 'url' => route('usuario.dashboard'), 'active' => request()->routeIs('usuario.dashboard')],
                 ['label' => 'Explorar', 'icon' => 'explore', 'url' => route('usuario.products.index'), 'active' => request()->routeIs('usuario.products.*')],
+                ['label' => 'Carrito', 'icon' => 'shopping_cart', 'url' => route('usuario.cart.index'), 'active' => request()->routeIs('usuario.cart.*')],
                 ['label' => 'Pedidos', 'icon' => 'receipt_long', 'url' => route('usuario.orders.history'), 'active' => request()->routeIs('usuario.orders.*')],
                 ['label' => 'Wishlist', 'icon' => 'favorite', 'url' => route('usuario.wishlist.index'), 'active' => request()->routeIs('usuario.wishlist.*')],
+                ['label' => 'Direcciones', 'icon' => 'location_on', 'url' => route('usuario.addresses.index'), 'active' => request()->routeIs('usuario.addresses.*')],
             ]);
 @endphp
 
@@ -62,8 +66,8 @@
         </div>
     </div>
 
-    <div class="cs-mobile-nav fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-line bg-white/95 px-2 pt-2 backdrop-blur md:hidden">
-        @foreach(array_slice($links, 0, 4) as $link)
+    <div class="cs-mobile-nav fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-white/95 px-2 pt-2 backdrop-blur md:hidden">
+        @foreach(array_slice($links, 0, 5) as $link)
             <a href="{{ $link['url'] }}" @class(['flex min-h-[52px] flex-col items-center justify-center gap-0.5 text-[10px] font-semibold no-underline', 'text-ink' => $link['active'], 'text-muted' => ! $link['active']])>
                 <span class="material-icons text-[21px]" aria-hidden="true">{{ $link['icon'] }}</span>
                 <span>{{ $link['label'] }}</span>

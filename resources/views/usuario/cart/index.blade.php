@@ -64,7 +64,7 @@
             $total = $totals['total'] ?? ($subtotal + $shippingCost);
         @endphp
         <div class="mt-6 max-w-xl space-y-3 rounded-[14px] border border-line bg-white p-5 sm:p-6">
-            <h2 class="text-lg sm:text-xl text-carbon font-semibold">Subotal: ${{ number_format($subtotal, 2) }}</h2>
+            <h2 class="text-lg sm:text-xl text-carbon font-semibold">Subtotal: ${{ number_format($subtotal, 2) }}</h2>
             <h2 class="text-lg sm:text-xl text-carbon font-semibold">
                 Costo de Envío:
                 <span class="block sm:inline mt-1 sm:mt-0">

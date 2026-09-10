@@ -22,12 +22,12 @@ class OrderController extends Controller
     {
         Gate::authorize('viewAny', Order::class);
 
-        $orders = Order::with('user', 'address')->get();
+        $orders = Order::with('user', 'address')->orderBy('created_at', 'desc')->paginate(15);
 
         Log::channel('audit')->info('Admin viewed orders list', [
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
-            'orders_count' => $orders->count(),
+            'orders_count' => $orders->total(),
             'action' => 'admin.orders.index',
             'timestamp' => now(),
         ]);
@@ -101,6 +101,8 @@ class OrderController extends Controller
 
     public function workerIndex()
     {
+        Gate::authorize('viewAny', Order::class);
+
         // Mostrar pedidos pagados que están pendientes de aceptación por el trabajador
         // Excluir pedidos ya rechazados o confirmados
         $orders = Order::whereIn('status', ['paid', 'pendiente'])
@@ -125,6 +127,8 @@ class OrderController extends Controller
      */
     public function buscarPedidos(Request $request)
     {
+        Gate::authorize('viewAny', Order::class);
+
         $query = trim((string) $request->query('q', ''));
 
         $orders = Order::with('user')
@@ -155,6 +159,7 @@ class OrderController extends Controller
     {
         $order = Order::with(['user', 'orderItems.product', 'shippingAddress'])
             ->findOrFail($id);
+        Gate::authorize('updateStatus', $order);
 
         // Verificar que el pedido esté en estado válido para el trabajador
         if (! in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
@@ -177,6 +182,7 @@ class OrderController extends Controller
     public function acceptOrder($id)
     {
         $order = Order::findOrFail($id);
+        Gate::authorize('updateStatus', $order);
 
         // Verificar que el pedido esté pagado y pendiente de aceptación
         if (! in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {
@@ -210,6 +216,7 @@ class OrderController extends Controller
     public function rejectOrder(Request $request, $id)
     {
         $order = Order::findOrFail($id);
+        Gate::authorize('updateStatus', $order);
 
         // Verificar que el pedido esté pagado y pendiente de aceptación
         if (! in_array($order->status, ['paid', 'pendiente']) || $order->payment_status !== 'paid') {

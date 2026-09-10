@@ -38,7 +38,7 @@
                     </svg>
                 </span>
 
-                <p class="ms-3 text-body-md font-medium text-white truncate" x-text="message"></p>
+                <p class="ms-3 text-body-md font-medium text-white break-words" x-text="message"></p>
             </div>
 
             <div class="shrink-0 sm:ms-3">

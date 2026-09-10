@@ -168,7 +168,7 @@
                     </button>
                 </div>
 
-                <form id="rejectForm" method="POST">
+                <form id="rejectForm" method="POST" action="{{ route('trabajador.orders.reject', $order->id) }}">
                     @csrf
                     @method('PATCH')
 

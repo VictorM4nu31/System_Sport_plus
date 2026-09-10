@@ -60,7 +60,7 @@ Route::middleware('guest')->controller(RegisteredUserController::class)->group(f
 });
 
 // User routes
-Route::middleware(['auth', 'role:usuario'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:usuario'])->group(function () {
     Route::get('/productos', [UserProductController::class, 'index'])->name('usuario.products.index');
     Route::get('/productos/search', [UserProductController::class, 'search'])->name('usuario.products.search');
     Route::get('/productos/{id}/ficha', [UserProductController::class, 'ficha'])->name('usuario.products.ficha');
@@ -82,6 +82,7 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
     Route::controller(UserOrderController::class)->group(function () {
         Route::get('/pedidos', 'index')->name('usuario.orders.index');
         Route::get('/pedidos/{id}', 'show')->name('usuario.orders.show');
+        Route::post('/pedidos/{id}/cancelar', 'cancel')->name('usuario.orders.cancel');
     });
 
     // Order history routes
@@ -106,7 +107,7 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
 });
 
 // Admin routes
-Route::middleware(['auth', 'role:administrador'])
+Route::middleware(['auth', 'verified', 'role:administrador'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -117,12 +118,12 @@ Route::middleware(['auth', 'role:administrador'])
         Route::post('/products/{id}/sync-stripe', [ProductController::class, 'syncWithStripe'])->name('products.sync-stripe');
         Route::get('/products/{id}/stripe-info', [ProductController::class, 'stripeInfo'])->name('products.stripe-info');
         Route::resource('categories', CategoryController::class)->except(['show']);
-        Route::resource('orders', OrderController::class)->only(['index', 'show', 'update', 'destroy']);
+        Route::resource('orders', OrderController::class)->only(['index', 'show', 'destroy']);
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::get('reports/sales', [ReportController::class, 'salesReport'])->name('reports.sales');
 
         // Monitoring routes
-        Route::controller(MonitoringController::class)->prefix('monitoring')->group(function () {
+        Route::controller(MonitoringController::class)->prefix('monitoring')->middleware('can:access-monitoring')->group(function () {
             Route::get('/dashboard', 'dashboard')->name('monitoring.dashboard');
             Route::get('/health-status', 'healthStatus')->name('monitoring.health-status');
             Route::get('/metrics', 'metrics')->name('monitoring.metrics');
@@ -135,7 +136,7 @@ Route::middleware(['auth', 'role:administrador'])
     });
 
 // Worker routes
-Route::middleware(['auth', 'role:trabajador'])
+Route::middleware(['auth', 'verified', 'role:trabajador'])
     ->prefix('trabajador')
     ->name('trabajador.')
     ->group(function () {
@@ -153,7 +154,7 @@ Route::middleware(['auth', 'role:trabajador'])
     });
 
 // Address management routes (moved inside user middleware group)
-Route::middleware(['auth', 'role:usuario'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:usuario'])->group(function () {
     Route::controller(AddressController::class)->prefix('direcciones')->group(function () {
         Route::get('/', 'index')->name('usuario.addresses.index');
         Route::get('/crear', 'create')->name('usuario.addresses.create');
@@ -168,7 +169,9 @@ Route::middleware(['auth', 'role:usuario'])->group(function () {
     Route::get('/usuario/dashboard', [UserOrderController::class, 'dashboard'])->name('usuario.dashboard');
 });
 
-Route::get('/api/address/{postalCode}', [ProfileController::class, 'getAddressByPostalCode']);
+Route::get('/api/address/{postalCode}', [ProfileController::class, 'getAddressByPostalCode'])
+    ->middleware(['auth', 'throttle:30,1'])
+    ->where('postalCode', '[0-9]+');
 
 // Stripe webhook route (no authentication required)
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])

@@ -58,7 +58,7 @@
                             <x-dropdown-link :href="route('profile.edit')">
                                 <span class="flex items-center space-x-2">
                                     <span class="material-icons">person</span>
-                                    <span>{{ __('Profile') }}</span>
+                                        <span>Perfil</span>
                                 </span>
                             </x-dropdown-link>
 
@@ -69,7 +69,7 @@
                                                 onclick="event.preventDefault(); this.closest('form').submit();">
                                     <span class="flex items-center space-x-2">
                                         <span class="material-icons">logout</span>
-                                        <span>{{ __('Log Out') }}</span>
+                                        <span>Cerrar sesión</span>
                                     </span>
                                 </x-dropdown-link>
                             </form>

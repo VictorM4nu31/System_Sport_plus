@@ -46,7 +46,7 @@ class MonitoringController extends Controller
         } catch (\Exception $e) {
             Log::error('Monitoring dashboard error', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return view('admin.monitoring.dashboard')->with('error', 'Unable to load monitoring data');
@@ -60,12 +60,13 @@ class MonitoringController extends Controller
     {
         try {
             $healthCheck = $this->monitoring->performHealthCheck();
+
             return response()->json($healthCheck);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Health check failed',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -77,16 +78,17 @@ class MonitoringController extends Controller
     {
         try {
             $metrics = $this->monitoring->getSystemMetrics();
+
             return response()->json([
                 'status' => 'success',
                 'data' => $metrics,
-                'timestamp' => now()->toISOString()
+                'timestamp' => now()->toISOString(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve metrics',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -103,13 +105,13 @@ class MonitoringController extends Controller
                 'status' => 'success',
                 'data' => $alerts,
                 'count' => count($alerts),
-                'timestamp' => now()->toISOString()
+                'timestamp' => now()->toISOString(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve alerts',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -124,18 +126,18 @@ class MonitoringController extends Controller
 
             Log::channel('audit')->info('System alerts cleared', [
                 'user_id' => Auth::id(),
-                'ip_address' => request()->ip()
+                'ip_address' => request()->ip(),
             ]);
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Alerts cleared successfully'
+                'message' => 'Alerts cleared successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to clear alerts',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -150,19 +152,19 @@ class MonitoringController extends Controller
 
             Log::channel('audit')->info('Manual health check performed', [
                 'user_id' => Auth::id(),
-                'results' => $results
+                'results' => $results,
             ]);
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Health check completed',
-                'data' => $results
+                'data' => $results,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Health check failed',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -172,9 +174,14 @@ class MonitoringController extends Controller
      */
     public function logs(Request $request)
     {
+        $validated = $request->validate([
+            'type' => 'sometimes|string|in:laravel,payments,security,orders,audit',
+            'lines' => 'sometimes|integer|min:1|max:1000',
+        ]);
+
         try {
-            $logType = $request->get('type', 'laravel');
-            $lines = $request->get('lines', 100);
+            $logType = $validated['type'] ?? 'laravel';
+            $lines = (int) ($validated['lines'] ?? 100);
 
             $logFile = match ($logType) {
                 'payments' => storage_path('logs/payments.log'),
@@ -184,10 +191,10 @@ class MonitoringController extends Controller
                 default => storage_path('logs/laravel.log')
             };
 
-            if (!file_exists($logFile)) {
+            if (! file_exists($logFile)) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Log file not found'
+                    'message' => 'Log file not found',
                 ], 404);
             }
 
@@ -198,14 +205,14 @@ class MonitoringController extends Controller
                 'data' => [
                     'type' => $logType,
                     'content' => $logContent,
-                    'lines' => count(explode("\n", $logContent))
-                ]
+                    'lines' => count(explode("\n", $logContent)),
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve logs',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -215,26 +222,30 @@ class MonitoringController extends Controller
      */
     public function performanceHistory(Request $request)
     {
+        $validated = $request->validate([
+            'hours' => 'sometimes|integer|min:1|max:168',
+        ]);
+
         try {
-            $hours = $request->get('hours', 24);
+            $hours = (int) ($validated['hours'] ?? 24);
             $startTime = now()->subHours($hours);
 
             // Get payment metrics
             $paymentMetrics = [];
             for ($i = 0; $i < $hours; $i++) {
                 $hour = $startTime->copy()->addHours($i);
-                $key = "payment_metrics:" . $hour->format('Y-m-d-H');
+                $key = 'payment_metrics:'.$hour->format('Y-m-d-H');
                 $metrics = Cache::get($key, [
                     'attempts' => 0,
                     'successes' => 0,
                     'failures' => 0,
-                    'total_amount' => 0
+                    'total_amount' => 0,
                 ]);
 
                 $paymentMetrics[] = [
                     'hour' => $hour->format('H:00'),
                     'date' => $hour->format('Y-m-d'),
-                    'metrics' => $metrics
+                    'metrics' => $metrics,
                 ];
             }
 
@@ -242,10 +253,10 @@ class MonitoringController extends Controller
             $orderMetrics = DB::table('orders')
                 ->select(
                     DB::raw('DATE(created_at) as date'),
-                    DB::raw('HOUR(created_at) as hour'),
+                    DB::raw('EXTRACT(HOUR FROM created_at) as hour'),
                     DB::raw('COUNT(*) as total_orders'),
-                    DB::raw('SUM(CASE WHEN payment_status = "completed" THEN 1 ELSE 0 END) as completed_orders'),
-                    DB::raw('SUM(CASE WHEN payment_status = "completed" THEN total_price ELSE 0 END) as revenue')
+                    DB::raw("SUM(CASE WHEN payment_status = 'completed' THEN 1 ELSE 0 END) as completed_orders"),
+                    DB::raw("SUM(CASE WHEN payment_status = 'completed' THEN total_price ELSE 0 END) as revenue")
                 )
                 ->where('created_at', '>=', $startTime)
                 ->groupBy('date', 'hour')
@@ -261,15 +272,15 @@ class MonitoringController extends Controller
                     'period' => [
                         'start' => $startTime->toISOString(),
                         'end' => now()->toISOString(),
-                        'hours' => $hours
-                    ]
-                ]
+                        'hours' => $hours,
+                    ],
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve performance history',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -321,7 +332,7 @@ class MonitoringController extends Controller
             ];
         } catch (\Exception $e) {
             Log::warning('Failed to get performance metrics', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return [];
@@ -340,7 +351,7 @@ class MonitoringController extends Controller
         $text = [];
 
         while ($linecounter > 0) {
-            $t = " ";
+            $t = ' ';
             while ($t != "\n") {
                 if (fseek($handle, $pos, SEEK_END) == -1) {
                     $beginning = true;
@@ -354,11 +365,13 @@ class MonitoringController extends Controller
                 rewind($handle);
             }
             $text[$lines - $linecounter - 1] = fgets($handle);
-            if ($beginning) break;
+            if ($beginning) {
+                break;
+            }
         }
         fclose($handle);
 
-        return implode("", array_reverse($text));
+        return implode('', array_reverse($text));
     }
 
     /**
@@ -378,6 +391,7 @@ class MonitoringController extends Controller
     {
         try {
             $result = DB::select("SHOW STATUS LIKE 'Threads_connected'");
+
             return $result[0]->Value ?? 0;
         } catch (\Exception $e) {
             return 0;
@@ -391,6 +405,7 @@ class MonitoringController extends Controller
     {
         try {
             $result = DB::select("SHOW STATUS LIKE 'Slow_queries'");
+
             return $result[0]->Value ?? 0;
         } catch (\Exception $e) {
             return 0;
@@ -407,13 +422,13 @@ class MonitoringController extends Controller
             return [
                 'hits' => 0,
                 'misses' => 0,
-                'hit_ratio' => 0
+                'hit_ratio' => 0,
             ];
         } catch (\Exception $e) {
             return [
                 'hits' => 0,
                 'misses' => 0,
-                'hit_ratio' => 0
+                'hit_ratio' => 0,
             ];
         }
     }

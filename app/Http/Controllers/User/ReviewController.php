@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Review;
@@ -13,25 +14,45 @@ class ReviewController extends Controller
      * Almacenar una nueva reseña.
      */
     public function store(Request $request, $productId)
-{
-    $request->validate([
-        'rating' => 'required|integer|min:1|max:5',
-        'review' => 'required|string|max:1000',
-    ]);
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:1000',
+        ]);
 
-    // Obtener el usuario desde la request
-    $user = $request->user();
+        // El producto debe existir: evita el 500 por FK ante IDs inexistentes.
+        $product = Product::findOrFail($productId);
 
-    Review::create([
-        'user_id' => $user->id, // Usuario desde la request
-        'product_id' => $productId,
-        'rating' => $request->input('rating'),
-        'review' => $request->input('review'),
-    ]);
+        // Obtener el usuario desde la request
+        $user = $request->user();
 
-    return redirect()->route('usuario.products.show', $productId)
-                     ->with('success', 'Reseña añadida con éxito.');
-}
+        // Solo quien compró (pedido pagado con este producto) puede reseñar.
+        $hasPurchased = $user->orders()
+            ->where('payment_status', PaymentStatus::PAID->value)
+            ->whereHas('orderItems', fn ($items) => $items->where('product_id', $product->id))
+            ->exists();
+
+        if (! $hasPurchased) {
+            return redirect()->route('usuario.products.show', $product->id)
+                ->with('error', 'Solo puedes reseñar productos que hayas comprado.');
+        }
+
+        // Una sola reseña por usuario y producto.
+        if (Review::where('user_id', $user->id)->where('product_id', $product->id)->exists()) {
+            return redirect()->route('usuario.products.show', $product->id)
+                ->with('error', 'Ya publicaste una reseña para este producto.');
+        }
+
+        Review::create([
+            'user_id' => $user->id, // Usuario desde la request
+            'product_id' => $product->id,
+            'rating' => $request->input('rating'),
+            'review' => $request->input('review'),
+        ]);
+
+        return redirect()->route('usuario.products.show', $product->id)
+            ->with('success', 'Reseña añadida con éxito.');
+    }
 
     /**
      * Mostrar las reseñas de un producto.

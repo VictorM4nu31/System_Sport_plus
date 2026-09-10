@@ -34,7 +34,7 @@
                         </a>
                         <a href="{{ route('admin.orders.index') }}"
                            class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-semibold text-body-md">
-                            Ver Órdenes
+                            Ver pedidos
                         </a>
                     </div>
                 </div>

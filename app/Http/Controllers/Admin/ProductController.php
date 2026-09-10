@@ -55,7 +55,8 @@ class ProductController extends Controller
         // Ordenar por productos destacados primero, luego por nombre
         $products = $query->orderBy('is_featured', 'desc')
             ->orderBy('name', 'asc')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         Log::channel('audit')->info('Admin viewed products list', [
             'user_id' => Auth::id(),
@@ -192,6 +193,12 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         Gate::authorize('delete', $product);
+
+        // Preservar el historial: no borrar productos con items en pedidos.
+        if ($product->orderItems()->exists()) {
+            return redirect()->route('admin.products.index')
+                ->with('error', "No se puede eliminar «{$product->name}» porque aparece en pedidos. Considéralo descontinuado en su lugar.");
+        }
 
         $productData = $product->toArray();
 

@@ -14,7 +14,7 @@ class WorkerController extends Controller
     {
         Gate::authorize('manage-workers');
 
-        $workers = User::role('trabajador')->get();
+        $workers = User::role('trabajador')->orderBy('name')->paginate(15);
 
         return view('admin.workers.index', compact('workers'));
     }
@@ -56,7 +56,8 @@ class WorkerController extends Controller
     {
         Gate::authorize('manage-workers');
 
-        $worker = User::findOrFail($id);
+        // Solo trabajadores: nunca editar administradores u otros roles.
+        $worker = User::role('trabajador')->findOrFail($id);
 
         return view('admin.workers.edit', compact('worker'));
     }
@@ -65,7 +66,7 @@ class WorkerController extends Controller
     {
         Gate::authorize('manage-workers');
 
-        $worker = User::findOrFail($id);
+        $worker = User::role('trabajador')->findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -81,7 +82,7 @@ class WorkerController extends Controller
     {
         Gate::authorize('manage-workers');
 
-        $worker = User::findOrFail($id);
+        $worker = User::role('trabajador')->findOrFail($id);
         $worker->delete();
 
         return redirect()->route('admin.workers.index')->with('success', 'Trabajador eliminado.');

@@ -8,12 +8,15 @@ use Illuminate\Validation\Rule;
 class ValidationService
 {
     /**
-     * Common validation rules for order status
+     * Common validation rules for order status.
+     *
+     * Alineadas con App\Enums\OrderStatus: el admin solo puede fijar
+     * estados reales del flujo (más los históricos en español).
      */
     public static function orderStatusRules(): array
     {
         return [
-            'status' => 'required|string|in:pendiente,en proceso,completado,cancelado',
+            'status' => 'required|string|in:pending,paid,confirmed,rejected,failed,cancelado,completado',
         ];
     }
 
@@ -41,7 +44,7 @@ class ValidationService
             'weight' => 'nullable|numeric|min:0',
             'specifications' => 'nullable|array',
             'is_featured' => 'boolean',
-            'sku' => 'nullable|string|max:50|unique:products,sku,' . $productId,
+            'sku' => 'nullable|string|max:50|unique:products,sku,'.$productId,
         ];
     }
 
@@ -57,7 +60,7 @@ class ValidationService
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($userId)
+                Rule::unique('users')->ignore($userId),
             ],
             'password' => $userId ? 'nullable|string|min:8|confirmed' : 'required|string|min:8|confirmed',
         ];
@@ -73,7 +76,7 @@ class ValidationService
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('categories')->ignore($categoryId)
+                Rule::unique('categories')->ignore($categoryId),
             ],
             'description' => 'nullable|string',
         ];

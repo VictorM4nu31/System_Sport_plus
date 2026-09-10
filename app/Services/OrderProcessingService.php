@@ -58,8 +58,8 @@ class OrderProcessingService implements OrderProcessingInterface
                 $order = Order::create([
                     'user_id' => $user->id,
                     'total_price' => $totalPrice,
-                    'status' => OrderStatus::PENDING,
-                    'payment_status' => PaymentStatus::PAID,
+                    'status' => OrderStatus::PENDING->value,
+                    'payment_status' => PaymentStatus::PAID->value,
                     'shipping_address' => $paymentData['shipping_address'] ?? null, // Mantener para compatibilidad
                     'shipping_address_id' => $shippingAddressId,
                     'payment_intent_id' => $paymentData['payment_intent_id'] ?? null,
